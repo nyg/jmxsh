@@ -184,6 +184,15 @@ jobs:
           rpmbuild --define "_topdir $rpmbuild_dir" -bb "$rpmbuild_dir/SPECS/jmxsh.spec"
           cp "$rpmbuild_dir"/RPMS/noarch/*.rpm target/
 
+      - name: Generate checksums
+        run: |
+          cd target
+          sha256sum \
+            "jmxsh-${{ env.RELEASE_VERSION }}.jar" \
+            "jmxsh-${{ env.RELEASE_VERSION }}.deb" \
+            jmxsh-*.rpm \
+            > "jmxsh-${{ env.RELEASE_VERSION }}-checksums.txt"
+
       - name: Generate release notes
         uses: orhun/git-cliff-action@c93ef52f3d0ddcdcc9bd5447d98d458a11cd4f72 # v4
         with:
@@ -201,6 +210,7 @@ jobs:
           target/jmxsh-${{ env.RELEASE_VERSION }}.jar
           target/jmxsh-${{ env.RELEASE_VERSION }}.deb
           target/jmxsh-*.rpm
+          target/jmxsh-${{ env.RELEASE_VERSION }}-checksums.txt
           -F git-cliff/CHANGELOG.md
           --title "Release v${{ env.RELEASE_VERSION }}"
           --verify-tag

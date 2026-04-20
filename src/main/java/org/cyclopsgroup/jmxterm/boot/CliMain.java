@@ -24,11 +24,14 @@ import org.cyclopsgroup.jmxterm.io.InputStreamCommandInput;
 import org.cyclopsgroup.jmxterm.io.JlineCommandInput;
 import org.cyclopsgroup.jmxterm.io.PrintStreamCommandOutput;
 import org.cyclopsgroup.jmxterm.io.VerboseLevel;
+import org.cyclopsgroup.jmxterm.utils.AppConfig;
 import org.cyclopsgroup.jmxterm.utils.XdgDirectories;
 import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.LineReaderImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import picocli.CommandLine;
 
@@ -38,6 +41,7 @@ import picocli.CommandLine;
  * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public class CliMain {
+  private static final Logger LOG = LoggerFactory.getLogger(CliMain.class);
   private static final PrintWriter STDOUT_WRITER = new PrintWriter(System.out, true);
 
   private static final String COMMAND_PROMPT = "$> ";
@@ -54,6 +58,7 @@ public class CliMain {
    * @throws Exception Allow any exceptions
    */
   int execute(String[] args) throws Exception {
+    LoggingConfigurator.configure(AppConfig.load(XdgDirectories.INSTANCE), XdgDirectories.INSTANCE);
     CliMainOptions options = new CliMainOptions();
     CommandLine cl = new CommandLine(options);
     try {
@@ -107,7 +112,7 @@ public class CliMain {
                         try {
                           history.save();
                         } catch (IOException e) {
-                          System.err.println("Failed to flush command history! " + e);
+                          LOG.warn("failed to flush command history", e);
                         }
                       }));
           input = new JlineCommandInput(consoleReader, COMMAND_PROMPT);

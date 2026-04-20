@@ -40,8 +40,46 @@ class XdgDirectoriesTest {
   }
 
   @Test
-  void legacyHistoryFileIsInHome() {
+  void configHomeUsesEnvVarWhenSet() {
+    var dirs = new XdgDirectories(_ -> "/custom/config", "/home/testuser");
+    assertThat(dirs.getConfigHome()).isEqualTo(Path.of("/custom/config"));
+  }
+
+  @Test
+  void configHomeFallsBackToDefaultWhenEnvVarIsNull() {
     var dirs = new XdgDirectories(_ -> null, "/home/testuser");
-    assertThat(dirs.getLegacyHistoryFile()).isEqualTo(Path.of("/home/testuser/.jmxterm_history"));
+    assertThat(dirs.getConfigHome()).isEqualTo(Path.of("/home/testuser/.config"));
+  }
+
+  @Test
+  void configHomeFallsBackToDefaultWhenEnvVarIsBlank() {
+    var dirs = new XdgDirectories(_ -> "  ", "/home/testuser");
+    assertThat(dirs.getConfigHome()).isEqualTo(Path.of("/home/testuser/.config"));
+  }
+
+  @Test
+  void configFileResolvesUnderConfigHome() {
+    var dirs = new XdgDirectories(k -> k.equals("XDG_CONFIG_HOME") ? "/xdg/config" : null, "/ignored");
+    assertThat(dirs.getConfigFile()).isEqualTo(Path.of("/xdg/config/jmxsh/config.properties"));
+  }
+
+  @Test
+  void configFileUsesDefaultConfigHome() {
+    var dirs = new XdgDirectories(_ -> null, "/home/testuser");
+    assertThat(dirs.getConfigFile())
+        .isEqualTo(Path.of("/home/testuser/.config/jmxsh/config.properties"));
+  }
+
+  @Test
+  void logFileResolvesUnderStateHome() {
+    var dirs = new XdgDirectories(k -> k.equals("XDG_STATE_HOME") ? "/xdg/state" : null, "/ignored");
+    assertThat(dirs.getLogFile()).isEqualTo(Path.of("/xdg/state/jmxsh/logs/jmxsh.log"));
+  }
+
+  @Test
+  void logFileUsesDefaultStateHome() {
+    var dirs = new XdgDirectories(_ -> null, "/home/testuser");
+    assertThat(dirs.getLogFile())
+        .isEqualTo(Path.of("/home/testuser/.local/state/jmxsh/logs/jmxsh.log"));
   }
 }

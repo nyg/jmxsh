@@ -12,6 +12,8 @@ public final class XdgDirectories {
 
   static final String APP_NAME = "jmxsh";
   static final String HISTORY_FILENAME = "history";
+  static final String CONFIG_FILENAME = "config.properties";
+  static final String LOG_FILENAME = "jmxsh.log";
 
   private final Function<String, String> env;
   private final String userHome;
@@ -49,5 +51,27 @@ public final class XdgDirectories {
   /** Returns the legacy history file path ({@code ~/.jmxterm_history}). */
   public Path getLegacyHistoryFile() {
     return Path.of(userHome, ".jmxterm_history");
+  }
+
+  /**
+   * Returns the XDG config home directory ({@code $XDG_CONFIG_HOME}, defaulting to
+   * {@code $HOME/.config}).
+   */
+  public Path getConfigHome() {
+    String xdg = env.apply("XDG_CONFIG_HOME");
+    if (xdg != null && !xdg.isBlank()) {
+      return Path.of(xdg);
+    }
+    return Path.of(userHome, ".config");
+  }
+
+  /** Returns the path where the application config file should be stored. */
+  public Path getConfigFile() {
+    return getConfigHome().resolve(APP_NAME).resolve(CONFIG_FILENAME);
+  }
+
+  /** Returns the path where the log file should be stored. */
+  public Path getLogFile() {
+    return getStateHome().resolve(APP_NAME).resolve("logs").resolve(LOG_FILENAME);
   }
 }

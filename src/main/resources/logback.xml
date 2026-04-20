@@ -1,0 +1,6 @@
+<configuration>
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+  <!-- No appenders configured here. LoggingConfigurator adds a rolling file appender
+       at startup when logging.file.enabled=true in $XDG_CONFIG_HOME/jmxsh/config.properties. -->
+  <root level="DEBUG"/>
+</configuration>

@@ -23,18 +23,17 @@ import org.cyclopsgroup.jmxterm.io.CommandOutput;
 import org.cyclopsgroup.jmxterm.io.RuntimeIOException;
 import org.cyclopsgroup.jmxterm.io.VerboseLevel;
 import org.cyclopsgroup.jmxterm.utils.EscapingTokenizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import picocli.CommandLine;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Facade class where commands are maintained and executed
  *
  * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
+@Slf4j
 public class CommandCenter {
-  private static final Logger LOG = LoggerFactory.getLogger(CommandCenter.class);
   private static final String COMMAND_DELIMITER = "&&";
   static final String ESCAPE_CHAR_REGEX = "(?<!\\\\)#";
 
@@ -129,7 +128,7 @@ public class CommandCenter {
 
   private void doExecute(String commandName, String[] commandArgs)
       throws JMException, IOException {
-    LOG.debug("executing command: {}", commandName);
+    log.debug("executing command: {}", commandName);
     Command cmd = commandFactory.createCommand(commandName);
     if (cmd instanceof HelpCommand command) {
       command.setCommandCenter(this);

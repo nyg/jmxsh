@@ -1,5 +1,7 @@
 package org.cyclopsgroup.jmxterm.cc;
 
+import lombok.experimental.UtilityClass;
+
 import org.cyclopsgroup.jmxterm.JavaProcessManager;
 import org.cyclopsgroup.jmxterm.jdk9.Jdk9JavaProcessManager;
 
@@ -8,12 +10,8 @@ import org.cyclopsgroup.jmxterm.jdk9.Jdk9JavaProcessManager;
  *
  * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
-public final class JPMFactory {
-
-  /** Default constructor that figures out an implementation of JPM */
-  private JPMFactory() {
-    throw new UnsupportedOperationException("Not instantiable");
-  }
+@UtilityClass
+public class JPMFactory {
 
   /** @return Java process manager instance */
   static JavaProcessManager createProcessManager() {

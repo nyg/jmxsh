@@ -2,7 +2,10 @@ package org.cyclopsgroup.jmxterm.jdk9;
 
 import java.io.IOException;
 
-import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
 import org.cyclopsgroup.jmxterm.JavaProcess;
 
 import com.sun.tools.attach.AttachNotSupportedException;
@@ -14,20 +17,12 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
  *
  * @author <a href="https://github.com/nyg">nyg</a>
  */
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class Jdk9JavaProcess implements JavaProcess {
 
+  @NonNull
   private final VirtualMachineDescriptor vmd;
   private final String address;
-
-  /**
-   * @param vmd Local VM
-   * @param address Connector address, if any
-   */
-  Jdk9JavaProcess(VirtualMachineDescriptor vmd, String address) {
-    Objects.requireNonNull(vmd, "VirtualMachineDescriptor can't be NULL");
-    this.vmd = vmd;
-    this.address = address;
-  }
 
   @Override
   public String getDisplayName() {

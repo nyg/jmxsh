@@ -2,10 +2,9 @@ package org.cyclopsgroup.jmxterm.cmd;
 
 import java.io.IOException;
 import org.cyclopsgroup.jmxterm.Command;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import picocli.CommandLine;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Command to close current connection
@@ -13,11 +12,11 @@ import picocli.CommandLine;
  * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(name = "close", description = "Close current JMX connection")
+@Slf4j
 public class CloseCommand extends Command {
-  private static final Logger LOG = LoggerFactory.getLogger(CloseCommand.class);
   @Override
   public void execute() throws IOException {
-    LOG.info("closing JMX connection");
+    log.info("closing JMX connection");
     getSession().disconnect();
     getSession().getOutput().printMessage("disconnected");
   }

@@ -13,16 +13,15 @@ import org.cyclopsgroup.jmxterm.JavaProcessManager;
 import org.cyclopsgroup.jmxterm.Session;
 import org.cyclopsgroup.jmxterm.io.CommandInput;
 import org.cyclopsgroup.jmxterm.io.CommandOutput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation of {@link Session} which keeps a {@link ConnectionImpl}
  *
  * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
+@Slf4j
 class SessionImpl extends Session {
-  private static final Logger LOG = LoggerFactory.getLogger(SessionImpl.class);
 
   private ConnectionImpl connection;
 
@@ -41,10 +40,10 @@ class SessionImpl extends Session {
     if (connection != null) {
       throw new IllegalStateException("Session is already opened");
     }
-    LOG.info("connecting to {}", url);
+    log.info("connecting to {}", url);
     JMXConnector connector = doConnect(url, env);
     connection = new ConnectionImpl(connector, url);
-    LOG.info("connected to {}", url);
+    log.info("connected to {}", url);
   }
 
   @Override
@@ -52,7 +51,7 @@ class SessionImpl extends Session {
     if (connection == null) {
       return;
     }
-    LOG.info("disconnecting from JMX server");
+    log.info("disconnecting from JMX server");
     try {
       connection.close();
     } finally {

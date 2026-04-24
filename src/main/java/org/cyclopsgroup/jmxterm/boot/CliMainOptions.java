@@ -2,6 +2,9 @@ package org.cyclopsgroup.jmxterm.boot;
 
 import java.io.File;
 import java.util.Objects;
+
+import lombok.Getter;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -22,6 +25,7 @@ import picocli.CommandLine.Option;
         "",
         "Config file: ${sys:jmxsh.config.file}"
     })
+@Getter
 public class CliMainOptions {
   /** Constant <code>stderr</code> that identifies standard error output */
   public static final String STDERR = "stderr";
@@ -55,69 +59,6 @@ public class CliMainOptions {
   private String user;
 
   private boolean isSecureRmiRegistry;
-
-  /** @return #setInput(String) */
-  public final String getInput() {
-    return input;
-  }
-
-  /** @return #setOutput(String) */
-  public final String getOutput() {
-    return output;
-  }
-
-  /** @return Password for user/password authentication */
-  public final String getPassword() {
-    return password;
-  }
-
-  /** @return #setUrl(String) */
-  public final String getUrl() {
-    return url;
-  }
-
-  /** @return User name for user/password authentication */
-  public final String getUser() {
-    return user;
-  }
-
-  /** @return True if user requested help */
-  public final boolean isHelpRequested() {
-    return helpRequested;
-  }
-
-  /** @return True if quiet (silent) mode is enabled */
-  public final boolean isQuiet() {
-    return quiet;
-  }
-
-  /** @return True if user requested version info */
-  public final boolean isVersionRequested() {
-    return versionRequested;
-  }
-
-  /** @return True if terminal exits on any failure */
-  public final boolean isExitOnFailure() {
-    return exitOnFailure;
-  }
-
-  /** @return True if terminal exits on any failure */
-  public final boolean isAppendToOutput() {
-    return appendToOutput;
-  }
-
-  /** @return True if CLI runs without user interaction, such as piped input */
-  public final boolean isNonInteractive() {
-    return nonInteractive;
-  }
-
-  /**
-   * @return True if the server's RMI registry is protected with SSL/TLS
-   *     (com.sun.management.jmxremote.registry.ssl=true)
-   */
-  public final boolean isSecureRmiRegistry() {
-    return isSecureRmiRegistry;
-  }
 
   /** @param exitOnFailure True if terminal exits on any failure */
   @Option(

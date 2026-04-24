@@ -12,11 +12,10 @@ import javax.management.ObjectName;
 
 import org.cyclopsgroup.jmxterm.Command;
 import org.cyclopsgroup.jmxterm.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Command to subscribe to an MBean notification
@@ -29,8 +28,8 @@ import picocli.CommandLine.Option;
     name = "subscribe",
     description = "Subscribe to the notifications of a bean",
     footer = "Syntax is \n subscribe <bean>")
+@Slf4j
 public class SubscribeCommand extends Command {
-  private static final Logger LOG = LoggerFactory.getLogger(SubscribeCommand.class);
   private static Map<ObjectName, NotificationListener> listeners =
       new ConcurrentHashMap<>();
 
@@ -68,7 +67,7 @@ public class SubscribeCommand extends Command {
       throw new IllegalArgumentException(
           "Please specify MBean to invoke either using -b option or bean command");
     }
-    LOG.debug("subscribing to notifications from {}", beanName);
+    log.debug("subscribing to notifications from {}", beanName);
 
     ObjectName name = new ObjectName(beanName);
     if (!listeners.containsKey(name)) {

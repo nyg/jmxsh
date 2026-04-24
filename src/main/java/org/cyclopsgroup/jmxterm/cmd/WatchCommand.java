@@ -18,13 +18,12 @@ import org.cyclopsgroup.jmxterm.Command;
 import org.cyclopsgroup.jmxterm.Session;
 import org.cyclopsgroup.jmxterm.io.CommandOutput;
 import org.cyclopsgroup.jmxterm.io.JlineCommandInput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jline.reader.impl.LineReaderImpl;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Command to watch an MBean attribute TODO Consider the use case for CSV file backend generation
@@ -35,8 +34,8 @@ import picocli.CommandLine.Parameters;
     name = "watch",
     description = "Watch the value of one MBean attribute constantly",
     footer = "DO NOT call this command in a script and expect decent output")
+@Slf4j
 public class WatchCommand extends Command {
-  private static final Logger LOG = LoggerFactory.getLogger(WatchCommand.class);
   private static final class ConsoleOutput extends Output {
     private final LineReaderImpl console;
 
@@ -117,7 +116,7 @@ public class WatchCommand extends Command {
       throw new IllegalStateException("Please specify a bean using bean command first.");
     }
 
-    LOG.debug("starting watch on {} for attributes {}", beanName, attributes);
+    log.debug("starting watch on {} for attributes {}", beanName, attributes);
 
     final ObjectName name = new ObjectName(beanName);
     final MBeanServerConnection con = session.getConnection().getServerConnection();
@@ -151,7 +150,7 @@ public class WatchCommand extends Command {
       System.in.read();
       System.out.println();
       executor.shutdownNow();
-      LOG.debug("watch stopped");
+      log.debug("watch stopped");
     }
 
     session.getOutput().println("");

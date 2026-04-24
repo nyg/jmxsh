@@ -1,11 +1,15 @@
 package org.cyclopsgroup.jmxterm.cc;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXServiceURL;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import org.cyclopsgroup.jmxterm.Connection;
 
@@ -14,21 +18,16 @@ import org.cyclopsgroup.jmxterm.Connection;
  *
  * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class ConnectionImpl implements Connection {
+
+  @Getter
+  @NonNull
   private final JMXConnector connector;
 
+  @Getter
+  @NonNull
   private final JMXServiceURL url;
-
-  /**
-   * @param connector JMX connector
-   * @param url JMX service URL object
-   */
-  ConnectionImpl(JMXConnector connector, JMXServiceURL url) {
-    Objects.requireNonNull(connector, "JMX connector can't be NULL");
-    Objects.requireNonNull(url, "JMX service URL can't be NULL");
-    this.connector = connector;
-    this.url = url;
-  }
 
   /**
    * Close current connection
@@ -39,11 +38,6 @@ class ConnectionImpl implements Connection {
     connector.close();
   }
 
-  /** @return JMX connector */
-  public final JMXConnector getConnector() {
-    return connector;
-  }
-
   @Override
   public String getConnectorId() throws IOException {
     return connector.getConnectionId();
@@ -52,10 +46,5 @@ class ConnectionImpl implements Connection {
   @Override
   public MBeanServerConnection getServerConnection() throws IOException {
     return connector.getMBeanServerConnection();
-  }
-
-  @Override
-  public final JMXServiceURL getUrl() {
-    return url;
   }
 }

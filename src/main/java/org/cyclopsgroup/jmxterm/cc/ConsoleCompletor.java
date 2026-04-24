@@ -8,19 +8,18 @@ import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Model.OptionSpec;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * JLine completor that handles tab key
  *
  * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
+@Slf4j
 public class ConsoleCompletor implements Completer {
-  private static final Logger LOG = LoggerFactory.getLogger(ConsoleCompletor.class);
 
   private final CommandCenter commandCenter;
 
@@ -84,8 +83,8 @@ public class ConsoleCompletor implements Completer {
       List<String> suggestions = cmd.suggestArgument(null);
       addFilteredSuggestions(suggestions, currentWord, candidates);
     } catch (RuntimeException e) {
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("Couldn't complete input", e);
+      if (log.isDebugEnabled()) {
+        log.debug("Couldn't complete input", e);
       }
     }
   }

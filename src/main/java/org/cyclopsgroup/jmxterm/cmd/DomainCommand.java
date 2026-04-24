@@ -8,11 +8,10 @@ import java.util.Objects;
 import org.cyclopsgroup.jmxterm.Command;
 import org.cyclopsgroup.jmxterm.Session;
 import org.cyclopsgroup.jmxterm.SyntaxUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Parameters;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Get or set current selected domain
@@ -25,8 +24,8 @@ import picocli.CommandLine.Parameters;
     footer =
         "With a parameter, parameter defined domain is selected, otherwise it displays current selected domain."
             + " eg. domain java.lang")
+@Slf4j
 public class DomainCommand extends Command {
-  private static final Logger LOG = LoggerFactory.getLogger(DomainCommand.class);
   /**
    * Get domain name from given domain expression
    *
@@ -80,7 +79,7 @@ public class DomainCommand extends Command {
       session.getOutput().printMessage("domain is unset");
     } else {
       session.setDomain(domainName);
-      LOG.debug("selected domain: {}", domainName);
+      log.debug("selected domain: {}", domainName);
       session.getOutput().printMessage("domain is set to " + session.getDomain());
     }
   }

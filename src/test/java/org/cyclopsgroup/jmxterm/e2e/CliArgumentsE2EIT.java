@@ -41,7 +41,7 @@ class CliArgumentsE2EIT {
 
   @Test
   void testSilentMode() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper("-v", "silent")) {
+    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper("-q")) {
       jmxterm.sendCommandAndClose(
           "open localhost:" + targetJvm.getJmxPort(),
           "bean test:type=TestMBean",

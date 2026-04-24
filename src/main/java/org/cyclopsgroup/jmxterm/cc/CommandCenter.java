@@ -2,6 +2,7 @@ package org.cyclopsgroup.jmxterm.cc;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,8 @@ import org.cyclopsgroup.jmxterm.io.CommandOutput;
 import org.cyclopsgroup.jmxterm.io.RuntimeIOException;
 import org.cyclopsgroup.jmxterm.io.VerboseLevel;
 import org.cyclopsgroup.jmxterm.utils.EscapingTokenizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import picocli.CommandLine;
 
@@ -31,6 +34,7 @@ import picocli.CommandLine;
  * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public class CommandCenter {
+  private static final Logger LOG = LoggerFactory.getLogger(CommandCenter.class);
   private static final String COMMAND_DELIMITER = "&&";
   static final String ESCAPE_CHAR_REGEX = "(?<!\\\\)#";
 
@@ -125,6 +129,7 @@ public class CommandCenter {
 
   private void doExecute(String commandName, String[] commandArgs)
       throws JMException, IOException {
+    LOG.debug("executing command: {}", commandName);
     Command cmd = commandFactory.createCommand(commandName);
     if (cmd instanceof HelpCommand command) {
       command.setCommandCenter(this);
@@ -134,12 +139,16 @@ public class CommandCenter {
       cl.parseArgs(commandArgs);
     } catch (CommandLine.ParameterException e) {
       session.getOutput().printMessage(e.getMessage());
-      cl.usage(new PrintWriter(System.out, true));
+      StringWriter sw = new StringWriter();
+      cl.usage(new PrintWriter(sw, true));
+      session.getOutput().printMessage(sw.toString());
       return;
     }
     // Print out usage if help option is specified
     if (cl.isUsageHelpRequested()) {
-      cl.usage(new PrintWriter(System.out, true));
+      StringWriter sw = new StringWriter();
+      cl.usage(new PrintWriter(sw, true));
+      session.getOutput().printMessage(sw.toString());
       return;
     }
     cmd.setSession(session);

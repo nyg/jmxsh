@@ -11,6 +11,8 @@ import org.cyclopsgroup.jmxterm.Command;
 import org.cyclopsgroup.jmxterm.Connection;
 import org.cyclopsgroup.jmxterm.Session;
 import org.cyclopsgroup.jmxterm.SyntaxUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
@@ -34,6 +36,7 @@ import picocli.CommandLine.Parameters;
          open service:jmx:jmxmp://localhost:9991,
          open jmx:service:...""")
 public class OpenCommand extends Command {
+  private static final Logger LOG = LoggerFactory.getLogger(OpenCommand.class);
   private String password;
 
   private String url;
@@ -45,6 +48,9 @@ public class OpenCommand extends Command {
   @Override
   public void execute() throws IOException {
     Session session = getSession();
+    if (url != null) {
+      LOG.info("opening JMX connection to {}", url);
+    }
     if (url == null) {
       Connection con = session.getConnection();
       if (con == null) {

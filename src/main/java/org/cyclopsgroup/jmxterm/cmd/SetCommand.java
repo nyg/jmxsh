@@ -17,6 +17,8 @@ import org.cyclopsgroup.jmxterm.Command;
 import org.cyclopsgroup.jmxterm.Session;
 import org.cyclopsgroup.jmxterm.SyntaxUtils;
 import org.cyclopsgroup.jmxterm.utils.ValueFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
@@ -29,6 +31,7 @@ import picocli.CommandLine.Parameters;
  */
 @CommandLine.Command(name = "set", description = "Set value of an MBean attribute")
 public class SetCommand extends Command {
+  private static final Logger LOG = LoggerFactory.getLogger(SetCommand.class);
   private List<String> arguments = Collections.emptyList();
 
   private String bean;
@@ -69,6 +72,7 @@ public class SetCommand extends Command {
     }
     Session session = getSession();
     String attributeName = arguments.get(0);
+    LOG.debug("setting attribute {} on bean {}", attributeName, bean);
 
     String beanName = BeanCommand.getBeanName(bean, domain, session);
     ObjectName name = new ObjectName(beanName);

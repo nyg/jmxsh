@@ -2,12 +2,17 @@ package org.cyclopsgroup.jmxterm.io;
 
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Command output implementation where detail message can be turned on and off dynamically
  *
  * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public class VerboseCommandOutput extends CommandOutput {
+  private static final Logger LOG = LoggerFactory.getLogger(VerboseCommandOutput.class);
+
   private final VerboseCommandOutputConfig config;
 
   private final CommandOutput output;
@@ -35,16 +40,9 @@ public class VerboseCommandOutput extends CommandOutput {
 
   @Override
   public void printError(Throwable e) {
-    switch (config.getVerboseLevel()) {
-      case VERBOSE:
-        output.printError(e);
-        break;
-      case SILENT:
-        break;
-      case BRIEF:
-      default:
-        output.printMessage("#" + e.getClass().getName() + ": " + e.getMessage());
-        break;
+    LOG.error("command execution error: {}", e.getMessage(), e);
+    if (config.getVerboseLevel() != VerboseLevel.SILENT) {
+      output.printMessage("#" + e.getMessage());
     }
   }
 

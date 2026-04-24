@@ -66,17 +66,6 @@ class VerboseLevelIT {
   }
 
   @Test
-  void testVerboseShowsStackTraces() {
-    cc.setVerboseLevel(VerboseLevel.VERBOSE);
-    // Execute a command that will fail (get attribute without connection)
-    assertThat(cc.execute("get Name")).isFalse();
-    String messages = messageWriter.toString();
-    assertThat(messages)
-        .as("Expected stack trace lines in VERBOSE mode, got: " + messages)
-        .contains("at ");
-  }
-
-  @Test
   void testBriefShowsShortErrors() {
     // Default level is BRIEF
     assertThat(cc.execute("get Name")).isFalse();
@@ -85,7 +74,7 @@ class VerboseLevelIT {
         .as("Expected '#' prefixed error in BRIEF mode, got: " + messages)
         .contains("#");
     assertThat(messages)
-        .as("Expected no full stack trace in BRIEF mode, got: " + messages)
+        .as("Expected no stack trace in BRIEF mode, got: " + messages)
         .doesNotContain("\tat ");
   }
 }

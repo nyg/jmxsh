@@ -73,6 +73,13 @@ Both RMI and JMXMP protocols are supported. URL formats:
 
 ## Conventions
 
+### Branching & Pull Requests
+
+**Never commit directly to `master`.** Always:
+1. Create a new branch (e.g. `feat/my-feature`, `fix/my-fix`, `chore/my-task`)
+2. Commit your changes on that branch
+3. Open a pull request against `master`
+
 ### Commit Messages
 
 Follow **Conventional Commits**: `type(scope): description`

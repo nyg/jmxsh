@@ -9,7 +9,6 @@ import java.util.Objects;
 /**
  * Implementation of {@link CommandInput} with an input stream
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public class InputStreamCommandInput extends CommandInput {
   private final LineNumberReader reader;

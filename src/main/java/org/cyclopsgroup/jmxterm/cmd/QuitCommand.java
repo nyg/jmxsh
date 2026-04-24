@@ -9,7 +9,6 @@ import picocli.CommandLine;
 /**
  * Command to terminate the console
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(name = "quit", aliases = {"exit", "bye"}, description = "Terminate console and exit")
 public class QuitCommand extends Command {

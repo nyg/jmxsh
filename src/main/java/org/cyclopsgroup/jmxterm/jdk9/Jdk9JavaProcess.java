@@ -15,7 +15,6 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
 /**
  * JDK9 specific implementation of {@link JavaProcess}
  *
- * @author <a href="https://github.com/nyg">nyg</a>
  */
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class Jdk9JavaProcess implements JavaProcess {

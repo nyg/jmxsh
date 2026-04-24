@@ -8,7 +8,6 @@ import picocli.CommandLine.Parameters;
 /**
  * A command for testing that records parameters passed in
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(name = "test", description = "desc")
 public class SelfRecordingCommand extends Command {

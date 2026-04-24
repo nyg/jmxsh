@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Command to close current connection
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(name = "close", description = "Close current JMX connection")
 @Slf4j

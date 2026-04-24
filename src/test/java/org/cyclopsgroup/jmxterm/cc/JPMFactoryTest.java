@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test of {@link JPMFactory}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class JPMFactoryTest {
   /** Verify JPMFactory can create process manager */

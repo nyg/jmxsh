@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case for {@link HelpCommand}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class HelpCommandTest {
   private HelpCommand command;

@@ -12,7 +12,6 @@ import java.util.Objects;
 /**
  * Output with a file
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public class FileCommandOutput extends CommandOutput {
   private final PrintWriter fileWriter;

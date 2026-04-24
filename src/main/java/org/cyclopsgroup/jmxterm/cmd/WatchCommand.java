@@ -28,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Command to watch an MBean attribute TODO Consider the use case for CSV file backend generation
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(
     name = "watch",

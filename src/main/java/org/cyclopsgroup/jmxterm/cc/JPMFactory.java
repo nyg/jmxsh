@@ -8,7 +8,6 @@ import org.cyclopsgroup.jmxterm.jdk9.Jdk9JavaProcessManager;
 /**
  * Internal factory class to create JPM instance
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @UtilityClass
 public class JPMFactory {

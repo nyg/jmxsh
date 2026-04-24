@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Command output implementation where detail message can be turned on and off dynamically
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @Slf4j
 @RequiredArgsConstructor

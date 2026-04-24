@@ -6,7 +6,6 @@ import java.io.Serial;
 /**
  * Unchecked version of IOException
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public class RuntimeIOException extends RuntimeException {
   @Serial

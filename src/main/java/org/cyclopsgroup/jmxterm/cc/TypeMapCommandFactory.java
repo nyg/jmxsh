@@ -11,7 +11,6 @@ import org.cyclopsgroup.jmxterm.CommandFactory;
 /**
  * CommandFactory implementation based on a Map of command types
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public class TypeMapCommandFactory implements CommandFactory {
   private final Map<String, Class<? extends Command>> commandTypes;

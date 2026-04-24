@@ -28,7 +28,6 @@ import picocli.CommandLine;
  * Factory class of commands which knows how to create Command class with given command name.
  * Commands are discovered via their {@link CommandLine.Command} annotations.
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class PredefinedCommandFactory implements CommandFactory {
 

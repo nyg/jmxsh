@@ -11,7 +11,6 @@ import picocli.CommandLine.Option;
 /**
  * Options for main class
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @Command(
     name = "jmxterm",

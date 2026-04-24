@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Implementation of {@link Session} which keeps a {@link ConnectionImpl}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @Slf4j
 class SessionImpl extends Session {

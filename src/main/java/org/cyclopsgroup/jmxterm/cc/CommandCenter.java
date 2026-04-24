@@ -30,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Facade class where commands are maintained and executed
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @Slf4j
 public class CommandCenter {

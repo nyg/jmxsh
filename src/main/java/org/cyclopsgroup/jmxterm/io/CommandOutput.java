@@ -3,7 +3,6 @@ package org.cyclopsgroup.jmxterm.io;
 /**
  * General abstract class to output message and values
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public abstract class CommandOutput {
   /** Close the output; */

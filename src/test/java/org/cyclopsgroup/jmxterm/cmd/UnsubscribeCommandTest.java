@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case for {@link RunCommand}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class UnsubscribeCommandTest {
   private SubscribeCommand subscribeCommand;

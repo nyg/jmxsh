@@ -12,7 +12,6 @@ import picocli.CommandLine.Parameters;
 /**
  * Command that display a help message
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @Command(
     name = "help",

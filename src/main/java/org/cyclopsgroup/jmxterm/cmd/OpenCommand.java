@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Command to open JMX connection
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(
     name = "open",

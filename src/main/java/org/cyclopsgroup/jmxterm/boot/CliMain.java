@@ -38,7 +38,6 @@ import picocli.CommandLine;
 /**
  * Main class invoked directly from command line
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @Slf4j
 public class CliMain {

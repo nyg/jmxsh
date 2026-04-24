@@ -7,7 +7,6 @@ import javax.management.remote.JMXServiceURL;
 /**
  * Identifies lifecycle of a connection
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public interface Connection {
   /**

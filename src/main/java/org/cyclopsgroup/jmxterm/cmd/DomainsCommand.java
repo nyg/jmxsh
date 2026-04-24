@@ -13,7 +13,6 @@ import picocli.CommandLine;
 /**
  * List domains for JMX connection
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(name = "domains", description = "List all available domain names")
 public class DomainsCommand extends Command {

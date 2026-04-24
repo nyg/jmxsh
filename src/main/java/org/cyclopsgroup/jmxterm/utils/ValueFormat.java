@@ -5,7 +5,6 @@ package org.cyclopsgroup.jmxterm.utils;
  * attribute value or parameter of operation. It's NOT designed to parse MBean name or other type of
  * input.
  *
- * @author $Author$
  * @version $Revision$ in $Change$ submitted at $DateTime$
  */
 public final class ValueFormat {

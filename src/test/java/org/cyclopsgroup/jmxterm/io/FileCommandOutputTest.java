@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case for {@link FileCommandOutput}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class FileCommandOutputTest {
   private File testFile;

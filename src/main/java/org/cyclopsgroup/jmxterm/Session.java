@@ -18,7 +18,6 @@ import org.cyclopsgroup.jmxterm.io.VerboseLevel;
  * JMX communication context. This class exists for the whole lifecycle of a command execution. It
  * is NOT thread safe. The caller(CommandCenter) makes sure all calls are synchronized.
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public abstract class Session implements VerboseCommandOutputConfig {
   private String bean;

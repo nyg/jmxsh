@@ -5,7 +5,6 @@ import java.io.IOException;
 /**
  * Identifies a running JVM process
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public interface JavaProcess {
   /** @return Display name of process */

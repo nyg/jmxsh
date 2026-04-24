@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Command to set an attribute
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(name = "set", description = "Set value of an MBean attribute")
 @Slf4j

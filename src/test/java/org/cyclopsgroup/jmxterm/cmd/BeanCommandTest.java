@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case for {@link BeanCommand}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class BeanCommandTest {
   private final BeanCommand command = new BeanCommand();

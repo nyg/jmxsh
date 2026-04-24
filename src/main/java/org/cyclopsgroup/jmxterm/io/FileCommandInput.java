@@ -10,7 +10,6 @@ import java.util.Objects;
 /**
  * Implementation of CommandInput with given File
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public class FileCommandInput extends CommandInput {
   private final LineNumberReader in;

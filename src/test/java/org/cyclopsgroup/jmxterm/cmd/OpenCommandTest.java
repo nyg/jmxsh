@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case to test {@link OpenCommand}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class OpenCommandTest {
   private OpenCommand command;

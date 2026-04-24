@@ -30,8 +30,8 @@ import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.LineReaderImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 import picocli.CommandLine;
 
@@ -40,8 +40,8 @@ import picocli.CommandLine;
  *
  * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
+@Slf4j
 public class CliMain {
-  private static final Logger LOG = LoggerFactory.getLogger(CliMain.class);
   private static final PrintWriter STDOUT_WRITER = new PrintWriter(System.out, true);
 
   private static final String COMMAND_PROMPT = "$> ";
@@ -52,7 +52,7 @@ public class CliMain {
     } catch (Exception e) {
       String message = e.getMessage() != null ? e.getMessage() : e.toString();
       System.err.println("# " + message);
-      LOG.error("Fatal error", e);
+      log.error("Fatal error", e);
       System.exit(1);
     }
   }
@@ -117,7 +117,7 @@ public class CliMain {
                         try {
                           history.save();
                         } catch (IOException e) {
-                          LOG.warn("failed to flush command history", e);
+                          log.warn("failed to flush command history", e);
                         }
                       }));
           input = new JlineCommandInput(consoleReader, COMMAND_PROMPT);
@@ -181,7 +181,7 @@ public class CliMain {
         input.close();
       }
     } catch (Exception e) {
-      LOG.error("Fatal startup error", e);
+      log.error("Fatal startup error", e);
       output.printError(e);
       return 1;
     } finally {

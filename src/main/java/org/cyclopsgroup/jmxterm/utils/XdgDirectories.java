@@ -3,11 +3,14 @@ package org.cyclopsgroup.jmxterm.utils;
 import java.nio.file.Path;
 import java.util.function.Function;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Resolves paths according to the
  * <a href="https://specifications.freedesktop.org/basedir-spec/latest/">XDG Base Directory
  * Specification</a>.
  */
+@RequiredArgsConstructor
 public final class XdgDirectories {
 
   static final String APP_NAME = "jmxsh";
@@ -21,15 +24,6 @@ public final class XdgDirectories {
   /** Production instance that reads real environment variables. */
   public static final XdgDirectories INSTANCE =
       new XdgDirectories(System.getenv()::get, System.getProperty("user.home"));
-
-  /**
-   * @param env function that returns the value of an environment variable (or {@code null})
-   * @param userHome value of the user's home directory
-   */
-  public XdgDirectories(Function<String, String> env, String userHome) {
-    this.env = env;
-    this.userHome = userHome;
-  }
 
   /**
    * Returns the XDG state home directory ({@code $XDG_STATE_HOME}, defaulting to

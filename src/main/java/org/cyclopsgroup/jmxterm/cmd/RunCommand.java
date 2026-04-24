@@ -19,12 +19,11 @@ import org.cyclopsgroup.jmxterm.Session;
 import org.cyclopsgroup.jmxterm.SyntaxUtils;
 import org.cyclopsgroup.jmxterm.io.ValueOutputFormat;
 import org.cyclopsgroup.jmxterm.utils.ValueFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Command to run an MBean operation
@@ -35,8 +34,8 @@ import picocli.CommandLine.Parameters;
     name = "run",
     description = "Invoke an MBean operation",
     footer = "Syntax is \n run <operationName> [parameter1] [parameter2]")
+@Slf4j
 public class RunCommand extends Command {
-  private static final Logger LOG = LoggerFactory.getLogger(RunCommand.class);
   private String bean;
 
   private String domain;
@@ -88,7 +87,7 @@ public class RunCommand extends Command {
       }
     }
     String operationName = parameters.get(0);
-    LOG.debug("invoking operation {} on {}", operationName, beanName);
+    log.debug("invoking operation {} on {}", operationName, beanName);
     ObjectName name = new ObjectName(beanName);
     MBeanServerConnection con = session.getConnection().getServerConnection();
     MBeanInfo beanInfo = con.getMBeanInfo(name);

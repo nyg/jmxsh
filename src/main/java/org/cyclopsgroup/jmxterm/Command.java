@@ -6,8 +6,7 @@ import java.util.Objects;
 
 import javax.management.JMException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import picocli.CommandLine.Option;
 
@@ -18,9 +17,8 @@ import picocli.CommandLine.Option;
  *
  * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
+@Slf4j
 public abstract class Command implements Completable {
-  private static final Logger LOG = LoggerFactory.getLogger(Command.class);
-
   private boolean help;
 
   private Session session;
@@ -86,8 +84,8 @@ public abstract class Command implements Completable {
     try {
       return doSuggestArgument();
     } catch (IOException | JMException e) {
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("Couldn't suggest argument", e);
+      if (log.isDebugEnabled()) {
+        log.debug("Couldn't suggest argument", e);
       }
       return null;
     }
@@ -100,8 +98,8 @@ public abstract class Command implements Completable {
     try {
       return doSuggestOption(name);
     } catch (IOException | JMException e) {
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("Couldn't suggest option", e);
+      if (log.isDebugEnabled()) {
+        log.debug("Couldn't suggest option", e);
       }
       return null;
     }

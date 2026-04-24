@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
+import lombok.Getter;
+
 /**
  * Loads application configuration from {@code $XDG_CONFIG_HOME/jmxsh/config.properties}. All
  * settings fall back to defaults when the file is absent or a key is missing.
@@ -16,6 +18,7 @@ public final class AppConfig {
   private static final String KEY_LOGGING_FILE_ENABLED = "logging.file.enabled";
   private static final boolean DEFAULT_LOGGING_FILE_ENABLED = false;
 
+  @Getter
   private final boolean loggingFileEnabled;
 
   private AppConfig(boolean loggingFileEnabled) {
@@ -57,11 +60,6 @@ public final class AppConfig {
       return false;
     }
     return defaultValue;
-  }
-
-  /** Returns {@code true} if log-to-file is enabled. Defaults to {@code false}. */
-  public boolean isLoggingFileEnabled() {
-    return loggingFileEnabled;
   }
 
   private static final String DEFAULT_CONFIG_CONTENT =

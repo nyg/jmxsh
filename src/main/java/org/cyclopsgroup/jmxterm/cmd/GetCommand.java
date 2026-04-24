@@ -17,12 +17,11 @@ import javax.management.openmbean.CompositeDataSupport;
 import org.cyclopsgroup.jmxterm.Command;
 import org.cyclopsgroup.jmxterm.Session;
 import org.cyclopsgroup.jmxterm.io.ValueOutputFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Get value of MBean attribute(s)
@@ -33,8 +32,8 @@ import picocli.CommandLine.Parameters;
     name = "get",
     description = "Get value of MBean attribute(s)",
     footer = "* stands for all attributes. eg. get Attribute1 Attribute2 or get *")
+@Slf4j
 public class GetCommand extends Command {
-  private static final Logger LOG = LoggerFactory.getLogger(GetCommand.class);
   private List<String> attributes = new ArrayList<>();
 
   private String bean;
@@ -155,7 +154,7 @@ public class GetCommand extends Command {
     if (attributes.isEmpty()) {
       throw new IllegalArgumentException("Please specify at least one attribute");
     }
-    LOG.debug("getting attribute(s) {} from bean {}", attributes, bean);
+    log.debug("getting attribute(s) {} from bean {}", attributes, bean);
     displayAttributes();
   }
 

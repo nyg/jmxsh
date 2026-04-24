@@ -15,12 +15,11 @@ import org.cyclopsgroup.jmxterm.Command;
 import org.cyclopsgroup.jmxterm.Session;
 import org.cyclopsgroup.jmxterm.SyntaxUtils;
 import org.cyclopsgroup.jmxterm.io.RuntimeIOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Command to display or set current bean
@@ -32,8 +31,8 @@ import picocli.CommandLine.Parameters;
     description = "Display or set current selected MBean. ",
     footer = "Without any parameter, it displays current selected bean, "
             + "otherwise it selects the bean defined by the first parameter. eg. bean java.lang:type=Memory")
+@Slf4j
 public class BeanCommand extends Command {
-  private static final Logger LOG = LoggerFactory.getLogger(BeanCommand.class);
   /**
    * Get full MBean name with given bean name, domain and session
    *
@@ -132,7 +131,7 @@ public class BeanCommand extends Command {
     MBeanServerConnection con = session.getConnection().getServerConnection();
     con.getMBeanInfo(name);
     session.setBean(beanName);
-    LOG.debug("selected bean: {}", beanName);
+    log.debug("selected bean: {}", beanName);
     session.getOutput().printMessage("bean is set to " + beanName);
   }
 

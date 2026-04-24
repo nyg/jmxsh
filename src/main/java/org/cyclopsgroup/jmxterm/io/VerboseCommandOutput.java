@@ -1,32 +1,23 @@
 package org.cyclopsgroup.jmxterm.io;
 
-import java.util.Objects;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Command output implementation where detail message can be turned on and off dynamically
  *
  * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
+@Slf4j
+@RequiredArgsConstructor
 public class VerboseCommandOutput extends CommandOutput {
-  private static final Logger LOG = LoggerFactory.getLogger(VerboseCommandOutput.class);
 
-  private final VerboseCommandOutputConfig config;
-
+  @NonNull
   private final CommandOutput output;
 
-  /**
-   * @param output Proxy'ed output
-   * @param config Dynamic config
-   */
-  public VerboseCommandOutput(CommandOutput output, VerboseCommandOutputConfig config) {
-    Objects.requireNonNull(output, "The proxy'ed output can't be NULL");
-    Objects.requireNonNull(config, "Config can't be NULL");
-    this.output = output;
-    this.config = config;
-  }
+  @NonNull
+  private final VerboseCommandOutputConfig config;
 
   @Override
   public void close() {
@@ -40,7 +31,7 @@ public class VerboseCommandOutput extends CommandOutput {
 
   @Override
   public void printError(Throwable e) {
-    LOG.error("command execution error: {}", e.getMessage(), e);
+    log.error("command execution error: {}", e.getMessage(), e);
     if (config.getVerboseLevel() != VerboseLevel.SILENT) {
       output.printMessage("#" + e.getMessage());
     }

@@ -182,7 +182,7 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>org.cyclopsgroup.jmxterm.boot.CliMain</mainClass>
+                  <mainClass>sh.jmx.jmxsh.boot.CliMain</mainClass>
                   <manifestEntries>
                     <Implementation-Title>jmxsh</Implementation-Title>
                     <Implementation-Version>${project.version}</Implementation-Version>
@@ -213,7 +213,7 @@
         <version>${maven-surefire-plugin.version}</version>
         <configuration>
           <excludes>
-            <exclude>org.cyclopsgroup.jmxterm.jdk*</exclude>
+            <exclude>sh.jmx.jmxsh.jdk*</exclude>
           </excludes>
         </configuration>
       </plugin>

@@ -1,0 +1,39 @@
+package sh.jmx.jmxsh;
+
+import java.io.IOException;
+import javax.management.MBeanServerConnection;
+import javax.management.remote.JMXServiceURL;
+
+/**
+ * Mock Connection implementation for testing purpose
+ *
+ */
+public class MockConnection implements Connection {
+  private final MBeanServerConnection con;
+
+  private final JMXServiceURL url;
+
+  /**
+   * @param url Service URL
+   * @param con Server connection
+   */
+  public MockConnection(JMXServiceURL url, MBeanServerConnection con) {
+    this.url = url;
+    this.con = con;
+  }
+
+  @Override
+  public final String getConnectorId() throws IOException {
+    return "id";
+  }
+
+  @Override
+  public final MBeanServerConnection getServerConnection() throws IOException {
+    return con;
+  }
+
+  @Override
+  public final JMXServiceURL getUrl() {
+    return url;
+  }
+}

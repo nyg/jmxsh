@@ -13,7 +13,6 @@ import org.cyclopsgroup.jmxterm.jdk9.Jdk9JavaProcessManager;
 /**
  * Mocked version of {@link Session} implementation for testing purpose only
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public class MockSession extends Session {
   private boolean connected = true;

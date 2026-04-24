@@ -15,7 +15,6 @@ import picocli.CommandLine.Option;
  * worry about concurrency. Command is transient, every command in console creates a new instance of
  * Command object which is disposed after execution finishes.
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @Slf4j
 public abstract class Command implements Completable {

@@ -6,7 +6,6 @@ import java.util.Objects;
 /**
  * Implementation of CommandOutput where output is written in given PrintStream objects
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public class PrintStreamCommandOutput extends CommandOutput {
   private final PrintStream messageOutput;

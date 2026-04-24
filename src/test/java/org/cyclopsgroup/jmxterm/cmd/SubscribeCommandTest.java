@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case for {@link org.cyclopsgroup.jmxterm.cmd.RunCommand}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class SubscribeCommandTest {
   private SubscribeCommand command;

@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Get or set current selected domain
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(
     name = "domain",

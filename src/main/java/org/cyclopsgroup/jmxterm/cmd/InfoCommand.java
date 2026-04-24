@@ -26,7 +26,6 @@ import picocli.CommandLine.Option;
 /**
  * Command that displays attributes and operations of an MBean
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(
     name = "info",

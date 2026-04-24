@@ -6,7 +6,6 @@ import java.io.IOException;
 /**
  * An abstract class that provides command line input line by line
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public abstract class CommandInput implements Closeable {
   @Override

@@ -7,7 +7,6 @@ import java.util.Objects;
 /**
  * A command output that writes result and message to given writers
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public class WriterCommandOutput extends CommandOutput {
   private final Writer messageOutput;

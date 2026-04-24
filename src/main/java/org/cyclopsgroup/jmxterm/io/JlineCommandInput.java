@@ -7,7 +7,6 @@ import org.jline.reader.impl.LineReaderImpl;
 /**
  * Implementation of input that reads command from jloin console input
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public class JlineCommandInput extends CommandInput {
   private final LineReaderImpl console;

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case of {@link Jdk9JavaProcessManager}
  *
- * @author <a href="https://github.com/nyg">nyg</a>
  */
 class Jdk9JavaProcessManagerTest {
 

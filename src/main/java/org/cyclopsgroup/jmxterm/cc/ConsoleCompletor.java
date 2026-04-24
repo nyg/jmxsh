@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * JLine completor that handles tab key
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @Slf4j
 public class ConsoleCompletor implements Completer {

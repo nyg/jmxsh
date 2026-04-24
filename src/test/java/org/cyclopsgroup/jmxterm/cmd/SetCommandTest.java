@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case of {@link SetCommand}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class SetCommandTest {
   private SetCommand command;

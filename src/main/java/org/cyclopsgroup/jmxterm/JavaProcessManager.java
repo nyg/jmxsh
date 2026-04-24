@@ -5,7 +5,6 @@ import java.util.List;
 /**
  * Java process manager
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public abstract class JavaProcessManager {
   /**

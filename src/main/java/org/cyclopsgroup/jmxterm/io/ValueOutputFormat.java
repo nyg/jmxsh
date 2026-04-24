@@ -11,7 +11,6 @@ import javax.management.openmbean.CompositeData;
 /**
  * A utility to print out object values in particular format.
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public class ValueOutputFormat {
   private final int indentSize;

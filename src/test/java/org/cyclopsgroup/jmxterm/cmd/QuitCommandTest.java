@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case for {@link QuitCommand}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class QuitCommandTest {
   private QuitCommand command;

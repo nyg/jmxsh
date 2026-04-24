@@ -16,7 +16,6 @@ import picocli.CommandLine.Option;
 /**
  * Command that shows list of beans
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(
     name = "beans",

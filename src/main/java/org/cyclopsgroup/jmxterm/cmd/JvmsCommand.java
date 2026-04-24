@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Command to list all running local JVM processes
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(name = "jvms", description = "List all running local JVM processes")
 @Slf4j

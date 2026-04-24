@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test of {@link CloseCommand}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class CloseCommandTest {
   private CloseCommand command;

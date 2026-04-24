@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case of {@link DomainsCommand}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class DomainsCommandTest {
   private DomainsCommand command;

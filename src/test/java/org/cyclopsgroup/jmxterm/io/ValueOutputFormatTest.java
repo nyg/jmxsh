@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case for {@link ValueOutputFormat}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class ValueOutputFormatTest {
   /** Print out expression and verify output */

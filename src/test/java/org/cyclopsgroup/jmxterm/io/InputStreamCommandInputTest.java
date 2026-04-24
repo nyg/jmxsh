@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit test case for class {@link InputStreamCommandInput}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class InputStreamCommandInputTest {
   /**

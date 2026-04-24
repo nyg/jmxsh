@@ -28,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Command to run an MBean operation
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(
     name = "run",

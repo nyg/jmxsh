@@ -3,7 +3,6 @@ package org.cyclopsgroup.jmxterm.io;
 /**
  * Level of verbose option
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public enum VerboseLevel {
   /** Nothing is written out except returned values */

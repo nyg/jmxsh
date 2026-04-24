@@ -15,7 +15,6 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
 /**
  * JDK9 specific java process manager
  *
- * @author <a href="https://github.com/nyg">nyg</a>
  */
 public class Jdk9JavaProcessManager extends JavaProcessManager {
 

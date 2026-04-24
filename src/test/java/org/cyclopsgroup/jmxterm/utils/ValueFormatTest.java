@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case of {@link ValueFormat}
  *
- * @author $Author$
  * @version $Revision$ in $Change$ submitted at $DateTime$
  */
 class ValueFormatTest {

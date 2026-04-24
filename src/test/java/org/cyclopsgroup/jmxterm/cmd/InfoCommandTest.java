@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link InfoCommand}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class InfoCommandTest {
   private InfoCommand command;

@@ -16,7 +16,6 @@ import org.cyclopsgroup.jmxterm.Connection;
 /**
  * Identifies a JMX connection
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class ConnectionImpl implements Connection {

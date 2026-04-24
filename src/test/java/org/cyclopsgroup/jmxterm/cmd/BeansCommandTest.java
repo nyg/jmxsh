@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case for {@link BeansCommand}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class BeansCommandTest {
   private static final String EOL = System.getProperty("line.separator");

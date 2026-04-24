@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Get value of MBean attribute(s)
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 @CommandLine.Command(
     name = "get",

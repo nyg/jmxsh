@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case of {@link PrintStreamCommandOutput}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class PrintStreamCommandOutputTest {
   /** Write something to output and verify what's written */

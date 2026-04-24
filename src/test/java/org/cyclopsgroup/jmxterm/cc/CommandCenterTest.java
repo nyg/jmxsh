@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 /**
  * Test case of {@link CommandCenter}
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 class CommandCenterTest {
   private CommandCenter cc;

@@ -15,7 +15,6 @@ import org.cyclopsgroup.jmxterm.utils.ValueFormat;
 /**
  * Utility class for syntax checking
  *
- * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
 public final class SyntaxUtils {
   /** NULL string identifier */

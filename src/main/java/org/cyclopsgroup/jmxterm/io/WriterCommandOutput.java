@@ -1,7 +1,6 @@
 package org.cyclopsgroup.jmxterm.io;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Objects;
 
@@ -44,7 +43,11 @@ public class WriterCommandOutput extends CommandOutput {
 
   @Override
   public void printError(Throwable e) {
-    e.printStackTrace(new PrintWriter(messageOutput, true));
+    try {
+      messageOutput.write("#" + e.getClass().getName() + ": " + e.getMessage());
+    } catch (IOException ex) {
+      throw new RuntimeIOException("Can't print error message", ex);
+    }
   }
 
   @Override

@@ -15,8 +15,13 @@ import picocli.CommandLine.Option;
     description = "Main executable of JMX terminal CLI tool",
     mixinStandardHelpOptions = true,
     versionProvider = VersionProvider.class,
-    footer =
-        "Without any option, this command opens an interactive command line based console. With a given input file, commands in file will be executed and process ends after file is processed")
+    footer = {
+        "Without any option, this command opens an interactive command line based console. "
+            + "With a given input file, commands in file will be executed and process ends after "
+            + "file is processed.",
+        "",
+        "Config file: ${sys:jmxsh.config.file}"
+    })
 public class CliMainOptions {
   /** Constant <code>stderr</code> that identifies standard error output */
   public static final String STDERR = "stderr";
@@ -167,7 +172,7 @@ public class CliMainOptions {
   /** @param verboseLevel Verbose level */
   @Option(
       names = {"-v", "--verbose"},
-      description = "Verbose level, could be silent|brief|verbose. Default value is brief")
+      description = "Verbose level, could be silent|brief. Default value is brief")
   public final void setVerboseLevel(String verboseLevel) {
     this.verboseLevel = verboseLevel;
   }

@@ -41,16 +41,8 @@ public class VerboseCommandOutput extends CommandOutput {
   @Override
   public void printError(Throwable e) {
     LOG.error("command execution error: {}", e.getMessage(), e);
-    switch (config.getVerboseLevel()) {
-      case VERBOSE:
-        output.printError(e);
-        break;
-      case SILENT:
-        break;
-      case BRIEF:
-      default:
-        output.printMessage("#" + e.getClass().getName() + ": " + e.getMessage());
-        break;
+    if (config.getVerboseLevel() != VerboseLevel.SILENT) {
+      output.printMessage("#" + e.getClass().getName() + ": " + e.getMessage());
     }
   }
 

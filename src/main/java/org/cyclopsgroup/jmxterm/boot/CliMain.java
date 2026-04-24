@@ -58,7 +58,10 @@ public class CliMain {
    * @throws Exception Allow any exceptions
    */
   int execute(String[] args) throws Exception {
-    LoggingConfigurator.configure(AppConfig.load(XdgDirectories.INSTANCE), XdgDirectories.INSTANCE);
+    AppConfig appConfig = AppConfig.load(XdgDirectories.INSTANCE);
+    AppConfig.createDefaultIfMissing(XdgDirectories.INSTANCE.getConfigFile());
+    LoggingConfigurator.configure(appConfig, XdgDirectories.INSTANCE);
+    System.setProperty("jmxsh.config.file", XdgDirectories.INSTANCE.getConfigFile().toString());
     CliMainOptions options = new CliMainOptions();
     CommandLine cl = new CommandLine(options);
     try {

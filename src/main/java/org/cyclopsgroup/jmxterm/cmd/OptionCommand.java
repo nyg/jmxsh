@@ -50,7 +50,7 @@ public class OptionCommand extends Command {
   /** @param verbose Verbose level of session */
   @Option(
       names = {"-v", "--verbose"},
-      description = "Verbose level(case insensitive): silent|brief|verbose")
+      description = "Verbose level(case insensitive): silent|brief")
   public final void setVerboseLevel(String verbose) {
     this.verboseLevel = verbose;
   }

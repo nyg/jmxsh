@@ -2,6 +2,7 @@ package org.cyclopsgroup.jmxterm.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -61,5 +62,31 @@ public final class AppConfig {
   /** Returns {@code true} if log-to-file is enabled. Defaults to {@code false}. */
   public boolean isLoggingFileEnabled() {
     return loggingFileEnabled;
+  }
+
+  private static final String DEFAULT_CONFIG_CONTENT =
+      """
+      # jmxsh configuration file
+      #
+      # Enable logging to a rotating file in the XDG state directory.
+      # Log files are stored in $XDG_STATE_HOME/jmxsh/logs/
+      # (default: ~/.local/state/jmxsh/logs/)
+      # logging.file.enabled=false
+      """;
+
+  /**
+   * Creates the config file with default (commented-out) content if it does not already exist.
+   * Parent directories are created as needed. Silently ignores failures.
+   */
+  public static void createDefaultIfMissing(Path configFile) {
+    if (Files.exists(configFile)) {
+      return;
+    }
+    try {
+      Files.createDirectories(configFile.getParent());
+      Files.writeString(configFile, DEFAULT_CONFIG_CONTENT, StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      // Non-fatal: if we cannot write the config, continue without it.
+    }
   }
 }

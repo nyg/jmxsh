@@ -9,7 +9,5 @@ public enum VerboseLevel {
   /** Nothing is written out except returned values */
   SILENT,
   /** Print out returned value of messages */
-  BRIEF,
-  /** Print out returned value of detail of messages */
-  VERBOSE
+  BRIEF
 }

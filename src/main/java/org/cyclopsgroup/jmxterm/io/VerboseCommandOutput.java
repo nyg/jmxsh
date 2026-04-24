@@ -42,7 +42,7 @@ public class VerboseCommandOutput extends CommandOutput {
   public void printError(Throwable e) {
     LOG.error("command execution error: {}", e.getMessage(), e);
     if (config.getVerboseLevel() != VerboseLevel.SILENT) {
-      output.printMessage("#" + e.getClass().getName() + ": " + e.getMessage());
+      output.printMessage("#" + e.getMessage());
     }
   }
 

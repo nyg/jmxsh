@@ -80,12 +80,7 @@ public class CliMain {
       return 0;
     }
 
-    VerboseLevel verboseLevel;
-    if (options.getVerboseLevel() != null) {
-      verboseLevel = VerboseLevel.valueOf(options.getVerboseLevel().toUpperCase());
-    } else {
-      verboseLevel = null;
-    }
+    VerboseLevel verboseLevel = options.isQuiet() ? VerboseLevel.SILENT : VerboseLevel.BRIEF;
 
     CommandOutput output;
     if (CliMainOptions.STDOUT.equals(options.getOutput())) {
@@ -153,10 +148,8 @@ public class CliMain {
               SyntaxUtils.getUrl(options.getUrl(), commandCenter.getProcessManager()),
               env.isEmpty() ? null : env);
         }
-        if (verboseLevel != null) {
-          commandCenter.setVerboseLevel(verboseLevel);
-        }
-        if (verboseLevel != VerboseLevel.SILENT) {
+        commandCenter.setVerboseLevel(verboseLevel);
+        if (!options.isQuiet()) {
           output.printMessage("Welcome to jmx.sh, type \"help\" for available commands.");
         }
         String line;

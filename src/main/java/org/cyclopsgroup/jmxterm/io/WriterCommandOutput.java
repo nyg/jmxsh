@@ -44,7 +44,7 @@ public class WriterCommandOutput extends CommandOutput {
   @Override
   public void printError(Throwable e) {
     try {
-      messageOutput.write("#" + e.getClass().getName() + ": " + e.getMessage());
+      messageOutput.write("#" + e.getMessage());
     } catch (IOException ex) {
       throw new RuntimeIOException("Can't print error message", ex);
     }

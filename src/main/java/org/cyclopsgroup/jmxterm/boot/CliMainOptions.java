@@ -13,7 +13,7 @@ import picocli.CommandLine.Option;
 @Command(
     name = "jmxterm",
     description = "Main executable of JMX terminal CLI tool",
-    mixinStandardHelpOptions = true,
+    mixinStandardHelpOptions = false,
     versionProvider = VersionProvider.class,
     footer = {
         "Without any option, this command opens an interactive command line based console. "
@@ -40,6 +40,12 @@ public class CliMainOptions {
 
   private boolean appendToOutput;
 
+  private boolean helpRequested;
+
+  private boolean quiet;
+
+  private boolean versionRequested;
+
   private String output = STDOUT;
 
   private String password;
@@ -47,8 +53,6 @@ public class CliMainOptions {
   private String url;
 
   private String user;
-
-  private String verboseLevel;
 
   private boolean isSecureRmiRegistry;
 
@@ -77,9 +81,19 @@ public class CliMainOptions {
     return user;
   }
 
-  /** @return Verbose option */
-  public final String getVerboseLevel() {
-    return verboseLevel;
+  /** @return True if user requested help */
+  public final boolean isHelpRequested() {
+    return helpRequested;
+  }
+
+  /** @return True if quiet (silent) mode is enabled */
+  public final boolean isQuiet() {
+    return quiet;
+  }
+
+  /** @return True if user requested version info */
+  public final boolean isVersionRequested() {
+    return versionRequested;
   }
 
   /** @return True if terminal exits on any failure */
@@ -169,12 +183,30 @@ public class CliMainOptions {
     this.user = user;
   }
 
-  /** @param verboseLevel Verbose level */
+  /** @param quiet True to suppress all messages (silent mode) */
   @Option(
-      names = {"-v", "--verbose"},
-      description = "Verbose level, could be silent|brief. Default value is brief")
-  public final void setVerboseLevel(String verboseLevel) {
-    this.verboseLevel = verboseLevel;
+      names = {"-q", "--quiet"},
+      description = "Quiet mode: suppress all messages, only output command results")
+  public final void setQuiet(boolean quiet) {
+    this.quiet = quiet;
+  }
+
+  /** @param helpRequested True if user requested help */
+  @Option(
+      names = {"-h", "--help"},
+      usageHelp = true,
+      description = "Display this help message")
+  public final void setHelpRequested(boolean helpRequested) {
+    this.helpRequested = helpRequested;
+  }
+
+  /** @param versionRequested True if user requested version info */
+  @Option(
+      names = {"-v", "--version"},
+      versionHelp = true,
+      description = "Print version information")
+  public final void setVersionRequested(boolean versionRequested) {
+    this.versionRequested = versionRequested;
   }
 
   /** @param appendToOutput True if outputfile is preserved */

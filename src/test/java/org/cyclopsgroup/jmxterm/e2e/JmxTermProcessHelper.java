@@ -24,7 +24,7 @@ public class JmxTermProcessHelper implements AutoCloseable {
    * Finds the uber JAR and launches jmxterm with {@code -n} (non-interactive) plus any extra
    * arguments.
    *
-   * @param extraArgs additional CLI arguments (e.g. {@code "-v", "silent"})
+   * @param extraArgs additional CLI arguments (e.g. {@code "-q"} for quiet mode)
    * @throws IOException if the JAR is not found or the process cannot be started
    */
   public JmxTermProcessHelper(String... extraArgs) throws IOException {

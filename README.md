@@ -50,7 +50,7 @@ sudo apt update && sudo apt install jmxsh
 - **Full MBean support** — browse domains, read/write attributes, invoke operations
 - **Command chaining** — run multiple commands in one line with `&&`
 - **Script mode** — automate JMX operations via files or piped input
-- **Verbose control** — silent, brief, or verbose output modes
+- **Quiet mode** — suppress informational messages with `-q` for scripting-friendly output
 - **Cross-platform** — runs anywhere Java runs (JAR, DEB, RPM)
 - **XDG Base Directory compliance** — command history stored in `$XDG_STATE_HOME/jmxsh/` (defaults to `~/.local/state/jmxsh/`), keeping your home directory clean
 

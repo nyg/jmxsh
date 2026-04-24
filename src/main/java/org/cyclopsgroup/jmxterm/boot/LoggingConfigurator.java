@@ -1,5 +1,7 @@
 package org.cyclopsgroup.jmxterm.boot;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.cyclopsgroup.jmxterm.utils.AppConfig;
@@ -41,6 +43,13 @@ public final class LoggingConfigurator {
       return;
     }
     Path logFile = xdg.getLogFile();
+    try {
+      Files.createDirectories(logFile.getParent());
+    } catch (IOException e) {
+      System.err.println(
+          "jmxsh: cannot create log directory " + logFile.getParent() + ": " + e.getMessage());
+      return;
+    }
 
     PatternLayoutEncoder encoder = new PatternLayoutEncoder();
     encoder.setContext(context);

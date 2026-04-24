@@ -46,8 +46,15 @@ public class CliMain {
 
   private static final String COMMAND_PROMPT = "$> ";
 
-  public static void main(String[] args) throws Exception {
-    System.exit(new CliMain().execute(args));
+  public static void main(String[] args) {
+    try {
+      System.exit(new CliMain().execute(args));
+    } catch (Exception e) {
+      String message = e.getMessage() != null ? e.getMessage() : e.toString();
+      System.err.println("# " + message);
+      LOG.error("Fatal error", e);
+      System.exit(1);
+    }
   }
 
   /**
@@ -124,52 +131,59 @@ public class CliMain {
       }
       try {
         CommandCenter commandCenter = new CommandCenter(output, input);
-        if (input instanceof JlineCommandInput commandInput) {
-          commandInput
-              .getConsole()
-              .setCompleter(new ConsoleCompletor(commandCenter));
-        }
-        if (options.getUrl() != null) {
-          Map<String, Object> env = new HashMap<>();
-          if (options.getUser() != null) {
-            String password = options.getPassword();
-            if (password == null) {
-              password = input.readMaskedString("Authentication password: ");
+        try {
+          if (input instanceof JlineCommandInput commandInput) {
+            commandInput
+                .getConsole()
+                .setCompleter(new ConsoleCompletor(commandCenter));
+          }
+          if (options.getUrl() != null) {
+            Map<String, Object> env = new HashMap<>();
+            if (options.getUser() != null) {
+              String password = options.getPassword();
+              if (password == null) {
+                password = input.readMaskedString("Authentication password: ");
+              }
+              String[] credentials = {options.getUser(), password};
+              env.put(JMXConnector.CREDENTIALS, credentials);
             }
-            String[] credentials = {options.getUser(), password};
-            env.put(JMXConnector.CREDENTIALS, credentials);
+            if (options.isSecureRmiRegistry()) {
+              // Required to prevent "java.rmi.ConnectIOException: non-JRMP server at remote endpoint"
+              // error
+              env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
+            }
+            commandCenter.connect(
+                SyntaxUtils.getUrl(options.getUrl(), commandCenter.getProcessManager()),
+                env.isEmpty() ? null : env);
           }
-          if (options.isSecureRmiRegistry()) {
-            // Required to prevent "java.rmi.ConnectIOException: non-JRMP server at remote endpoint"
-            // error
-            env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
+          commandCenter.setVerboseLevel(verboseLevel);
+          if (!options.isQuiet()) {
+            output.printMessage("Welcome to jmx.sh, type \"help\" for available commands.");
           }
-          commandCenter.connect(
-              SyntaxUtils.getUrl(options.getUrl(), commandCenter.getProcessManager()),
-              env.isEmpty() ? null : env);
+          String line;
+          int exitCode = 0;
+          int lineNumber = 0;
+          while ((line = input.readLine()) != null) {
+            lineNumber++;
+            if (!commandCenter.execute(line) && options.isExitOnFailure()) {
+              exitCode = -lineNumber;
+              break;
+            }
+            if (commandCenter.isClosed()) {
+              break;
+            }
+          }
+          return exitCode;
+        } finally {
+          commandCenter.close();
         }
-        commandCenter.setVerboseLevel(verboseLevel);
-        if (!options.isQuiet()) {
-          output.printMessage("Welcome to jmx.sh, type \"help\" for available commands.");
-        }
-        String line;
-        int exitCode = 0;
-        int lineNumber = 0;
-        while ((line = input.readLine()) != null) {
-          lineNumber++;
-          if (!commandCenter.execute(line) && options.isExitOnFailure()) {
-            exitCode = -lineNumber;
-            break;
-          }
-          if (commandCenter.isClosed()) {
-            break;
-          }
-        }
-        commandCenter.close();
-        return exitCode;
       } finally {
         input.close();
       }
+    } catch (Exception e) {
+      LOG.error("Fatal startup error", e);
+      output.printError(e);
+      return 1;
     } finally {
       output.close();
     }

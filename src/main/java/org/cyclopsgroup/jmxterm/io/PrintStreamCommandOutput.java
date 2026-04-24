@@ -45,7 +45,8 @@ public class PrintStreamCommandOutput extends CommandOutput {
 
   @Override
   public void printError(Throwable e) {
-    messageOutput.println("#" + e.getMessage());
+    String message = e.getMessage() != null ? e.getMessage() : e.toString();
+    messageOutput.println("#" + message);
   }
 
   @Override

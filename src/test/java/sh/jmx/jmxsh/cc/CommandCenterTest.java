@@ -98,6 +98,27 @@ class CommandCenterTest {
   }
 
   @Test
+  void singleQuotedArgument() {
+    runCommandAndVerifyArguments("test 'hello world'", Arrays.asList("hello world"));
+  }
+
+  @Test
+  void doubleQuotedArgument() {
+    runCommandAndVerifyArguments("test \"hello world\"", Arrays.asList("hello world"));
+  }
+
+  @Test
+  void quotedArgumentMixedWithUnquoted() {
+    runCommandAndVerifyArguments("test a 'b c' d", Arrays.asList("a", "b c", "d"));
+  }
+
+  @Test
+  void unclosedQuoteReturnsError() {
+    boolean result = cc.execute("test 'unclosed");
+    assertThat(result).isFalse();
+  }
+
+  @Test
   void regexEscapesCorrectly() {
     final String s1 = "".split(ESCAPE_CHAR_REGEX)[0];
     final String s2 = "a b c".split(ESCAPE_CHAR_REGEX)[0];

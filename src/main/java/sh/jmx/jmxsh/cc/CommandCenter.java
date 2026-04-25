@@ -22,8 +22,10 @@ import sh.jmx.jmxsh.io.CommandOutput;
 import sh.jmx.jmxsh.io.RuntimeIOException;
 import sh.jmx.jmxsh.io.OutputMode;
 import sh.jmx.jmxsh.attach.JavaProcessManager;
-import sh.jmx.jmxsh.utils.EscapingTokenizer;
 
+import org.jline.reader.Parser.ParseContext;
+import org.jline.reader.SyntaxError;
+import org.jline.reader.impl.DefaultParser;
 import picocli.CommandLine;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,6 +35,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class CommandCenter {
+  private static final DefaultParser PARSER = new DefaultParser().eofOnUnclosedQuote(true);
+
   private static final String COMMAND_DELIMITER = "&&";
   static final String ESCAPE_CHAR_REGEX = "(?<!\\\\)#";
 
@@ -113,7 +117,12 @@ public class CommandCenter {
     }
 
     // Take the first argument out since it's command name
-    final List<String> args = new ArrayList<>(EscapingTokenizer.tokenize(command));
+    final List<String> args;
+    try {
+      args = new ArrayList<>(PARSER.parse(command, command.length(), ParseContext.ACCEPT_LINE).words());
+    } catch (SyntaxError e) {
+      throw new IllegalArgumentException("Malformed command (check quotes): " + e.getMessage(), e);
+    }
     String commandName = args.remove(0);
     // Leave the rest of arguments for command
     String[] commandArgs = args.toArray(String[]::new);

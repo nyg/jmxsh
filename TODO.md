@@ -34,13 +34,12 @@ fork vestiges, and design patterns that predate modern Java. Organized by catego
 
 ### Fork Vestiges (jmxterm / jcli lineage)
 
-- 🟢 **`jdk9/` package name** — the `com.sun.tools.attach` Attach API became a first-class public API in JDK 9; the project now targets Java 25. The package and class names (`Jdk9JavaProcess`, `Jdk9JavaProcessManager`) are misleading fossils. Rename to `attach/` with matching class names. (`jdk9/`, `cc/JPMFactory.java`)
+- 🟢 **`jdk9/` package name** — the `com.sun.tools.attach` Attach API became a first-class public API in JDK 9; the project now targets Java 25. The class names were simplified (removed the `Jdk9` prefix), but the package is still `jdk9/`. Rename the package to `attach/` to remove the version fossil. (`jdk9/`)
 
 ### Legacy Java APIs
 
 ### Legacy Language Constructs
 
-- 🟡 **`JavaProcessManager` as abstract class with no concrete state** — Both methods are abstract and there is no shared state. This is a pre-Java 8 pattern for defining a contract; it should be an `interface`. (`JavaProcessManager.java`)
 - 🟡 **`CommandInput` and `CommandOutput` as abstract classes** — Both define only abstract methods plus one convenience default — a perfect fit for `interface` with `default` methods in Java 25. (`io/CommandInput.java`, `io/CommandOutput.java`)
 - 🟡 **`WatchCommand` three-class hierarchy for a single-method abstraction** — The `Output` / `ConsoleOutput` / `ReportOutput` class hierarchy exists to abstract a single `printLine(String)` call. A `@FunctionalInterface` (or a lambda) collapses this to one line. (`cmd/WatchCommand.java`)
 
@@ -51,10 +50,9 @@ fork vestiges, and design patterns that predate modern Java. Organized by catego
 - 🟡 **Reflection-heavy command instantiation** — `PredefinedCommandFactory` and `TypeMapCommandFactory` use `getDeclaredConstructor().newInstance()` and `Class.forName()` to create command instances at runtime, forgoing type safety and IDE support. (`cc/PredefinedCommandFactory.java`, `cc/TypeMapCommandFactory.java`)
 - 🟡 **`Runtime.getRuntime().addShutdownHook(new Thread(...))` pattern** — Registering an anonymous `Thread` as a shutdown hook is the pre-virtual-thread way to handle teardown. (`boot/CliMain.java`)
 - 🟡 **Raw `synchronized` locking around session state** — `CommandCenter` guards mutable session state with a raw lock object. `java.util.concurrent.locks.ReentrantLock` provides equivalent semantics with better observability and more flexible lock/unlock control. (`cc/CommandCenter.java`)
-- 🟢 **`JPMFactory` pointless indirection** — The factory exists solely to call `new Jdk9JavaProcessManager()`. The abstraction adds no value and can be inlined at the call site. (`cc/JPMFactory.java`)
 
 ### Legacy Code Smells
 
-- 🟡 **Lombok in a Java 25 project** — `@Getter` on simple data holders; `@RequiredArgsConstructor` instead of explicit constructors; `@NonNull` instead of `Objects.requireNonNull()`. Lombok fills language gaps that Java 25 no longer has, and its annotation-processor magic obscures what the compiler actually generates. (`jdk9/Jdk9JavaProcess.java`, `utils/AppConfig.java`, and others)
+- 🟡 **Lombok in a Java 25 project** — `@Getter` on simple data holders; `@RequiredArgsConstructor` instead of explicit constructors; `@NonNull` instead of `Objects.requireNonNull()`. Lombok fills language gaps that Java 25 no longer has, and its annotation-processor magic obscures what the compiler actually generates. (`jdk9/JavaProcess.java`, `utils/AppConfig.java`, and others)
 - 🟢 **Null-centric API style** — Several methods return `null` to signal absence (e.g., `Completable.getCandidateValues()`, `Command.getSession()`). `Optional` or empty collections express intent more clearly and eliminate null-check boilerplate at call sites. (`Command.java`, `Completable.java`)
 - 🟢 **`UnimplementedCommandInput` misleading name** — This is a deliberate stub/null-object, but the name implies unfinished work. A name like `NoopCommandInput` would better communicate intent. (`io/UnimplementedCommandInput.java`)

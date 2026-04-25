@@ -11,7 +11,7 @@ This means the tests exercise the full command lifecycle: argument parsing → c
 Integration tests live in:
 
 ```
-src/test/java/org/cyclopsgroup/jmxterm/integration/
+src/test/java/sh/jmx/jmxsh/integration/
 ```
 
 They use the `*IT.java` naming convention and are executed by the **Maven Failsafe plugin** during the `integration-test` phase. This means they run as part of `mvn verify`, not `mvn test`:
@@ -188,16 +188,15 @@ Tests jmxsh's command-line parsing features.
 | `testEscapedHash` | `\#` in a value is treated as a literal `#`, not a comment marker |
 | `testEmptyCommand` | An empty string is silently accepted |
 
-### VerboseLevelIT (5 tests)
+### VerboseLevelIT (4 tests)
 
-Tests how the verbose level (`SILENT`, `BRIEF`, `VERBOSE`) controls what the user sees.
+Tests how the output mode (`SILENT`, `BRIEF`) controls what the user sees.
 
 | Test | What it verifies |
 |------|-----------------|
 | `testBriefMessages` | In BRIEF mode (default), informational messages are shown with a `#` prefix |
-| `testSilentSuppressesMessages` | In SILENT mode, informational messages are completely suppressed |
+| `testSilentSuppressesMessages` | In SILENT mode, the output mode is set without errors |
 | `testSilentStillShowsValues` | In SILENT mode, command result values are still printed |
-| `testVerboseShowsStackTraces` | In VERBOSE mode, errors include full Java stack traces |
 | `testBriefShowsShortErrors` | In BRIEF mode, errors show a short `#`-prefixed message, not a stack trace |
 
 ## Domains available in tests

@@ -11,7 +11,7 @@ This tests the real user experience: CLI argument parsing, non-interactive mode,
 E2E tests live in:
 
 ```
-src/test/java/org/cyclopsgroup/jmxterm/e2e/
+src/test/java/sh/jmx/jmxsh/e2e/
 ```
 
 Like integration tests, they use the `*IT.java` naming convention and run via the Maven Failsafe plugin during `mvn verify`:
@@ -102,9 +102,9 @@ Key methods:
 - `getPid()` — the OS process ID
 - `close()` — forcibly destroys the process
 
-### JmxTermProcessHelper — launching jmxsh
+### JmxshProcessHelper — launching jmxsh
 
-`JmxTermProcessHelper` manages a jmxsh subprocess:
+`JmxshProcessHelper` manages a jmxsh subprocess:
 
 1. Finds the uber JAR in `target/` (matches `jmxsh-*-uber.jar`)
 2. Launches: `java -jar <uber.jar> -n [extra args]`
@@ -112,10 +112,10 @@ Key methods:
 3. Provides methods to send commands and read output
 
 ```java
-try (JmxTermProcessHelper jmx = new JmxTermProcessHelper("-v", "silent")) {
-    jmx.sendCommand("open localhost:" + target.getJmxPort());
-    jmx.sendCommand("domains");
-    String output = jmx.readAllOutput(Duration.ofSeconds(10));
+try (JmxshProcessHelper jmxsh = new JmxshProcessHelper("-q")) {
+    jmxsh.sendCommand("open localhost:" + target.getJmxPort());
+    jmxsh.sendCommand("domains");
+    String output = jmxsh.readAllOutput(Duration.ofSeconds(10));
     assertThat(output).contains("JMImplementation");
 }
 ```
@@ -147,7 +147,7 @@ Tests CLI flags that control jmxsh's startup behavior.
 | Test | What it verifies |
 |------|-----------------|
 | `testAutoConnect` | `-l localhost:<port>` auto-connects on startup; `domains` works immediately |
-| `testSilentMode` | `-v silent` suppresses all `#`-prefixed messages but still shows result values |
+| `testSilentMode` | `-q` (quiet mode) suppresses all `#`-prefixed messages but still shows result values |
 | `testExitOnFailure` | `-e` causes jmxsh to exit with non-zero code on first command failure |
 | `testHelpFlag` | `-h` prints usage information and exits with code 0 |
 
@@ -161,6 +161,26 @@ Tests the process exit code under different scenarios.
 | `testExitOnFailureReturnsNegativeLineNumber` | With `-e`, a failure on line N causes exit code -N (254 unsigned on POSIX) |
 | `testQuitExitCode` | Just sending `quit` exits with code 0 |
 
+### StartupErrorsE2EIT (2 tests)
+
+Tests that startup failures (before the REPL begins) produce a clean `#`-prefixed error message and a non-zero exit code instead of a raw JVM stack trace.
+
+| Test | What it verifies |
+|------|-----------------|
+| `invalidOutputFileProducesCleanError` | `-o /nonexistent/dir/output.txt` fails cleanly with a `#`-prefixed message and non-zero exit |
+| `failedAutoConnectProducesCleanError` | `-l localhost:1` (always refused) fails cleanly with a `#`-prefixed message and non-zero exit |
+
+### JmxmpConnectionE2EIT (4 tests)
+
+Tests the JMXMP protocol end-to-end against a `TargetJmxmpProcess` subprocess.
+
+| Test | What it verifies |
+|------|-----------------|
+| `testOpenWithJmxmpShorthand` | `open jmxmp://localhost:<port>` connects successfully |
+| `testOpenWithFullJmxmpServiceUrl` | `open service:jmx:jmxmp://localhost:<port>` connects successfully |
+| `testGetAttributeOverJmxmp` | Reads the `Name` attribute over a JMXMP connection |
+| `testRunOperationOverJmxmp` | Invokes `run echo world` over a JMXMP connection |
+
 ## Port allocation
 
 Both `TargetJvmProcess` and the test infrastructure use **random free ports** (`new ServerSocket(0)`) to avoid conflicts. This is important because:
@@ -171,7 +191,7 @@ Both `TargetJvmProcess` and the test infrastructure use **random free ports** (`
 
 ## Process lifecycle and cleanup
 
-Every process is forcibly destroyed in `@AfterAll` or in `close()` methods. `JmxTermProcessHelper` implements `AutoCloseable` so it can be used in try-with-resources blocks.
+Every process is forcibly destroyed in `@AfterAll` or in `close()` methods. `JmxshProcessHelper` implements `AutoCloseable` so it can be used in try-with-resources blocks.
 
 The target JVM stays alive for all tests in a class (started in `@BeforeAll`, stopped in `@AfterAll`), while each test creates its own fresh jmxsh process to ensure clean state.
 

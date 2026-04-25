@@ -42,7 +42,7 @@ flag ensures the compiled bytecode is compatible with Java 25 and later.
 Runs unit tests under `src/test/java`. These tests use JUnit (Jupiter), Mockito, and AssertJ to
 verify individual command behavior against mocked `MBeanServerConnection` instances.
 
-> Tests in the `org.cyclopsgroup.jmxterm.jdk*` package are excluded because they depend on
+> Tests in the `sh.jmx.jmxsh.jdk*` package are excluded because they depend on
 > platform-specific JVM attach APIs.
 
 ### 4. Package
@@ -63,7 +63,7 @@ classes.
 Produces a self-contained uber JAR (`jmxsh-<version>-uber.jar`) that bundles all runtime
 dependencies into a single executable file. The shade plugin handles `META-INF/services` merging
 and license aggregation via resource transformers. The manifest sets
-`org.cyclopsgroup.jmxterm.boot.CliMain` as the main class, so it can be run directly:
+`sh.jmx.jmxsh.boot.CliMain` as the main class, so it can be run directly:
 
 ```bash
 java -jar jmxsh-<version>-uber.jar

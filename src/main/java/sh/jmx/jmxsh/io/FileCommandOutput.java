@@ -1,10 +1,10 @@
 package sh.jmx.jmxsh.io;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 import java.util.Objects;
@@ -23,18 +23,16 @@ public class FileCommandOutput extends CommandOutput {
    * @param appendToOutput whether to write to output.
    * @throws IOException allows IO error.
    */
-  public FileCommandOutput(File file, boolean appendToOutput) throws IOException {
+  public FileCommandOutput(Path file, boolean appendToOutput) throws IOException {
     Objects.requireNonNull(file, "File can't be NULL");
-    File af = file.getAbsoluteFile();
-    if (!af.getParentFile().isDirectory() && !af.getParentFile().mkdirs()) {
-        throw new IOException("Couldn't make directory " + af.getParentFile());
-      }
+    Path af = file.toAbsolutePath();
+    Files.createDirectories(af.getParent());
 
     var openOptions = appendToOutput
         ? new StandardOpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.APPEND}
         : new StandardOpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING};
     fileWriter = new PrintWriter(
-        Files.newBufferedWriter(af.toPath(), StandardCharsets.UTF_8, openOptions));
+        Files.newBufferedWriter(af, StandardCharsets.UTF_8, openOptions));
     output = new WriterCommandOutput(fileWriter, new PrintWriter(System.err, true));
   }
 

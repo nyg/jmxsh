@@ -1,7 +1,7 @@
 package sh.jmx.jmxsh.cmd;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -43,11 +43,7 @@ public class SetCommand extends Command {
       MBeanServerConnection conn = getSession().getConnection().getServerConnection();
       MBeanInfo info = conn.getMBeanInfo(new ObjectName(session.getBean()));
       MBeanAttributeInfo[] attrs = info.getAttributes();
-      List<String> attributeNames = new ArrayList<>(attrs.length);
-      for (MBeanAttributeInfo attr : attrs) {
-        attributeNames.add(attr.getName());
-      }
-      return attributeNames;
+      return Arrays.stream(attrs).map(MBeanAttributeInfo::getName).toList();
     }
     return null;
   }

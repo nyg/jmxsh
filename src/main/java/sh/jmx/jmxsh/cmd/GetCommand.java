@@ -2,6 +2,7 @@ package sh.jmx.jmxsh.cmd;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,11 +129,7 @@ public class GetCommand extends Command {
       MBeanServerConnection con = getSession().getConnection().getServerConnection();
       MBeanAttributeInfo[] ais =
           con.getMBeanInfo(new ObjectName(getSession().getBean())).getAttributes();
-      List<String> results = new ArrayList<>(ais.length);
-      for (MBeanAttributeInfo ai : ais) {
-        results.add(ai.getName());
-      }
-      return results;
+      return Arrays.stream(ais).map(MBeanAttributeInfo::getName).toList();
     }
     return null;
   }

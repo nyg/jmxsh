@@ -32,7 +32,7 @@ class ScriptExecutionE2EIT {
 
   @Test
   void testBasicCommandExecution() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper()) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
       jmxterm.sendCommandAndClose(
           "open localhost:" + targetJvm.getJmxPort(), "domains", "quit");
       String output = jmxterm.readAllOutput(TIMEOUT);
@@ -45,7 +45,7 @@ class ScriptExecutionE2EIT {
 
   @Test
   void testGetAttribute() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper()) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
       jmxterm.sendCommandAndClose(
           "open localhost:" + targetJvm.getJmxPort(),
           "bean test:type=TestMBean",
@@ -59,7 +59,7 @@ class ScriptExecutionE2EIT {
 
   @Test
   void testSetAndGetAttribute() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper()) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
       jmxterm.sendCommandAndClose(
           "open localhost:" + targetJvm.getJmxPort(),
           "bean test:type=TestMBean",
@@ -73,7 +73,7 @@ class ScriptExecutionE2EIT {
 
   @Test
   void testRunOperation() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper()) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
       jmxterm.sendCommandAndClose(
           "open localhost:" + targetJvm.getJmxPort(),
           "bean test:type=TestMBean",

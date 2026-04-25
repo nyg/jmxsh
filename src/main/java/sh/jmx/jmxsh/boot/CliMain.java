@@ -1,6 +1,5 @@
 package sh.jmx.jmxsh.boot;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +14,7 @@ import javax.rmi.ssl.SslRMIClientSocketFactory;
 
 import sh.jmx.jmxsh.SyntaxUtils;
 import sh.jmx.jmxsh.cc.CommandCenter;
-import sh.jmx.jmxsh.cc.ConsoleCompletor;
+import sh.jmx.jmxsh.cc.ConsoleCompleter;
 import sh.jmx.jmxsh.io.CommandInput;
 import sh.jmx.jmxsh.io.CommandOutput;
 import sh.jmx.jmxsh.io.FileCommandInput;
@@ -92,8 +91,7 @@ public class CliMain {
     if (CliMainOptions.STDOUT.equals(options.getOutput())) {
       output = new PrintStreamCommandOutput(System.out, System.err);
     } else {
-      File outputFile = new File(options.getOutput());
-      output = new FileCommandOutput(outputFile, options.isAppendToOutput());
+      output = new FileCommandOutput(Path.of(options.getOutput()), options.isAppendToOutput());
     }
     try {
       CommandInput input;
@@ -105,8 +103,7 @@ public class CliMain {
           Path historyPath = XdgDirectories.INSTANCE.getHistoryFile();
           migrateHistory(XdgDirectories.INSTANCE.getLegacyHistoryFile(), historyPath);
           Files.createDirectories(historyPath.getParent());
-          File historyFile = historyPath.toFile();
-          consoleReader.setVariable(LineReader.HISTORY_FILE, historyFile);
+          consoleReader.setVariable(LineReader.HISTORY_FILE, historyPath);
           History history = consoleReader.getHistory();
           history.load();
           Runtime.getRuntime()
@@ -122,11 +119,11 @@ public class CliMain {
           input = new JlineCommandInput(consoleReader, COMMAND_PROMPT);
         }
       } else {
-        File inputFile = new File(options.getInput());
-        if (!inputFile.isFile()) {
-          throw new FileNotFoundException("File " + inputFile + " is not a valid file");
+        Path inputPath = Path.of(options.getInput());
+        if (!Files.isRegularFile(inputPath)) {
+          throw new FileNotFoundException("File " + inputPath + " is not a valid file");
         }
-        input = new FileCommandInput(new File(options.getInput()));
+        input = new FileCommandInput(inputPath);
       }
       try {
         CommandCenter commandCenter = new CommandCenter(output, input);
@@ -134,7 +131,7 @@ public class CliMain {
           if (input instanceof JlineCommandInput commandInput) {
             commandInput
                 .getConsole()
-                .setCompleter(new ConsoleCompletor(commandCenter));
+                .setCompleter(new ConsoleCompleter(commandCenter));
           }
           if (options.getUrl() != null) {
             Map<String, Object> env = new HashMap<>();

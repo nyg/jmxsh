@@ -26,7 +26,7 @@ class ConnectionImplTest {
   void construction() throws Exception {
     JMXConnector con = mock(JMXConnector.class);
     ConnectionImpl c = new ConnectionImpl(con, SyntaxUtils.getUrl("localhost:9991", null));
-    assertThat(c.getConnector()).isSameAs(con);
+    assertThat(c.connector()).isSameAs(con);
 
     when(con.getConnectionId()).thenReturn("xyz");
     assertThat(c.getConnectorId()).isEqualTo("xyz");

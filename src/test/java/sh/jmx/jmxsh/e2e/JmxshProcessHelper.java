@@ -13,21 +13,21 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Launches the jmxterm uber JAR as a subprocess in non-interactive mode and provides methods to
+ * Launches the jmxsh uber JAR as a subprocess in non-interactive mode and provides methods to
  * send commands via stdin and read output from stdout.
  */
-public class JmxTermProcessHelper implements AutoCloseable {
+public class JmxshProcessHelper implements AutoCloseable {
 
   private final Process process;
 
   /**
-   * Finds the uber JAR and launches jmxterm with {@code -n} (non-interactive) plus any extra
+   * Finds the uber JAR and launches jmxsh with {@code -n} (non-interactive) plus any extra
    * arguments.
    *
    * @param extraArgs additional CLI arguments (e.g. {@code "-q"} for quiet mode)
    * @throws IOException if the JAR is not found or the process cannot be started
    */
-  public JmxTermProcessHelper(String... extraArgs) throws IOException {
+  public JmxshProcessHelper(String... extraArgs) throws IOException {
     Path uberJar = findUberJar();
     String javaHome = System.getProperty("java.home");
     String javaBin = javaHome + "/bin/java";
@@ -96,7 +96,7 @@ public class JmxTermProcessHelper implements AutoCloseable {
       exited = process.waitFor(timeout.toMillis(), TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      throw new IllegalStateException("Interrupted while waiting for jmxterm to exit", e);
+      throw new IllegalStateException("Interrupted while waiting for jmxsh to exit", e);
     }
 
     String line;
@@ -107,13 +107,13 @@ public class JmxTermProcessHelper implements AutoCloseable {
     if (!exited) {
       process.destroyForcibly();
       throw new IllegalStateException(
-          "jmxterm did not exit within " + timeout.toSeconds() + " seconds");
+          "jmxsh did not exit within " + timeout.toSeconds() + " seconds");
     }
     return sb.toString();
   }
 
   /**
-   * Returns the exit code of the jmxterm process. The process must have already exited.
+   * Returns the exit code of the jmxsh process. The process must have already exited.
    *
    * @return the exit code
    */

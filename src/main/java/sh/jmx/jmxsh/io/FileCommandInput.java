@@ -1,10 +1,10 @@
 package sh.jmx.jmxsh.io;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 
 /**
@@ -20,9 +20,9 @@ public class FileCommandInput extends CommandInput {
    * @param inputFile Given input file
    * @throws IOException Thrown when file doesn't exist or can't be read
    */
-  public FileCommandInput(File inputFile) throws IOException {
+  public FileCommandInput(Path inputFile) throws IOException {
     Objects.requireNonNull(inputFile, "Input can't be NULL");
-    this.in = new LineNumberReader(Files.newBufferedReader(inputFile.toPath(), StandardCharsets.UTF_8));
+    this.in = new LineNumberReader(Files.newBufferedReader(inputFile, StandardCharsets.UTF_8));
   }
 
   @Override

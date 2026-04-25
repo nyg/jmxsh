@@ -29,7 +29,7 @@ class ExitCodeE2EIT {
 
   @Test
   void testSuccessfulExecution() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper()) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
       jmxterm.sendCommandAndClose(
           "open localhost:" + targetJvm.getJmxPort(), "domains", "quit");
       jmxterm.readAllOutput(TIMEOUT);
@@ -39,7 +39,7 @@ class ExitCodeE2EIT {
 
   @Test
   void testExitOnFailureReturnsNegativeLineNumber() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper("-e")) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper("-e")) {
       // Line 1: valid command (help), Line 2: invalid command (get without connection/bean)
       jmxterm.sendCommandAndClose("help", "get Name");
       jmxterm.readAllOutput(TIMEOUT);
@@ -56,7 +56,7 @@ class ExitCodeE2EIT {
 
   @Test
   void testQuitExitCode() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper()) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
       jmxterm.sendCommandAndClose("quit");
       jmxterm.readAllOutput(TIMEOUT);
       assertThat(jmxterm.getExitCode()).as("Quit command should return exit code 0").isEqualTo(0);

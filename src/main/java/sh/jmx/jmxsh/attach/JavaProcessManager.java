@@ -12,7 +12,6 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
 
 public class JavaProcessManager {
 
-  /** Property for the local connector address */
   private static final String LOCAL_CONNECTOR_ADDRESS_PROP = "com.sun.management.jmxremote.localConnectorAddress";
 
   public JavaProcess get(int pid) {
@@ -34,7 +33,6 @@ public class JavaProcessManager {
         String address = agentProps.getProperty(LOCAL_CONNECTOR_ADDRESS_PROP);
         javaProcesses.add(new JavaProcess(vmd, address));
       } catch (AttachNotSupportedException | IOException _) {
-        // could not attach or some other exception
         javaProcesses.add(new JavaProcess(vmd, null));
       } finally {
         if (vm != null) {

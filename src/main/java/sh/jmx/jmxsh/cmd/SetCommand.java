@@ -23,10 +23,6 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Command to set an attribute
- *
- */
 @CommandLine.Command(name = "set", description = "Set value of an MBean attribute")
 @Slf4j
 public class SetCommand extends Command {
@@ -95,14 +91,12 @@ public class SetCommand extends Command {
     session.getOutput().printMessage("Value of attribute " + attributeName + " is set to " + inputValue);
   }
 
-  /** @param arguments Argument list. The first argument is attribute name */
   @Parameters(description = "name, value, value2...", arity = "2..*")
   public final void setArguments(List<String> arguments) {
     Objects.requireNonNull(arguments, "Arguments can't be NULL");
     this.arguments = arguments;
   }
 
-  /** @param bean Bean where the attribute is */
   @Option(
       names = {"-b", "--bean"},
       description = "MBean name where the attribute is. Optional if bean has been set")
@@ -110,7 +104,6 @@ public class SetCommand extends Command {
     this.bean = bean;
   }
 
-  /** @param domain Domain where the bean is */
   @Option(names = {"-d", "--domain"}, description = "Domain under which the bean is")
   public final void setDomain(String domain) {
     this.domain = domain;

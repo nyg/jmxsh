@@ -145,14 +145,14 @@ The standard JMX interface (`javax.management.MBeanServerConnection`) obtained f
 
 Abstractions for input and output (`sh.jmx.jmxsh.io`):
 
-- **CommandInput** — reads user commands. Implementations: `JlineCommandInput` (interactive console
-  with tab completion and history), `FileCommandInput` (script files), `InputStreamCommandInput`
-  (piped input)
-- **CommandOutput** — writes results and messages. `VerboseCommandOutput` is a decorator that
-  filters output based on `OutputMode` (SILENT or BRIEF)
+- **CommandInput** — interface for reading user commands. Implementations: `JlineCommandInput`
+  (interactive console with tab completion and history), `FileCommandInput` (script files),
+  `InputStreamCommandInput` (piped input)
+- **CommandOutput** — interface for writing results and messages. `VerboseCommandOutput` is a
+  decorator that filters output based on `OutputMode` (SILENT or BRIEF)
 
 ### JavaProcessManager
 
 Discovers local JVM processes for the `jvms` command and PID-based `open` connections
-(`sh.jmx.jmxsh.jdk9.JavaProcessManager`). Uses the `VirtualMachine` Attach API to list
+(`sh.jmx.jmxsh.attach.JavaProcessManager`). Uses the `VirtualMachine` Attach API to list
 running JVMs and can attach a JMX management agent to a process by PID.

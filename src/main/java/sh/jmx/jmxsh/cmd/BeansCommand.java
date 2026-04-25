@@ -13,25 +13,12 @@ import sh.jmx.jmxsh.Session;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
-/**
- * Command that shows list of beans
- *
- */
 @CommandLine.Command(
     name = "beans",
     description = "List available beans under a domain or all domains",
     footer =
         "Without -d option, current select domain is applied. If there's no domain specified, all beans are listed. Example:\n beans\n beans -d java.lang")
 public class BeansCommand extends Command {
-  /**
-   * Get list of bean names under current domain
-   *
-   * @param session Current JMX session
-   * @param domainName Full domain name
-   * @return List of bean names
-   * @throws MalformedObjectNameException Input domain name is malformed
-   * @throws IOException Communication error
-   */
   public static List<String> getBeans(Session session, String domainName)
       throws MalformedObjectNameException, IOException {
     ObjectName queryName = domainName == null ?  null : new ObjectName(domainName + ":*");
@@ -71,7 +58,6 @@ public class BeansCommand extends Command {
     }
   }
 
-  /** @param domain Domain under which beans are listed */
   @Option(
       names = {"-d", "--domain"},
       paramLabel = "domain",

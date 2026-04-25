@@ -9,10 +9,6 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-/**
- * Command that display a help message
- *
- */
 @Command(
     name = "help",
     description = "Display available commands or usage of a command",
@@ -49,14 +45,12 @@ public class HelpCommand extends sh.jmx.jmxsh.Command {
     }
   }
 
-  /** @param argNames Array of arguments */
   @Parameters(arity = "0..*")
   public final void setArgNames(List<String> argNames) {
     Objects.requireNonNull(argNames, "argNames can't be NULL");
     this.argNames = argNames;
   }
 
-  /** @param commandCenter CommandCenter object that calls this help command */
   final void setCommandCenter(CommandCenter commandCenter) {
     Objects.requireNonNull(commandCenter, "commandCenter can't be NULL");
     this.commandCenter = commandCenter;

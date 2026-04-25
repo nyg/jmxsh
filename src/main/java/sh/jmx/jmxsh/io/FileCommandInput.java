@@ -7,19 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
-/**
- * Implementation of CommandInput with given File
- *
- */
-public class FileCommandInput extends CommandInput {
+public class FileCommandInput implements CommandInput {
   private final LineNumberReader in;
 
-  /**
-   * Read input from a given file
-   *
-   * @param inputFile Given input file
-   * @throws IOException Thrown when file doesn't exist or can't be read
-   */
   public FileCommandInput(Path inputFile) throws IOException {
     Objects.requireNonNull(inputFile, "Input can't be NULL");
     this.in = new LineNumberReader(Files.newBufferedReader(inputFile, StandardCharsets.UTF_8));

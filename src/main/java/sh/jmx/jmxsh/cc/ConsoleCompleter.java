@@ -13,10 +13,6 @@ import picocli.CommandLine;
 import picocli.CommandLine.Model.OptionSpec;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * JLine completer that handles tab key
- *
- */
 @Slf4j
 public class ConsoleCompleter implements Completer {
 
@@ -53,7 +49,6 @@ public class ConsoleCompleter implements Completer {
       String currentWord = line.word();
       String previousWord = wordIndex > 1 ? words.get(wordIndex - 1) : "";
 
-      // Complete option names
       if (currentWord.startsWith("-")) {
         for (OptionSpec option : spec.options()) {
           for (String name : option.names()) {
@@ -78,7 +73,6 @@ public class ConsoleCompleter implements Completer {
         }
       }
 
-      // Complete positional arguments
       List<String> suggestions = cmd.suggestArgument(null);
       addFilteredSuggestions(suggestions, currentWord, candidates);
     } catch (RuntimeException e) {

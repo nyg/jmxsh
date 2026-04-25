@@ -9,10 +9,6 @@ import lombok.Getter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-/**
- * Options for main class
- *
- */
 @Command(
     name = "jmxsh",
     description = "Interactive JMX shell",
@@ -27,13 +23,10 @@ import picocli.CommandLine.Option;
     })
 @Getter
 public class CliMainOptions {
-  /** Constant <code>stderr</code> that identifies standard error output */
   public static final String STDERR = "stderr";
 
-  /** Constant <code>stdin</code> that identifies standard input */
   public static final String STDIN = "stdin";
 
-  /** Constant <code>stdout</code> that identifies standard output */
   public static final String STDOUT = "stdout";
 
   private boolean exitOnFailure;
@@ -60,7 +53,6 @@ public class CliMainOptions {
 
   private boolean isSecureRmiRegistry;
 
-  /** @param exitOnFailure True if terminal exits on any failure */
   @Option(
       names = {"-e", "--exitonfailure"},
       description = "With this flag, terminal exits for any Exception")
@@ -68,7 +60,6 @@ public class CliMainOptions {
     this.exitOnFailure = exitOnFailure;
   }
 
-  /** @param file Input script path or <code>stdin</code> as default value for console input */
   @Option(
       names = {"-i", "--input"},
       description =
@@ -81,7 +72,6 @@ public class CliMainOptions {
     this.input = file;
   }
 
-  /** @param nonInteractive True if CLI runs without user interaction, such as piped input */
   @Option(
       names = {"-n", "--noninteract"},
       description =
@@ -90,7 +80,6 @@ public class CliMainOptions {
     this.nonInteractive = nonInteractive;
   }
 
-  /** @param outputFile It can be a file or {@link #STDERR} or {@link #STDERR} */
   @Option(
       names = {"-o", "--output"},
       description = "Output file, stdout or stderr. Default value is stdout")
@@ -99,7 +88,6 @@ public class CliMainOptions {
     this.output = outputFile;
   }
 
-  /** @param password Password for user/password authentication */
   @Option(
       names = {"-p", "--password"},
       description = "Password for user/password authentication")
@@ -108,7 +96,6 @@ public class CliMainOptions {
     this.password = password;
   }
 
-  /** @param url MBean server URL */
   @Option(
       names = {"-l", "--url"},
       description = "Location of MBean service. It can be <host>:<port>, jmxmp://<host>:<port>, or full service URL.")
@@ -117,14 +104,12 @@ public class CliMainOptions {
     this.url = url;
   }
 
-  /** @param user User name for user/password authentication */
   @Option(names = {"-u", "--user"}, description = "User name for user/password authentication")
   public final void setUser(String user) {
     Objects.requireNonNull(user, "User can't be NULL");
     this.user = user;
   }
 
-  /** @param quiet True to suppress all messages (silent mode) */
   @Option(
       names = {"-q", "--quiet"},
       description = "Quiet mode: suppress all messages, only output command results")
@@ -132,7 +117,6 @@ public class CliMainOptions {
     this.quiet = quiet;
   }
 
-  /** @param helpRequested True if user requested help */
   @Option(
       names = {"-h", "--help"},
       usageHelp = true,
@@ -141,7 +125,6 @@ public class CliMainOptions {
     this.helpRequested = helpRequested;
   }
 
-  /** @param versionRequested True if user requested version info */
   @Option(
       names = {"-v", "--version"},
       versionHelp = true,
@@ -150,7 +133,6 @@ public class CliMainOptions {
     this.versionRequested = versionRequested;
   }
 
-  /** @param appendToOutput True if outputfile is preserved */
   @Option(
       names = {"-a", "--appendtooutput"},
       description = "With this flag, the outputfile is preserved and content is appended to it")
@@ -158,10 +140,6 @@ public class CliMainOptions {
     this.appendToOutput = appendToOutput;
   }
 
-  /**
-   * @param isSecureRmiRegistry Whether the server's RMI registry is protected with SSL/TLS
-   *     (com.sun.management.jmxremote.registry.ssl=true)
-   */
   @Option(
       names = {"-s", "--sslrmiregistry"},
       description = "Whether the server's RMI registry is protected with SSL/TLS")

@@ -13,10 +13,6 @@ import picocli.CommandLine;
 import picocli.CommandLine.Parameters;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Get or set current selected domain
- *
- */
 @CommandLine.Command(
     name = "domain",
     description = "Display or set current selected domain. ",
@@ -25,14 +21,6 @@ import lombok.extern.slf4j.Slf4j;
             + " eg. domain java.lang")
 @Slf4j
 public class DomainCommand extends Command {
-  /**
-   * Get domain name from given domain expression
-   *
-   * @param domain Domain expression, which can be a name or NULL
-   * @param session Current JMX session
-   * @return String name of domain coming from given parameter or current session
-   * @throws IOException
-   */
   static String getDomainName(String domain, Session session) {
     Objects.requireNonNull(session, "Session can't be NULL");
     if (session.getConnection() == null) {
@@ -83,7 +71,6 @@ public class DomainCommand extends Command {
     }
   }
 
-  /** @param domain Domain to select */
   @Parameters(paramLabel = "domain", description = "Name of domain to set", arity = "0..1")
   public final void setDomain(String domain) {
     this.domain = domain;

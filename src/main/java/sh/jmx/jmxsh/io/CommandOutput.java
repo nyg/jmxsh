@@ -1,29 +1,29 @@
 package sh.jmx.jmxsh.io;
 
 /**
- * General abstract class to output message and values
+ * Interface to output messages and values
  *
  */
-public abstract class CommandOutput {
-  /** Close the output; */
-  public void close() {}
+public interface CommandOutput {
+  /** Close the output. */
+  default void close() {}
 
   /**
    * Print out value to output without line break
    *
    * @param output Value to print out
    */
-  public abstract void print(String output);
+  void print(String output);
 
   /** @param e Error to print out */
-  public abstract void printError(Throwable e);
+  void printError(Throwable e);
 
   /**
    * Print out value to output as standalone line
    *
    * @param output Value to print out
    */
-  public void println(String output) {
+  default void println(String output) {
     print(output);
     print(System.lineSeparator());
   }
@@ -33,5 +33,5 @@ public abstract class CommandOutput {
    *
    * @param message Message to print out.
    */
-  public abstract void printMessage(String message);
+  void printMessage(String message);
 }

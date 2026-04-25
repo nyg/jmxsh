@@ -15,9 +15,7 @@ import picocli.CommandLine.Option;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Command to subscribe to an MBean notification
- *
- * <p>Remove the subscription of an already subscribed notification listener. Notifications will no
+ * Removes the subscription of an already subscribed notification listener. Notifications will no
  * longer be sent to the session output.
  */
 @CommandLine.Command(
@@ -50,13 +48,11 @@ public class UnsubscribeCommand extends Command {
     }
   }
 
-  /** @param bean Bean under which the operation is */
   @Option(names = {"-b", "--bean"}, description = "MBean to invoke")
   public final void setBean(String bean) {
     this.bean = bean;
   }
 
-  /** @param domain Domain under which is bean is */
   @Option(names = {"-d", "--domain"}, description = "Domain of MBean to invoke")
   public final void setDomain(String domain) {
     this.domain = domain;

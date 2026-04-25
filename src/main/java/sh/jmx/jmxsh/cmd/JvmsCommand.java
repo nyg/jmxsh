@@ -13,10 +13,6 @@ import picocli.CommandLine.Option;
 import lombok.extern.slf4j.Slf4j;
 import sh.jmx.jmxsh.attach.JavaProcess;
 
-/**
- * Command to list all running local JVM processes
- *
- */
 @CommandLine.Command(name = "jvms", description = "List all running local JVM processes")
 @Slf4j
 public class JvmsCommand extends Command {
@@ -39,7 +35,6 @@ public class JvmsCommand extends Command {
     }
   }
 
-  /** @param pidOnly Flag to notify command to only print out PID instead of more details */
   @Option(names = {"-p", "--pidonly"}, description = "Only print out PID")
   public final void setPidOnly(boolean pidOnly) {
     this.pidOnly = pidOnly;

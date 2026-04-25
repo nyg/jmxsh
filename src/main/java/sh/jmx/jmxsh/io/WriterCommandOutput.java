@@ -4,24 +4,15 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Objects;
 
-/**
- * A command output that writes result and message to given writers
- *
- */
-public class WriterCommandOutput extends CommandOutput {
+public class WriterCommandOutput implements CommandOutput {
   private final Writer messageOutput;
 
   private final Writer resultOutput;
 
-  /** @param output Writer for both result and message */
   public WriterCommandOutput(Writer output) {
     this(output, output);
   }
 
-  /**
-   * @param resultOutput IO Writer for result output
-   * @param messageOutput IO Writer for message output
-   */
   public WriterCommandOutput(Writer resultOutput, Writer messageOutput) {
     Objects.requireNonNull(resultOutput, "Result output can't be NULL");
     this.resultOutput = resultOutput;

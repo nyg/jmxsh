@@ -81,13 +81,11 @@ public class SubscribeCommand extends Command {
     }
   }
 
-  /** @param bean Bean under which the operation is */
   @Option(names = {"-b", "--bean"}, description = "MBean to invoke")
   public final void setBean(String bean) {
     this.bean = bean;
   }
 
-  /** @param domain Domain under which is bean is */
   @Option(names = {"-d", "--domain"}, description = "Domain of MBean to invoke")
   public final void setDomain(String domain) {
     this.domain = domain;

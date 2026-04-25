@@ -10,18 +10,8 @@ import sh.jmx.jmxsh.io.RuntimeIOException;
 
 import picocli.CommandLine;
 
-/**
- * List domains for JMX connection
- *
- */
 @CommandLine.Command(name = "domains", description = "List all available domain names")
 public class DomainsCommand extends Command {
-  /**
-   * Gets list of domains for current JMX connection.
-   *
-   * @param session The current session.
-   * @return List of available domain names.
-   */
   static List<String> getCandidateDomains(Session session) {
     String[] domains;
     try {

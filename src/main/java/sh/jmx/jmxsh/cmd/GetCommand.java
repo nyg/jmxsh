@@ -24,10 +24,6 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Get value of MBean attribute(s)
- *
- */
 @CommandLine.Command(
     name = "get",
     description = "Get value of MBean attribute(s)",
@@ -154,14 +150,12 @@ public class GetCommand extends Command {
     displayAttributes();
   }
 
-  /** @param attributes List of attribute names */
   @Parameters(paramLabel = "attr", description = "Name of attributes to select", arity = "1..*")
   public final void setAttributes(List<String> attributes) {
     Objects.requireNonNull(attributes, "Attributes can't be NULL");
     this.attributes = attributes;
   }
 
-  /** @param bean Bean under which attribute is get */
   @Option(
       names = {"-b", "--bean"},
       description = "MBean name where the attribute is. Optional if bean has been set")
@@ -169,25 +163,21 @@ public class GetCommand extends Command {
     this.bean = bean;
   }
 
-  /** @param domain Domain under which bean is selected */
   @Option(names = {"-d", "--domain"}, description = "Domain of bean, optional")
   public final void setDomain(String domain) {
     this.domain = domain;
   }
 
-  /** @param showDescription True to show detail description */
   @Option(names = {"-i", "--info"}, description = "Show detail information of each attribute")
   public final void setShowDescription(boolean showDescription) {
     this.showDescription = showDescription;
   }
 
-  /** @param noQuotationMarks True if value is not surrounded by quotation marsk */
   @Option(names = {"-q", "--quots"}, description = "Quotation marks around value")
   public final void setShowQuotationMarks(boolean noQuotationMarks) {
     this.showQuotationMarks = noQuotationMarks;
   }
 
-  /** @param simpleFormat True if value is printed out in a simple format without full expression */
   @Option(
       names = {"-s", "--simple"},
       description = "Print simple expression of value without full expression")
@@ -195,10 +185,6 @@ public class GetCommand extends Command {
     this.simpleFormat = simpleFormat;
   }
 
-  /**
-   * @param completeLine True if value is printed out in a complete &lt;/bean # value&gt; single
-   *     line expression
-   */
   @Option(
       names = {"-f", "--completeLine"},
       description = "Print expression with bean and value in single line with '#' delimiter.")

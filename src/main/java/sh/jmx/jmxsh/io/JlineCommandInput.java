@@ -4,26 +4,17 @@ import java.io.IOException;
 import java.util.Objects;
 import org.jline.reader.impl.LineReaderImpl;
 
-/**
- * Implementation of input that reads command from jloin console input
- *
- */
-public class JlineCommandInput extends CommandInput {
+public class JlineCommandInput implements CommandInput {
   private final LineReaderImpl console;
 
   private final String prompt;
 
-  /**
-   * @param console Jline console reader
-   * @param prompt Prompt string
-   */
   public JlineCommandInput(LineReaderImpl console, String prompt) {
     Objects.requireNonNull(console, "Jline console reader can't be NULL");
     this.console = console;
     this.prompt = prompt == null ? "" : prompt.trim();
   }
 
-  /** @return Jline console */
   public final LineReaderImpl getConsole() {
     return console;
   }

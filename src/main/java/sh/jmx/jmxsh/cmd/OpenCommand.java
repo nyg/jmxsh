@@ -17,10 +17,6 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Command to open JMX connection
- *
- */
 @CommandLine.Command(
     name = "open",
     description = "Open JMX session or display current connection",
@@ -86,7 +82,6 @@ public class OpenCommand extends Command {
     }
   }
 
-  /** @param password Password for user authentication */
   @Option(
       names = {"-p", "--password"},
       description = "Password for user/password authentication")
@@ -94,22 +89,16 @@ public class OpenCommand extends Command {
     this.password = password;
   }
 
-  /** @param url URL of MBean service to open */
   @Parameters(paramLabel = "url", description = "URL, <host>:<port>, jmxmp://<host>:<port>, or a PID to connect to", arity = "0..1")
   public final void setUrl(String url) {
     this.url = url;
   }
 
-  /** @param user User name for user authentication */
   @Option(names = {"-u", "--user"}, description = "User name for user/password authentication")
   public final void setUser(String user) {
     this.user = user;
   }
 
-  /**
-   * @param isSecureRmiRegistry Whether the server's RMI registry is protected with SSL/TLS
-   *     (com.sun.management.jmxremote.registry.ssl=true)
-   */
   @Option(
       names = {"-s", "--sslrmiregistry"},
       description = "Whether the server's RMI registry is protected with SSL/TLS")

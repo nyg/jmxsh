@@ -26,11 +26,6 @@ and dependency graph. Items are organized by category. Each item is labeled with
 
 ## Legacy
 
-### Legacy Language Constructs
-
-- 🟡 **`CommandInput` and `CommandOutput` as abstract classes** — Both define only abstract methods plus one convenience default — a perfect fit for `interface` with `default` methods in Java 25. (`io/CommandInput.java`, `io/CommandOutput.java`)
-- 🟡 **`WatchCommand` three-class hierarchy for a single-method abstraction** — The `Output` / `ConsoleOutput` / `ReportOutput` class hierarchy exists to abstract a single `printLine(String)` call. A `@FunctionalInterface` (or a lambda) collapses this to one line. (`cmd/WatchCommand.java`)
-
 ### Legacy Architecture
 
 - 🟠 **Mutable static listener registry + memory leak in `SubscribeCommand`** — `listeners` is a public mutable static `ConcurrentHashMap` shared across all command instances, coupling `SubscribeCommand` and `UnsubscribeCommand` through global state. Worse: `BeanNotificationListener` is a non-static inner class that holds an implicit reference to its outer `SubscribeCommand` instance. Every registered listener permanently roots that instance (and through it, the `Session`, `Connection`, and `CommandCenter`) preventing garbage collection — a structural memory leak. (`cmd/SubscribeCommand.java`, `cmd/UnsubscribeCommand.java`)

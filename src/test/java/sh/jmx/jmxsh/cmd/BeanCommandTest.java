@@ -23,10 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-/**
- * Test case for {@link BeanCommand}
- *
- */
 @ExtendWith(MockitoExtension.class)
 class BeanCommandTest {
   @Mock

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
@@ -21,13 +22,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-/**
- * Test case for {@link BeansCommand}
- *
- */
 @ExtendWith(MockitoExtension.class)
 class BeansCommandTest {
-  private static final String EOL = System.getProperty("line.separator");
+  private static final String EOL = System.lineSeparator();
 
   @Mock
   private Session session;
@@ -59,13 +56,13 @@ class BeansCommandTest {
     when(conn.getDomains()).thenReturn(new String[] {"a", "b"});
     when(conn.queryNames(new ObjectName("a:*"), null))
         .thenReturn(
-            new HashSet<ObjectName>(
-                Arrays.asList(new ObjectName("a:type=1"), new ObjectName("a:type=2"))));
+                new HashSet<>(
+                        List.of(new ObjectName("a:type=1"), new ObjectName("a:type=2"))));
     when(conn.queryNames(new ObjectName("b:*"), null))
-        .thenReturn(new HashSet<ObjectName>(Arrays.asList(new ObjectName("b:type=1"))));
+        .thenReturn(new HashSet<>(List.of(new ObjectName("b:type=1"))));
     command.setSession(session);
     command.execute();
-    assertThat(writer.toString()).isEqualTo("a:type=1" + EOL + "a:type=2" + EOL + "b:type=1" + EOL);
+    assertThat(writer).hasToString("a:type=1" + EOL + "a:type=2" + EOL + "b:type=1" + EOL);
   }
 
   /**
@@ -76,11 +73,11 @@ class BeansCommandTest {
   @Test
   void executeWithDomainInSession() throws Exception {
     when(conn.queryNames(new ObjectName("b:*"), null))
-        .thenReturn(new HashSet<ObjectName>(Arrays.asList(new ObjectName("b:type=1"))));
+        .thenReturn(new HashSet<ObjectName>(List.of(new ObjectName("b:type=1"))));
     when(session.getDomain()).thenReturn("b");
     command.setSession(session);
     command.execute();
-    assertThat(writer.toString()).isEqualTo("b:type=1" + EOL);
+    assertThat(writer).hasToString("b:type=1" + EOL);
   }
 
   /**
@@ -93,10 +90,10 @@ class BeansCommandTest {
     command.setDomain("b");
     when(conn.getDomains()).thenReturn(new String[] {"a", "b"});
     when(conn.queryNames(new ObjectName("b:*"), null))
-        .thenReturn(new HashSet<ObjectName>(Arrays.asList(new ObjectName("b:type=1"))));
+        .thenReturn(new HashSet<ObjectName>(List.of(new ObjectName("b:type=1"))));
     command.setSession(session);
     command.execute();
-    assertThat(writer.toString()).isEqualTo("b:type=1" + EOL);
+    assertThat(writer).hasToString("b:type=1" + EOL);
   }
 
   /**
@@ -110,12 +107,12 @@ class BeansCommandTest {
     when(conn.getDomains()).thenReturn(new String[] {"a", "b"});
     when(conn.queryNames(new ObjectName("a:*"), null))
         .thenReturn(
-            new HashSet<ObjectName>(
-                Arrays.asList(new ObjectName("a:type=1"), new ObjectName("a:type=2"))));
+                new HashSet<>(
+                        List.of(new ObjectName("a:type=1"), new ObjectName("a:type=2"))));
     when(conn.queryNames(new ObjectName("b:*"), null))
-        .thenReturn(new HashSet<ObjectName>(Arrays.asList(new ObjectName("b:type=1"))));
+        .thenReturn(new HashSet<>(List.of(new ObjectName("b:type=1"))));
     command.setSession(session);
     command.execute();
-    assertThat(writer.toString()).isEqualTo("a:type=1" + EOL + "a:type=2" + EOL + "b:type=1" + EOL);
+    assertThat(writer).hasToString("a:type=1" + EOL + "a:type=2" + EOL + "b:type=1" + EOL);
   }
 }

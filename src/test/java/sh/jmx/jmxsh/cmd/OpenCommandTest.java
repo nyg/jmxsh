@@ -21,10 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-/**
- * Test case to test {@link OpenCommand}
- *
- */
 @ExtendWith(MockitoExtension.class)
 class OpenCommandTest {
   @Mock

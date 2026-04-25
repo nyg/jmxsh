@@ -123,7 +123,7 @@ public class CommandCenter {
     } catch (SyntaxError e) {
       throw new IllegalArgumentException("Malformed command (check quotes): " + e.getMessage(), e);
     }
-    String commandName = args.remove(0);
+    String commandName = args.removeFirst();
     // Leave the rest of arguments for command
     String[] commandArgs = args.toArray(String[]::new);
     // Call command with parsed command name and arguments

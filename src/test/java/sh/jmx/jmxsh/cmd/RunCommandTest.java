@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
@@ -26,10 +27,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-/**
- * Test case for {@link RunCommand}
- *
- */
 @ExtendWith(MockitoExtension.class)
 class RunCommandTest {
   @Mock
@@ -56,7 +53,7 @@ class RunCommandTest {
   @Test
   void executeNormally() throws Exception {
     command.setBean("a:type=x");
-    command.setParameters(Arrays.asList("exe", "33"));
+    command.setParameters(List.of("exe", "33"));
 
     MBeanInfo beanInfo = mock(MBeanInfo.class);
     MBeanOperationInfo opInfo = mock(MBeanOperationInfo.class);
@@ -78,7 +75,7 @@ class RunCommandTest {
   void executeOverloadedMethod() throws Exception {
     command.setBean("a:type=x");
     command.setTypes("java.lang.String");
-    command.setParameters(Arrays.asList("exe", "33"));
+    command.setParameters(List.of("exe", "33"));
 
     MBeanInfo beanInfo = mock(MBeanInfo.class);
     MBeanOperationInfo opInfo1 = mock(MBeanOperationInfo.class);

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -71,7 +72,7 @@ class GetCommandTest {
       String delimiter) {
     command.setDomain(domain);
     command.setBean(bean);
-    command.setAttributes(Arrays.asList(attribute));
+    command.setAttributes(List.of(attribute));
     command.setSimpleFormat(true);
     command.setSingleLine(singleLine);
     command.setDelimiter(delimiter);

@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.SelfRecordingCommand;
@@ -47,18 +48,13 @@ class CommandCenterTest {
     executedCommands = new ArrayList<>();
     output = new StringWriter();
 
-    Map<String, Class<? extends Command>> commandTypes = new HashMap<>();
-    commandTypes.put("test", SelfRecordingCommand.class);
+    Map<String, Supplier<Command>> commandTypes = new HashMap<>();
+    commandTypes.put("test", () -> new SelfRecordingCommand(executedCommands));
     cc =
         new CommandCenter(
             new WriterCommandOutput(output),
             null,
-            new TypeMapCommandFactory(commandTypes) {
-              @Override
-              public Command createCommand(String commandName) {
-                return new SelfRecordingCommand(executedCommands);
-              }
-            });
+            new TypeMapCommandFactory(commandTypes));
   }
 
   /** Verify the execution */

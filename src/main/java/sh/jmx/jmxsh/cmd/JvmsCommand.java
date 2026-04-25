@@ -11,7 +11,7 @@ import sh.jmx.jmxsh.Session;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import lombok.extern.slf4j.Slf4j;
-import sh.jmx.jmxsh.jdk9.JavaProcess;
+import sh.jmx.jmxsh.attach.JavaProcess;
 
 /**
  * Command to list all running local JVM processes

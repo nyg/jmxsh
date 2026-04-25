@@ -1,43 +1,40 @@
 package sh.jmx.jmxsh.cc;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
-
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
+
 import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.CommandFactory;
 
 /**
- * CommandFactory implementation based on a Map of command types
+ * CommandFactory implementation based on a Map of command suppliers
  *
  */
-public class TypeMapCommandFactory implements CommandFactory {
-  private final Map<String, Class<? extends Command>> commandTypes;
+class TypeMapCommandFactory implements CommandFactory {
+  private final Map<String, Supplier<Command>> commandSuppliers;
 
-  /** @param commandTypes Map of command types */
-  public TypeMapCommandFactory(Map<String, Class<? extends Command>> commandTypes) {
-    Objects.requireNonNull(commandTypes, "Command type can't be NULL");
-    this.commandTypes = Collections.unmodifiableMap(commandTypes);
+  /** @param commandSuppliers Map of command name to supplier */
+  TypeMapCommandFactory(Map<String, Supplier<Command>> commandSuppliers) {
+    Objects.requireNonNull(commandSuppliers, "Command suppliers can't be NULL");
+    this.commandSuppliers = Collections.unmodifiableMap(commandSuppliers);
   }
 
   @Override
   public Command createCommand(String commandName) {
     Objects.requireNonNull(commandName, "commandName can't be NULL");
-    Class<? extends Command> commandType = commandTypes.get(commandName);
-    if (commandType == null) {
+    Supplier<Command> supplier = commandSuppliers.get(commandName);
+    if (supplier == null) {
       throw new IllegalArgumentException(
           "Command " + commandName + " isn't valid, run help to see available commands");
     }
-    try {
-      return commandType.getDeclaredConstructor().newInstance();
-    } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-      throw new IllegalStateException("Can't instantiate instance", e);
-    }
+    return supplier.get();
   }
 
   @Override
-  public Map<String, Class<? extends Command>> getCommandTypes() {
-    return commandTypes;
+  public Set<String> getCommandNames() {
+    return Collections.unmodifiableSet(commandSuppliers.keySet());
   }
 }

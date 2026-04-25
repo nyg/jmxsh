@@ -21,7 +21,7 @@ import sh.jmx.jmxsh.io.CommandInput;
 import sh.jmx.jmxsh.io.CommandOutput;
 import sh.jmx.jmxsh.io.RuntimeIOException;
 import sh.jmx.jmxsh.io.OutputMode;
-import sh.jmx.jmxsh.jdk9.JavaProcessManager;
+import sh.jmx.jmxsh.attach.JavaProcessManager;
 import sh.jmx.jmxsh.utils.EscapingTokenizer;
 
 import picocli.CommandLine;
@@ -178,15 +178,7 @@ public class CommandCenter {
 
   /** @return Set of command names */
   public Set<String> getCommandNames() {
-    return commandFactory.getCommandTypes().keySet();
-  }
-
-  /**
-   * @param name Command name
-   * @return Type of command associated with given name
-   */
-  public Class<? extends Command> getCommandType(String name) {
-    return commandFactory.getCommandTypes().get(name);
+    return commandFactory.getCommandNames();
   }
 
   /**

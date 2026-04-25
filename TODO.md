@@ -27,17 +27,6 @@ and dependency graph. Items are organized by category. Each item is labeled with
 
 ## Legacy
 
-Items identified as out-of-place in a Java 25 project — dated idioms, dead dependencies,
-fork vestiges, and design patterns that predate modern Java. Organized by category.
-
-### Legacy Dependencies
-
-### Fork Vestiges (jmxterm / jcli lineage)
-
-- 🟢 **`jdk9/` package name** — the `com.sun.tools.attach` Attach API became a first-class public API in JDK 9; the project now targets Java 25. The class names were simplified (removed the `Jdk9` prefix), but the package is still `jdk9/`. Rename the package to `attach/` to remove the version fossil. (`jdk9/`)
-
-### Legacy Java APIs
-
 ### Legacy Language Constructs
 
 - 🟡 **`CommandInput` and `CommandOutput` as abstract classes** — Both define only abstract methods plus one convenience default — a perfect fit for `interface` with `default` methods in Java 25. (`io/CommandInput.java`, `io/CommandOutput.java`)
@@ -47,7 +36,6 @@ fork vestiges, and design patterns that predate modern Java. Organized by catego
 
 - 🟠 **Mutable static listener registry + memory leak in `SubscribeCommand`** — `listeners` is a public mutable static `ConcurrentHashMap` shared across all command instances, coupling `SubscribeCommand` and `UnsubscribeCommand` through global state. Worse: `BeanNotificationListener` is a non-static inner class that holds an implicit reference to its outer `SubscribeCommand` instance. Every registered listener permanently roots that instance (and through it, the `Session`, `Connection`, and `CommandCenter`) preventing garbage collection — a structural memory leak. (`cmd/SubscribeCommand.java`, `cmd/UnsubscribeCommand.java`)
 - 🟡 **Hand-rolled command tokenizer** — `EscapingTokenizer` is a custom regex-and-loop parser; `CommandCenter` splits on delimiters manually. This brittle plumbing predates mature tokenizer libraries and could be simplified or replaced. (`utils/EscapingTokenizer.java`, `cc/CommandCenter.java`)
-- 🟡 **Reflection-heavy command instantiation** — `PredefinedCommandFactory` and `TypeMapCommandFactory` use `getDeclaredConstructor().newInstance()` and `Class.forName()` to create command instances at runtime, forgoing type safety and IDE support. (`cc/PredefinedCommandFactory.java`, `cc/TypeMapCommandFactory.java`)
 - 🟡 **`Runtime.getRuntime().addShutdownHook(new Thread(...))` pattern** — Registering an anonymous `Thread` as a shutdown hook is the pre-virtual-thread way to handle teardown. (`boot/CliMain.java`)
 - 🟡 **Raw `synchronized` locking around session state** — `CommandCenter` guards mutable session state with a raw lock object. `java.util.concurrent.locks.ReentrantLock` provides equivalent semantics with better observability and more flexible lock/unlock control. (`cc/CommandCenter.java`)
 

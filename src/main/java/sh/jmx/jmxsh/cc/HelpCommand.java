@@ -39,9 +39,7 @@ public class HelpCommand extends sh.jmx.jmxsh.Command {
       }
     } else {
       for (String argName : argNames) {
-        Class<? extends sh.jmx.jmxsh.Command> commandType =
-            commandCenter.getCommandType(argName);
-        if (commandType == null) {
+        if (!commandCenter.getCommandNames().contains(argName)) {
           throw new IllegalArgumentException("Command " + argName + " is not found");
         }
         sh.jmx.jmxsh.Command cmd =

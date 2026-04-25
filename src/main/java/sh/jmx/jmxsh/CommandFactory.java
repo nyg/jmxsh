@@ -1,6 +1,6 @@
 package sh.jmx.jmxsh;
 
-import java.util.Map;
+import java.util.Set;
 
 /**
  * Factory which create Command instance based on command name
@@ -15,6 +15,6 @@ public interface CommandFactory {
    */
   Command createCommand(String name);
 
-  /** @return Map of command types */
-  Map<String, Class<? extends Command>> getCommandTypes();
+  /** @return Set of registered command names */
+  Set<String> getCommandNames();
 }

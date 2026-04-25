@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.beans.IntrospectionException;
@@ -55,14 +54,11 @@ class HelpCommandTest {
     CommandCenter cc = mock(CommandCenter.class);
     command.setCommandCenter(cc);
 
-    doReturn(SelfRecordingCommand.class).when(cc).getCommandType("a");
-    doReturn(SelfRecordingCommand.class).when(cc).getCommandType("b");
+    when(cc.getCommandNames()).thenReturn(new HashSet<String>(Arrays.asList("a", "b")));
     doReturn(new SelfRecordingCommand(new ArrayList<>())).when(cc).createCommand("a");
     doReturn(new SelfRecordingCommand(new ArrayList<>())).when(cc).createCommand("b");
     command.setSession(session);
     command.execute();
-    verify(cc).getCommandType("a");
-    verify(cc).getCommandType("b");
   }
 
   /**

@@ -1,8 +1,9 @@
 package sh.jmx.jmxsh.cc;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
 
 import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.CommandFactory;
@@ -22,49 +23,34 @@ import sh.jmx.jmxsh.cmd.SubscribeCommand;
 import sh.jmx.jmxsh.cmd.UnsubscribeCommand;
 import sh.jmx.jmxsh.cmd.WatchCommand;
 
-import picocli.CommandLine;
-
 /**
- * Factory class of commands which knows how to create Command class with given command name.
- * Commands are discovered via their {@link CommandLine.Command} annotations.
- *
+ * Factory that registers all built-in commands by name and alias, each paired with a constructor
+ * reference so no reflection is required at instantiation time.
  */
 class PredefinedCommandFactory implements CommandFactory {
-
-  private static final List<Class<? extends Command>> COMMAND_CLASSES =
-      List.of(
-          BeanCommand.class,
-          BeansCommand.class,
-          CloseCommand.class,
-          DomainCommand.class,
-          DomainsCommand.class,
-          GetCommand.class,
-          InfoCommand.class,
-          JvmsCommand.class,
-          OpenCommand.class,
-          QuitCommand.class,
-          RunCommand.class,
-          SetCommand.class,
-          SubscribeCommand.class,
-          UnsubscribeCommand.class,
-          WatchCommand.class);
 
   private final CommandFactory delegate;
 
   PredefinedCommandFactory() {
-    HashMap<String, Class<? extends Command>> commands = new HashMap<>();
-    for (Class<? extends Command> commandClass : COMMAND_CLASSES) {
-      CommandLine.Command annotation = commandClass.getAnnotation(CommandLine.Command.class);
-      if (annotation == null) {
-        throw new IllegalStateException(
-            "@Command annotation missing on " + commandClass.getName());
-      }
-      commands.put(annotation.name(), commandClass);
-      for (String alias : annotation.aliases()) {
-        commands.put(alias, commandClass);
-      }
-    }
-    commands.put("help", HelpCommand.class);
+    Map<String, Supplier<Command>> commands = new HashMap<>();
+    commands.put("bean",        BeanCommand::new);
+    commands.put("beans",       BeansCommand::new);
+    commands.put("close",       CloseCommand::new);
+    commands.put("domain",      DomainCommand::new);
+    commands.put("domains",     DomainsCommand::new);
+    commands.put("get",         GetCommand::new);
+    commands.put("info",        InfoCommand::new);
+    commands.put("jvms",        JvmsCommand::new);
+    commands.put("open",        OpenCommand::new);
+    commands.put("quit",        QuitCommand::new);
+    commands.put("exit",        QuitCommand::new);
+    commands.put("bye",         QuitCommand::new);
+    commands.put("run",         RunCommand::new);
+    commands.put("set",         SetCommand::new);
+    commands.put("subscribe",   SubscribeCommand::new);
+    commands.put("unsubscribe", UnsubscribeCommand::new);
+    commands.put("watch",       WatchCommand::new);
+    commands.put("help",        HelpCommand::new);
     delegate = new TypeMapCommandFactory(commands);
   }
 
@@ -74,7 +60,7 @@ class PredefinedCommandFactory implements CommandFactory {
   }
 
   @Override
-  public Map<String, Class<? extends Command>> getCommandTypes() {
-    return delegate.getCommandTypes();
+  public Set<String> getCommandNames() {
+    return delegate.getCommandNames();
   }
 }

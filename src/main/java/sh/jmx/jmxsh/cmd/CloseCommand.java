@@ -6,10 +6,6 @@ import sh.jmx.jmxsh.Command;
 import picocli.CommandLine;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Command to close current connection
- *
- */
 @CommandLine.Command(name = "close", description = "Close current JMX connection")
 @Slf4j
 public class CloseCommand extends Command {

@@ -7,14 +7,9 @@ import java.io.LineNumberReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-/**
- * Implementation of {@link CommandInput} with an input stream
- *
- */
 public class InputStreamCommandInput implements CommandInput {
   private final LineNumberReader reader;
 
-  /** @param in Given input stream */
   public InputStreamCommandInput(InputStream in) {
     Objects.requireNonNull(in, "Input stream can't be NULL");
     reader = new LineNumberReader(new InputStreamReader(in, StandardCharsets.UTF_8));

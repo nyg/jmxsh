@@ -22,55 +22,29 @@ public abstract class Command implements Completable {
 
   private Session session;
 
-  /**
-   * Provide a list of possible arguments for auto completion. This method returns list of
-   * arguments(not option) and is called when user presses tab key.
-   *
-   * @return List of possible arguments used by auto completion or NULL
-   * @throws IOException IO errors
-   * @throws JMException JMX problemo
-   */
   protected List<String> doSuggestArgument() throws IOException, JMException {
     return null;
   }
 
-  /**
-   * Provide a list of possible option values for auto completion
-   *
-   * @param optionName Name of option
-   * @return List of possible arguments used by auto completion or NULL
-   * @throws IOException Network communication errors
-   * @throws JMException JMX errors
-   */
   protected List<String> doSuggestOption(String optionName) throws IOException, JMException {
     return null;
   }
 
-  /**
-   * Execute command
-   *
-   * @throws IOException IO errors
-   * @throws JMException JMX errors
-   */
   public abstract void execute() throws IOException, JMException;
 
-  /** @return Session where command runs */
   public final Session getSession() {
     return session;
   }
 
-  /** @return True if help option is on */
   public final boolean isHelp() {
     return help;
   }
 
-  /** @param help True to display usage */
   @Option(names = {"-h", "--help"}, usageHelp = true, description = "Display usage")
   public final void setHelp(boolean help) {
     this.help = help;
   }
 
-  /** @param session Session where command runs */
   public final void setSession(Session session) {
     Objects.requireNonNull(session, "Session can't be NULL");
     this.session = session;

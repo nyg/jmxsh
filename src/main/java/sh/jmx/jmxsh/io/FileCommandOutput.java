@@ -9,20 +9,11 @@ import java.nio.file.StandardOpenOption;
 
 import java.util.Objects;
 
-/**
- * Output with a file
- *
- */
 public class FileCommandOutput implements CommandOutput {
   private final PrintWriter fileWriter;
 
   private final WriterCommandOutput output;
 
-  /**
-   * @param file where the result is written to.
-   * @param appendToOutput whether to write to output.
-   * @throws IOException allows IO error.
-   */
   public FileCommandOutput(Path file, boolean appendToOutput) throws IOException {
     Objects.requireNonNull(file, "File can't be NULL");
     Path af = file.toAbsolutePath();

@@ -2,10 +2,6 @@ package sh.jmx.jmxsh.io;
 
 import java.io.IOException;
 
-/**
- * Unimplemented version of command input
- *
- */
 public class UnimplementedCommandInput implements CommandInput {
   @Override
   public String readLine() throws IOException {

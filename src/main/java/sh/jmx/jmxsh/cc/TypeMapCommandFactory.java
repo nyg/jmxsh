@@ -16,7 +16,6 @@ import sh.jmx.jmxsh.CommandFactory;
 class TypeMapCommandFactory implements CommandFactory {
   private final Map<String, Supplier<Command>> commandSuppliers;
 
-  /** @param commandSuppliers Map of command name to supplier */
   TypeMapCommandFactory(Map<String, Supplier<Command>> commandSuppliers) {
     Objects.requireNonNull(commandSuppliers, "Command suppliers can't be NULL");
     this.commandSuppliers = Collections.unmodifiableMap(commandSuppliers);

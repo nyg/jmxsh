@@ -23,10 +23,6 @@ import sh.jmx.jmxsh.Session;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
-/**
- * Command that displays attributes and operations of an MBean
- *
- */
 @CommandLine.Command(
     name = "info",
     description = "Display detail information about an MBean",
@@ -198,29 +194,21 @@ public class InfoCommand extends Command {
     }
   }
 
-  /** @param bean Bean for which information is displayed */
   @Option(names = {"-b", "--bean"}, description = "Name of MBean")
   public final void setBean(String bean) {
     this.bean = bean;
   }
 
-  /**
-   * Given domain
-   *
-   * @param domain Domain name
-   */
   @Option(names = {"-d", "--domain"}, description = "Domain for bean")
   public final void setDomain(String domain) {
     this.domain = domain;
   }
 
-  /** @param showDescription True to show detail description */
   @Option(names = {"-e", "--detail"}, description = "Show description")
   public final void setShowDescription(boolean showDescription) {
     this.showDescription = showDescription;
   }
 
-  /** @param type Type of detail to display */
   @Option(
       names = {"-t", "--type"},
       description =

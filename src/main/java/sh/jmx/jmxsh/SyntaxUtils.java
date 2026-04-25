@@ -14,12 +14,7 @@ import sh.jmx.jmxsh.attach.JavaProcess;
 import sh.jmx.jmxsh.attach.JavaProcessManager;
 import sh.jmx.jmxsh.utils.ValueFormat;
 
-/**
- * Utility class for syntax checking
- *
- */
 public final class SyntaxUtils {
-  /** NULL string identifier */
   public static final String NULL = ValueFormat.NULL;
 
   /** Null print stream to redirect std streams */
@@ -38,12 +33,6 @@ public final class SyntaxUtils {
       Map.entry("float", float.class),
       Map.entry("double", double.class));
 
-  /**
-   * @param url String expression of MBean server URL or abbreviation like localhost:9991
-   * @param jpm Java process manager to get process URL
-   * @return Parsed JMXServerURL
-   * @throws IOException IO error
-   */
   public static JMXServiceURL getUrl(String url, JavaProcessManager jpm) throws IOException {
     if (url == null || url.isEmpty()) {
       throw new IllegalArgumentException("Empty URL is not allowed");
@@ -70,23 +59,10 @@ public final class SyntaxUtils {
     }
   }
 
-  /**
-   * Check if string value is <code>null</code>
-   *
-   * @param s String value
-   * @return True if value is <code>null</code>
-   */
   public static boolean isNull(String s) {
     return NULL.equalsIgnoreCase(s) || "*".equals(s);
   }
 
-  /**
-   * Parse given string expression to expected type of value
-   *
-   * @param expression String expression
-   * @param type Target type
-   * @return Object of value
-   */
   public static Object parse(String expression, String type) {
     if (expression == null || NULL.equalsIgnoreCase(expression)) {
       return null;

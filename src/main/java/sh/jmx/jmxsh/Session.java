@@ -36,11 +36,6 @@ public class Session {
   private final JavaProcessManager processManager;
   private OutputMode outputMode = OutputMode.BRIEF;
 
-  /**
-   * @param output Output destination
-   * @param input Command line input
-   * @param processManager Process manager
-   */
   public Session(CommandOutput output, CommandInput input, JavaProcessManager processManager) {
     Objects.requireNonNull(output, "Output can't be NULL");
     Objects.requireNonNull(processManager, "Process manager can't be NULL");
@@ -49,7 +44,6 @@ public class Session {
     this.processManager = processManager;
   }
 
-  /** Close JMX terminal console. Supposedly, process terminates after this call */
   public void close() {
     if (closed) {
       return;
@@ -62,13 +56,6 @@ public class Session {
     closed = true;
   }
 
-  /**
-   * Connect to MBean server
-   *
-   * @param url URL to connect
-   * @param env Environment variables
-   * @throws IOException allows IO exceptions.
-   */
   public void connect(JMXServiceURL url, Map<String, Object> env) throws IOException {
     Objects.requireNonNull(url, "URL can't be NULL");
     if (connection != null) {
@@ -80,11 +67,6 @@ public class Session {
     log.info("connected to {}", url);
   }
 
-  /**
-   * Close JMX connector
-   *
-   * @throws IOException Thrown when connection can't be closed
-   */
   public void disconnect() throws IOException {
     if (connection == null) {
       return;
@@ -97,14 +79,6 @@ public class Session {
     }
   }
 
-  /**
-   * Connect to MBean server
-   *
-   * @param url MBean server URL
-   * @param env A map of environment
-   * @return Connector that holds connection to MBean server
-   * @throws IOException Network errors
-   */
   protected JMXConnector doConnect(JMXServiceURL url, Map<String, Object> env) throws IOException {
     return JMXConnectorFactory.connect(url, env);
   }
@@ -121,37 +95,24 @@ public class Session {
     return closed;
   }
 
-  /** @return True if there's a open connection to JMX server */
   public boolean isConnected() {
     return connection != null;
   }
 
-  /**
-   * Set current selected bean
-   *
-   * @param bean Bean to select
-   */
   public final void setBean(String bean) {
     this.bean = bean;
   }
 
-  /**
-   * Set current selected domain
-   *
-   * @param domain Domain to select
-   */
   public final void setDomain(String domain) {
     Objects.requireNonNull(domain, "domain can't be NULL");
     this.domain = domain;
   }
 
-  /** @param outputMode Output mode (BRIEF or SILENT) */
   public final void setOutputMode(OutputMode outputMode) {
     Objects.requireNonNull(outputMode, "Output mode can't be NULL");
     this.outputMode = outputMode;
   }
 
-  /** Set domain and bean to be NULL */
   public void unsetDomain() {
     bean = null;
     domain = null;

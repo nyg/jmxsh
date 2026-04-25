@@ -7,17 +7,10 @@ package sh.jmx.jmxsh.utils;
  *
  */
 public final class ValueFormat {
-  /** Keyword that identifies NULL pointer <code>null</code> */
   public static final String NULL = "null";
 
   private ValueFormat() {}
 
-  /**
-   * Parse given syntax of string
-   *
-   * @param value String value
-   * @return Escaped string value
-   */
   public static String parseValue(String value) {
     if (value == null || value.isEmpty()) {
       return null;

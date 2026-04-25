@@ -21,10 +21,6 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Command to display or set current bean
- *
- */
 @CommandLine.Command(
     name = "bean",
     description = "Display or set current selected MBean. ",
@@ -32,16 +28,6 @@ import lombok.extern.slf4j.Slf4j;
             + "otherwise it selects the bean defined by the first parameter. eg. bean java.lang:type=Memory")
 @Slf4j
 public class BeanCommand extends Command {
-  /**
-   * Get full MBean name with given bean name, domain and session
-   *
-   * @param bean Name of bean. It can be NULL so that session#getBean() is returned
-   * @param domain Domain for bean
-   * @param session Current session
-   * @return Full qualified name of MBean
-   * @throws JMException Thrown when given MBean name is malformed
-   * @throws IOException allows IO exceptions.
-   */
   public static String getBeanName(String bean, String domain, Session session)
       throws JMException, IOException {
     Objects.requireNonNull(session, "Session can't be NULL");
@@ -75,7 +61,6 @@ public class BeanCommand extends Command {
     throw new IllegalArgumentException("Bean name " + bean + " isn't valid");
   }
 
-  /** Gets a list of candidate beans. */
   static List<String> getCandidateBeanNames(Session session) throws MalformedObjectNameException {
     try {
       ArrayList<String> results = new ArrayList<>(BeansCommand.getBeans(session, null));
@@ -134,21 +119,11 @@ public class BeanCommand extends Command {
     session.getOutput().printMessage("bean is set to " + beanName);
   }
 
-  /**
-   * Set bean option
-   *
-   * @param bean Bean to set
-   */
   @Parameters(paramLabel = "bean", description = "MBean name with or without domain", arity = "0..1")
   public final void setBean(String bean) {
     this.bean = bean;
   }
 
-  /**
-   * Set domain option
-   *
-   * @param domain Domain option to set
-   */
   @Option(names = {"-d", "--domain"}, description = "Domain name")
   public final void setDomain(String domain) {
     this.domain = domain;

@@ -24,10 +24,6 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Command to run an MBean operation
- *
- */
 @CommandLine.Command(
     name = "run",
     description = "Invoke an MBean operation",
@@ -86,7 +82,6 @@ public class RunCommand extends Command {
     MBeanServerConnection con = session.getConnection().getServerConnection();
     MBeanInfo beanInfo = con.getMBeanInfo(name);
 
-    // Looking for operation to invoke
     MBeanOperationInfo operationInfo = null;
     for (MBeanOperationInfo info : beanInfo.getOperations()) {
       if (operationName.equals(info.getName())
@@ -117,7 +112,6 @@ public class RunCommand extends Command {
         }
       }
     }
-    // If no matching operation is found, throw an exception
     if (operationInfo == null) {
       throw new IllegalArgumentException(
           "Operation "
@@ -128,7 +122,6 @@ public class RunCommand extends Command {
               + beanName);
     }
 
-    // Now set parameters to invoke with
     Object[] params = new Object[parameters.size() - 1];
     MBeanParameterInfo[] paramInfos = operationInfo.getSignature();
     if (params.length != paramInfos.length) {
@@ -150,7 +143,6 @@ public class RunCommand extends Command {
         "calling operation %s of mbean %s with params %s".formatted(
             operationName, beanName, Arrays.toString(params)));
 
-    // Invoke operation, record execution time if measure flag is on
     Object result;
     if (measure) {
       long start = System.nanoTime();
@@ -165,23 +157,19 @@ public class RunCommand extends Command {
     }
     session.getOutput().printMessage("operation returns: ");
     new ValueOutputFormat(2, false, showQuotationMarks).printValue(session.getOutput(), result);
-    // Finish with an empty line
     session.getOutput().println("");
   }
 
-  /** @param bean Bean under which the operation is */
   @Option(names = {"-b", "--bean"}, description = "MBean to invoke")
   public final void setBean(String bean) {
     this.bean = bean;
   }
 
-  /** @param domain Domain under which is bean is */
   @Option(names = {"-d", "--domain"}, description = "Domain of MBean to invoke")
   public final void setDomain(String domain) {
     this.domain = domain;
   }
 
-  /** @param measure True if you want to display latency */
   @Option(
       names = {"-m", "--measure"},
       description = "Measure the time spent on the invocation of operation")
@@ -196,7 +184,6 @@ public class RunCommand extends Command {
     this.types = types;
   }
 
-  /** @param parameters List of parameters. The first parameter is operation name */
   @Parameters(
       description = "The first parameter is operation name, which is followed by list of arguments",
       arity = "1..*")
@@ -205,7 +192,6 @@ public class RunCommand extends Command {
     this.parameters = parameters;
   }
 
-  /** @param showQuotationMarks True if output is surrounded by quotation marks */
   @Option(names = {"-q", "--quots"}, description = "Flag for quotation marks")
   public final void setShowQuotationMarks(boolean showQuotationMarks) {
     this.showQuotationMarks = showQuotationMarks;

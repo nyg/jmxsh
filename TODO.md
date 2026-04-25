@@ -32,12 +32,6 @@ fork vestiges, and design patterns that predate modern Java. Organized by catego
 
 ### Legacy Dependencies
 
-### Fork Vestiges (jmxterm / jcli lineage)
-
-- 🟢 **`jdk9/` package name** — the `com.sun.tools.attach` Attach API became a first-class public API in JDK 9; the project now targets Java 25. The class names were simplified (removed the `Jdk9` prefix), but the package is still `jdk9/`. Rename the package to `attach/` to remove the version fossil. (`jdk9/`)
-
-### Legacy Java APIs
-
 ### Legacy Language Constructs
 
 - 🟡 **`CommandInput` and `CommandOutput` as abstract classes** — Both define only abstract methods plus one convenience default — a perfect fit for `interface` with `default` methods in Java 25. (`io/CommandInput.java`, `io/CommandOutput.java`)

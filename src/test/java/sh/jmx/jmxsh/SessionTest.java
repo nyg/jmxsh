@@ -3,7 +3,6 @@ package sh.jmx.jmxsh;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
@@ -11,7 +10,7 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXServiceURL;
 
 import sh.jmx.jmxsh.io.WriterCommandOutput;
-import sh.jmx.jmxsh.jdk9.JavaProcessManager;
+import sh.jmx.jmxsh.attach.JavaProcessManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

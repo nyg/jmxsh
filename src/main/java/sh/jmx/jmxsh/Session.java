@@ -16,7 +16,7 @@ import sh.jmx.jmxsh.io.CommandOutput;
 import sh.jmx.jmxsh.io.OutputMode;
 import sh.jmx.jmxsh.io.UnimplementedCommandInput;
 import sh.jmx.jmxsh.io.VerboseCommandOutput;
-import sh.jmx.jmxsh.jdk9.JavaProcessManager;
+import sh.jmx.jmxsh.attach.JavaProcessManager;
 
 /**
  * JMX communication context. This class exists for the whole lifecycle of a command execution. It

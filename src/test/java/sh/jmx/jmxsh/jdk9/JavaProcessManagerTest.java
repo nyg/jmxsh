@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import sh.jmx.jmxsh.attach.JavaProcess;
+import sh.jmx.jmxsh.attach.JavaProcessManager;
+
 class JavaProcessManagerTest {
 
   @Test

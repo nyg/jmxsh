@@ -6,39 +6,30 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import sh.jmx.jmxsh.JavaProcess;
 
 import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 
-/**
- * JDK9 specific implementation of {@link JavaProcess}
- *
- */
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-public class Jdk9JavaProcess implements JavaProcess {
+public class JavaProcess {
 
   @NonNull
   private final VirtualMachineDescriptor vmd;
   private final String address;
 
-  @Override
   public String getDisplayName() {
     return vmd.displayName();
   }
 
-  @Override
   public int getProcessId() {
     return Integer.parseInt(vmd.id());
   }
 
-  @Override
   public boolean isManageable() {
     return address != null;
   }
 
-  @Override
   public void startManagementAgent() throws IOException {
     try {
       VirtualMachine.attach(vmd).startLocalManagementAgent();
@@ -47,7 +38,6 @@ public class Jdk9JavaProcess implements JavaProcess {
     }
   }
 
-  @Override
   public String toUrl() {
     return address;
   }

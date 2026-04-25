@@ -9,11 +9,11 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
 import sh.jmx.jmxsh.Connection;
-import sh.jmx.jmxsh.JavaProcessManager;
 import sh.jmx.jmxsh.Session;
 import sh.jmx.jmxsh.io.CommandInput;
 import sh.jmx.jmxsh.io.CommandOutput;
 import lombok.extern.slf4j.Slf4j;
+import sh.jmx.jmxsh.jdk9.JavaProcessManager;
 
 /**
  * Implementation of {@link Session} which keeps a {@link ConnectionImpl}

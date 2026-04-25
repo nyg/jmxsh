@@ -12,10 +12,6 @@ import javax.management.remote.JMXConnector;
 import sh.jmx.jmxsh.SyntaxUtils;
 import org.junit.jupiter.api.Test;
 
-/**
- * Test case of {@link ConnectionImpl}
- *
- */
 class ConnectionImplTest {
   /**
    * Test the object is constructed correctly

@@ -13,14 +13,10 @@ import javax.management.remote.JMXServiceURL;
 import sh.jmx.jmxsh.Connection;
 import sh.jmx.jmxsh.SyntaxUtils;
 import sh.jmx.jmxsh.io.WriterCommandOutput;
-import sh.jmx.jmxsh.jdk9.Jdk9JavaProcessManager;
+import sh.jmx.jmxsh.jdk9.JavaProcessManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/**
- * Test case of {@link ConnectionImpl}
- *
- */
 class SessionImplTest {
   private JMXConnector con;
 
@@ -34,7 +30,7 @@ class SessionImplTest {
         new SessionImpl(
             new WriterCommandOutput(Writer.nullWriter()),
             null,
-            new Jdk9JavaProcessManager()) {
+            new JavaProcessManager()) {
           @Override
           protected JMXConnector doConnect(JMXServiceURL url, Map<String, Object> env)
               throws IOException {

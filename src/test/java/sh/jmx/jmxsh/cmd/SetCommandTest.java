@@ -23,10 +23,6 @@ import sh.jmx.jmxsh.MockSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/**
- * Test case of {@link SetCommand}
- *
- */
 class SetCommandTest {
   private SetCommand command;
 

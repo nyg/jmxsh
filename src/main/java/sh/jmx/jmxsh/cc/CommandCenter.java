@@ -16,12 +16,12 @@ import javax.management.remote.JMXServiceURL;
 
 import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.CommandFactory;
-import sh.jmx.jmxsh.JavaProcessManager;
 import sh.jmx.jmxsh.Session;
 import sh.jmx.jmxsh.io.CommandInput;
 import sh.jmx.jmxsh.io.CommandOutput;
 import sh.jmx.jmxsh.io.RuntimeIOException;
 import sh.jmx.jmxsh.io.VerboseLevel;
+import sh.jmx.jmxsh.jdk9.JavaProcessManager;
 import sh.jmx.jmxsh.utils.EscapingTokenizer;
 
 import picocli.CommandLine;
@@ -67,7 +67,7 @@ public class CommandCenter {
   public CommandCenter(CommandOutput output, CommandInput input, CommandFactory commandFactory) {
     Objects.requireNonNull(output, "Output can't be NULL");
     Objects.requireNonNull(commandFactory, "Command factory can't be NULL");
-    processManager = JPMFactory.createProcessManager();
+    this.processManager = new JavaProcessManager();
     this.session = new SessionImpl(output, input, processManager);
     this.commandFactory = commandFactory;
   }

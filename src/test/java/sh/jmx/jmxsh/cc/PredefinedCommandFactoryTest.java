@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import sh.jmx.jmxsh.cmd.QuitCommand;
 import org.junit.jupiter.api.Test;
 
-/** Test case of {@link PredefinedCommandFactory} */
 class PredefinedCommandFactoryTest {
 
   @Test

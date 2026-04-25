@@ -26,10 +26,6 @@ import sh.jmx.jmxsh.MockSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/**
- * Test case of {@link GetCommand}
- *
- */
 class GetCommandTest {
 
   private static String randomAlphabetic(int length) {

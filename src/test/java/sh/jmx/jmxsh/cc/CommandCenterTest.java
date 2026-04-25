@@ -17,10 +17,6 @@ import sh.jmx.jmxsh.io.WriterCommandOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/**
- * Test case of {@link CommandCenter}
- *
- */
 class CommandCenterTest {
   private CommandCenter cc;
 

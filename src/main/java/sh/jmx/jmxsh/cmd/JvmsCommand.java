@@ -6,12 +6,12 @@ import java.util.List;
 import javax.management.JMException;
 
 import sh.jmx.jmxsh.Command;
-import sh.jmx.jmxsh.JavaProcess;
 import sh.jmx.jmxsh.Session;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import lombok.extern.slf4j.Slf4j;
+import sh.jmx.jmxsh.jdk9.JavaProcess;
 
 /**
  * Command to list all running local JVM processes

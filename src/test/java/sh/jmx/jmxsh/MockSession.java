@@ -8,7 +8,7 @@ import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXServiceURL;
 
 import sh.jmx.jmxsh.io.WriterCommandOutput;
-import sh.jmx.jmxsh.jdk9.Jdk9JavaProcessManager;
+import sh.jmx.jmxsh.jdk9.JavaProcessManager;
 
 /**
  * Mocked version of {@link Session} implementation for testing purpose only
@@ -24,7 +24,7 @@ public class MockSession extends Session {
    * @param con MBean service connection
    */
   public MockSession(Writer output, MBeanServerConnection con) throws IOException {
-    super(new WriterCommandOutput(output, null), null, new Jdk9JavaProcessManager());
+    super(new WriterCommandOutput(output, null), null, new JavaProcessManager());
     connection = new MockConnection(SyntaxUtils.getUrl("localhost:9991", null), con);
   }
 

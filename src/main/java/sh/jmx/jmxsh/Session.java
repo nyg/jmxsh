@@ -7,12 +7,14 @@ import java.util.Objects;
 
 import javax.management.remote.JMXServiceURL;
 
+import lombok.Getter;
 import sh.jmx.jmxsh.io.CommandInput;
 import sh.jmx.jmxsh.io.CommandOutput;
 import sh.jmx.jmxsh.io.UnimplementedCommandInput;
 import sh.jmx.jmxsh.io.VerboseCommandOutput;
 import sh.jmx.jmxsh.io.VerboseCommandOutputConfig;
 import sh.jmx.jmxsh.io.VerboseLevel;
+import sh.jmx.jmxsh.jdk9.JavaProcessManager;
 
 /**
  * JMX communication context. This class exists for the whole lifecycle of a command execution. It
@@ -20,16 +22,17 @@ import sh.jmx.jmxsh.io.VerboseLevel;
  *
  */
 public abstract class Session implements VerboseCommandOutputConfig {
+
+  @Getter
   private String bean;
-
   private boolean closed;
-
+  @Getter
   private String domain;
-
+  @Getter
   private final CommandInput input;
-
   private final CommandOutput output;
 
+  @Getter
   private final JavaProcessManager processManager;
 
   private VerboseLevel verboseLevel = VerboseLevel.BRIEF;
@@ -76,39 +79,16 @@ public abstract class Session implements VerboseCommandOutputConfig {
    */
   public abstract void disconnect() throws IOException;
 
-  /** @return Current selected bean */
-  public final String getBean() {
-    return bean;
-  }
-
   /** @return Current open JMX server connection */
   public abstract Connection getConnection();
 
-  /** @return Current domain */
-  public final String getDomain() {
-    return domain;
-  }
-
-  /** @return Command output destination */
+    /** @return Command output destination */
   public final CommandOutput getOutput() {
     return output;
   }
 
-  /**
-   * @return General input of command lines, which could be interactive environment, a file or piped
-   *     input
-   */
-  public final CommandInput getInput() {
-    return input;
-  }
-
-  /** @return Java process manager to load processes */
-  public JavaProcessManager getProcessManager() {
-    return processManager;
-  }
-
-  @Override
-  public final VerboseLevel getVerboseLevel() {
+    @Override
+  public VerboseLevel getVerboseLevel() {
     return verboseLevel;
   }
 

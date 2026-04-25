@@ -13,10 +13,6 @@ import sh.jmx.jmxsh.MockSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/**
- * Test case of {@link DomainsCommand}
- *
- */
 class DomainsCommandTest {
   private DomainsCommand command;
 

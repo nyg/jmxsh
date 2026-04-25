@@ -9,10 +9,6 @@ import java.math.BigInteger;
 
 import org.junit.jupiter.api.Test;
 
-/**
- * Test case of {@link SyntaxUtils}
- *
- */
 class SyntaxUtilsTest {
   /**
    * Test how getUrl() figure out MBeanServer URL based on various pattern of input

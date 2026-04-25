@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * End-to-end tests that launch jmxterm as a separate OS process, connect to a JMXMP target JVM, and
+ * End-to-end tests that launch jmxsh as a separate OS process, connect to a JMXMP target JVM, and
  * verify command output.
  */
 class JmxmpConnectionE2EIT {
@@ -32,10 +32,10 @@ class JmxmpConnectionE2EIT {
 
   @Test
   void testOpenWithJmxmpShorthand() throws Exception {
-    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
-      jmxterm.sendCommandAndClose(
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper()) {
+      jmxsh.sendCommandAndClose(
           "open jmxmp://localhost:" + targetJvm.getJmxmpPort(), "domains", "quit");
-      String output = jmxterm.readAllOutput(TIMEOUT);
+      String output = jmxsh.readAllOutput(TIMEOUT);
       assertThat(output)
           .as("Expected 'JMImplementation' domain in output: " + output)
           .contains("JMImplementation");
@@ -44,10 +44,10 @@ class JmxmpConnectionE2EIT {
 
   @Test
   void testOpenWithFullJmxmpServiceUrl() throws Exception {
-    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
-      jmxterm.sendCommandAndClose(
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper()) {
+      jmxsh.sendCommandAndClose(
           "open service:jmx:jmxmp://localhost:" + targetJvm.getJmxmpPort(), "domains", "quit");
-      String output = jmxterm.readAllOutput(TIMEOUT);
+      String output = jmxsh.readAllOutput(TIMEOUT);
       assertThat(output)
           .as("Expected 'JMImplementation' domain in output: " + output)
           .contains("JMImplementation");
@@ -56,27 +56,27 @@ class JmxmpConnectionE2EIT {
 
   @Test
   void testGetAttributeOverJmxmp() throws Exception {
-    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
-      jmxterm.sendCommandAndClose(
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper()) {
+      jmxsh.sendCommandAndClose(
           "open jmxmp://localhost:" + targetJvm.getJmxmpPort(),
           "bean test:type=TestMBean",
           "run reset",
           "get Name",
           "quit");
-      String output = jmxterm.readAllOutput(TIMEOUT);
+      String output = jmxsh.readAllOutput(TIMEOUT);
       assertThat(output).as("Expected 'default' in output: " + output).contains("default");
     }
   }
 
   @Test
   void testRunOperationOverJmxmp() throws Exception {
-    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
-      jmxterm.sendCommandAndClose(
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper()) {
+      jmxsh.sendCommandAndClose(
           "open jmxmp://localhost:" + targetJvm.getJmxmpPort(),
           "bean test:type=TestMBean",
           "run echo world",
           "quit");
-      String output = jmxterm.readAllOutput(TIMEOUT);
+      String output = jmxsh.readAllOutput(TIMEOUT);
       assertThat(output).as("Expected 'echo:world' in output: " + output).contains("echo:world");
     }
   }

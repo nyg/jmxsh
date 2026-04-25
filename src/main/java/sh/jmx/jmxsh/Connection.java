@@ -1,26 +1,25 @@
 package sh.jmx.jmxsh;
 
 import java.io.IOException;
+
 import javax.management.MBeanServerConnection;
+import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXServiceURL;
 
 /**
- * Identifies lifecycle of a connection
- *
+ * Holds a live JMX connector and the URL it was opened against.
  */
-public interface Connection {
-  /**
-   * @return Id of connector
-   * @throws IOException Thrown when ID can't be retrieved
-   */
-  String getConnectorId() throws IOException;
+public record Connection(JMXConnector connector, JMXServiceURL url) {
 
-  /**
-   * @return MBean server connection
-   * @throws IOException Thrown for communication problem
-   */
-  MBeanServerConnection getServerConnection() throws IOException;
+  public void close() throws IOException {
+    connector.close();
+  }
 
-  /** @return JMX service URL object */
-  JMXServiceURL getUrl();
+  public String getConnectorId() throws IOException {
+    return connector.getConnectionId();
+  }
+
+  public MBeanServerConnection getServerConnection() throws IOException {
+    return connector.getMBeanServerConnection();
+  }
 }

@@ -22,7 +22,7 @@ import sh.jmx.jmxsh.io.FileCommandOutput;
 import sh.jmx.jmxsh.io.InputStreamCommandInput;
 import sh.jmx.jmxsh.io.JlineCommandInput;
 import sh.jmx.jmxsh.io.PrintStreamCommandOutput;
-import sh.jmx.jmxsh.io.VerboseLevel;
+import sh.jmx.jmxsh.io.OutputMode;
 import sh.jmx.jmxsh.utils.AppConfig;
 import sh.jmx.jmxsh.utils.XdgDirectories;
 import org.jline.reader.History;
@@ -85,7 +85,7 @@ public class CliMain {
       return 0;
     }
 
-    VerboseLevel verboseLevel = options.isQuiet() ? VerboseLevel.SILENT : VerboseLevel.BRIEF;
+    OutputMode outputMode = options.isQuiet() ? OutputMode.SILENT : OutputMode.BRIEF;
 
     CommandOutput output;
     if (CliMainOptions.STDOUT.equals(options.getOutput())) {
@@ -152,7 +152,7 @@ public class CliMain {
                 SyntaxUtils.getUrl(options.getUrl(), commandCenter.getProcessManager()),
                 env.isEmpty() ? null : env);
           }
-          commandCenter.setVerboseLevel(verboseLevel);
+          commandCenter.setOutputMode(outputMode);
           if (!options.isQuiet()) {
             output.printMessage("Welcome to jmx.sh, type \"help\" for available commands.");
           }

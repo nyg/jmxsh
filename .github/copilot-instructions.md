@@ -53,7 +53,9 @@ Arguments and options use picocli annotations:
 
 ### Session & Connection
 
-`Session` (abstract class) holds the JMX connection state plus the currently selected domain and bean. `SessionImpl` in `cc/` is the concrete implementation. Session is **not thread-safe** — `CommandCenter` synchronizes all calls. Commands receive the session via `setSession()` before each `execute()` call.
+`Session` is a concrete class that holds the JMX connection state plus the currently selected domain and bean. It owns the connect/disconnect lifecycle and wraps the `CommandOutput` in a `VerboseCommandOutput` decorator. Session is **not thread-safe** — `CommandCenter` synchronizes all calls. Commands receive the session via `setSession()` before each `execute()` call.
+
+`Connection` is a record that holds the `JMXConnector` and `JMXServiceURL`. It is created inside `Session.connect()` and nulled out on `Session.disconnect()`.
 
 Both RMI and JMXMP protocols are supported. URL formats:
 - `host:port` — RMI shorthand (default), expands to `service:jmx:rmi:///jndi/rmi://host:port/jmxrmi`
@@ -65,11 +67,11 @@ Both RMI and JMXMP protocols are supported. URL formats:
 
 ### IO Abstraction
 
-`CommandInput` and `CommandOutput` are abstract base classes with implementations for interactive console (JLine), files, streams, and writers. `VerboseCommandOutput` is a decorator that filters output based on `VerboseLevel` (SILENT, BRIEF, VERBOSE).
+`CommandInput` and `CommandOutput` are abstract base classes with implementations for interactive console (JLine), files, streams, and writers. `VerboseCommandOutput` is a decorator that filters output based on `OutputMode` (SILENT or BRIEF).
 
 ### JVM Process Discovery
 
-`jdk9/` provides JVM discovery using the `com.sun.tools.attach` API (`VirtualMachine`/`VirtualMachineDescriptor`). Created via `JPMFactory.createProcessManager()`. Used by the `jvms` and `open` commands.
+`jdk9/` provides JVM discovery using the `com.sun.tools.attach` API (`VirtualMachine`/`VirtualMachineDescriptor`). `JavaProcessManager` is instantiated directly in `CommandCenter`. Used by the `jvms` and `open` commands.
 
 ## Conventions
 
@@ -90,26 +92,41 @@ Scopes: `cmd`, `io`, `build`, `deps`, `ci`
 ### Testing
 
 - **JUnit** (Jupiter) with `@Test`, `@BeforeEach` from `org.junit.jupiter.api`
-- **Mockito** for mocking (`mock()`, `when()`, `verify()`)
+- **Mockito** for mocking — use `@ExtendWith(MockitoExtension.class)` with `@Mock` fields
 - **AssertJ** for fluent assertions (`assertThat(...).isEqualTo(...)`)
-- Test helpers: `MockSession`, `MockConnection`, `SelfRecordingCommand` in the test root package
+- Test helper: `SelfRecordingCommand` in the test root package
 
 Typical test pattern:
 ```java
-@BeforeEach
-void setUp() {
-    command = new DomainsCommand();
-}
+@ExtendWith(MockitoExtension.class)
+class DomainsCommandTest {
+    @Mock
+    private Session session;
+    @Mock
+    private Connection connection;
+    @Mock
+    private MBeanServerConnection con;
 
-@Test
-void execution() throws Exception {
-    MBeanServerConnection con = mock(MBeanServerConnection.class);
-    StringWriter output = new StringWriter();
-    when(con.getDomains()).thenReturn(new String[] {"a", "b"});
-    command.setSession(new MockSession(output, con));
-    command.execute();
-    verify(con).getDomains();
-    assertThat(output.toString().trim()).isEqualTo("a" + System.lineSeparator() + "b");
+    private DomainsCommand command;
+    private StringWriter writer;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        command = new DomainsCommand();
+        writer = new StringWriter();
+        when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
+        when(session.getConnection()).thenReturn(connection);
+        when(connection.getServerConnection()).thenReturn(con);
+    }
+
+    @Test
+    void execution() throws Exception {
+        when(con.getDomains()).thenReturn(new String[] {"a", "b"});
+        command.setSession(session);
+        command.execute();
+        verify(con).getDomains();
+        assertThat(writer.toString().trim()).isEqualTo("a" + System.lineSeparator() + "b");
+    }
 }
 ```
 
@@ -125,4 +142,4 @@ void execution() throws Exception {
 - Commands throw `IllegalArgumentException` for invalid user input
 - Commands throw `IllegalStateException` for invalid session state (e.g., not connected)
 - `RuntimeIOException` wraps checked `IOException` as unchecked
-- Error display respects `VerboseLevel`: VERBOSE shows stack traces, BRIEF shows messages prefixed with `#`, SILENT suppresses output
+- Error display respects `OutputMode`: BRIEF shows messages prefixed with `#`, SILENT suppresses output

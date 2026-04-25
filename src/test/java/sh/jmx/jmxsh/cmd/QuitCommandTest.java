@@ -1,37 +1,42 @@
 package sh.jmx.jmxsh.cmd;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.StringWriter;
 
-import sh.jmx.jmxsh.MockSession;
 import sh.jmx.jmxsh.Session;
+import sh.jmx.jmxsh.io.WriterCommandOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Test case for {@link QuitCommand}
  *
  */
+@ExtendWith(MockitoExtension.class)
 class QuitCommandTest {
-  private QuitCommand command;
+  @Mock
+  private Session session;
 
-  private StringWriter output;
+  private QuitCommand command;
 
   /** Setup objects to test */
   @BeforeEach
   void setUp() {
     command = new QuitCommand();
-    output = new StringWriter();
   }
 
   /** @throws Exception */
   @Test
   void execute() throws Exception {
-    Session session = new MockSession(output, null);
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(new StringWriter(), null));
     command.setSession(session);
     command.execute();
-    assertThat(session.isConnected()).isFalse();
-    assertThat(session.isClosed()).isTrue();
+    verify(session).disconnect();
+    verify(session).close();
   }
 }

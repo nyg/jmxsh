@@ -1,4 +1,4 @@
-package sh.jmx.jmxsh.cc;
+package sh.jmx.jmxsh;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -9,14 +9,12 @@ import java.io.IOException;
 
 import javax.management.remote.JMXConnector;
 
-import sh.jmx.jmxsh.SyntaxUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-/**
- * Test case of {@link ConnectionImpl}
- *
- */
-class ConnectionImplTest {
+@ExtendWith(MockitoExtension.class)
+class ConnectionTest {
   /**
    * Test the object is constructed correctly
    *
@@ -25,7 +23,7 @@ class ConnectionImplTest {
   @Test
   void construction() throws Exception {
     JMXConnector con = mock(JMXConnector.class);
-    ConnectionImpl c = new ConnectionImpl(con, SyntaxUtils.getUrl("localhost:9991", null));
+    Connection c = new Connection(con, SyntaxUtils.getUrl("localhost:9991", null));
     assertThat(c.connector()).isSameAs(con);
 
     when(con.getConnectionId()).thenReturn("xyz");

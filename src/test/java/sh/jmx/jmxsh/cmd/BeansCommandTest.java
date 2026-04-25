@@ -1,9 +1,10 @@
 package sh.jmx.jmxsh.cmd;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,29 +12,41 @@ import java.util.HashSet;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
-import sh.jmx.jmxsh.MockSession;
+import sh.jmx.jmxsh.Connection;
+import sh.jmx.jmxsh.Session;
+import sh.jmx.jmxsh.io.WriterCommandOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Test case for {@link BeansCommand}
  *
  */
+@ExtendWith(MockitoExtension.class)
 class BeansCommandTest {
   private static final String EOL = System.getProperty("line.separator");
 
-  private BeansCommand command;
-
+  @Mock
+  private Session session;
+  @Mock
+  private Connection connection;
+  @Mock
   private MBeanServerConnection conn;
 
-  private StringWriter output;
+  private BeansCommand command;
+  private StringWriter writer;
 
   /** Set up testing connection */
   @BeforeEach
-  void setUp() {
-    output = new StringWriter();
+  void setUp() throws IOException {
+    writer = new StringWriter();
     command = new BeansCommand();
-    conn = mock(MBeanServerConnection.class);
+    lenient().when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
+    when(session.getConnection()).thenReturn(connection);
+    when(connection.getServerConnection()).thenReturn(conn);
   }
 
   /**
@@ -50,9 +63,9 @@ class BeansCommandTest {
                 Arrays.asList(new ObjectName("a:type=1"), new ObjectName("a:type=2"))));
     when(conn.queryNames(new ObjectName("b:*"), null))
         .thenReturn(new HashSet<ObjectName>(Arrays.asList(new ObjectName("b:type=1"))));
-    command.setSession(new MockSession(output, conn));
+    command.setSession(session);
     command.execute();
-    assertThat(output.toString()).isEqualTo("a:type=1" + EOL + "a:type=2" + EOL + "b:type=1" + EOL);
+    assertThat(writer.toString()).isEqualTo("a:type=1" + EOL + "a:type=2" + EOL + "b:type=1" + EOL);
   }
 
   /**
@@ -62,14 +75,12 @@ class BeansCommandTest {
    */
   @Test
   void executeWithDomainInSession() throws Exception {
-    when(conn.getDomains()).thenReturn(new String[] {"a", "b"});
     when(conn.queryNames(new ObjectName("b:*"), null))
         .thenReturn(new HashSet<ObjectName>(Arrays.asList(new ObjectName("b:type=1"))));
-    MockSession session = new MockSession(output, conn);
-    session.setDomain("b");
+    when(session.getDomain()).thenReturn("b");
     command.setSession(session);
     command.execute();
-    assertThat(output.toString()).isEqualTo("b:type=1" + EOL);
+    assertThat(writer.toString()).isEqualTo("b:type=1" + EOL);
   }
 
   /**
@@ -83,9 +94,9 @@ class BeansCommandTest {
     when(conn.getDomains()).thenReturn(new String[] {"a", "b"});
     when(conn.queryNames(new ObjectName("b:*"), null))
         .thenReturn(new HashSet<ObjectName>(Arrays.asList(new ObjectName("b:type=1"))));
-    command.setSession(new MockSession(output, conn));
+    command.setSession(session);
     command.execute();
-    assertThat(output.toString()).isEqualTo("b:type=1" + EOL);
+    assertThat(writer.toString()).isEqualTo("b:type=1" + EOL);
   }
 
   /**
@@ -103,10 +114,8 @@ class BeansCommandTest {
                 Arrays.asList(new ObjectName("a:type=1"), new ObjectName("a:type=2"))));
     when(conn.queryNames(new ObjectName("b:*"), null))
         .thenReturn(new HashSet<ObjectName>(Arrays.asList(new ObjectName("b:type=1"))));
-    MockSession session = new MockSession(output, conn);
-    session.setDomain("b");
     command.setSession(session);
     command.execute();
-    assertThat(output.toString()).isEqualTo("a:type=1" + EOL + "a:type=2" + EOL + "b:type=1" + EOL);
+    assertThat(writer.toString()).isEqualTo("a:type=1" + EOL + "a:type=2" + EOL + "b:type=1" + EOL);
   }
 }

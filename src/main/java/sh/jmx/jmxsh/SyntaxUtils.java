@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 
 import javax.management.remote.JMXServiceURL;
 
+import sh.jmx.jmxsh.jdk9.JavaProcess;
+import sh.jmx.jmxsh.jdk9.JavaProcessManager;
 import sh.jmx.jmxsh.utils.ValueFormat;
 
 /**

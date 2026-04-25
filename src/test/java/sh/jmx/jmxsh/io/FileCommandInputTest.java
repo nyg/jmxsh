@@ -7,10 +7,6 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
-/**
- * Test case of {@link FileCommandInput}
- *
- */
 class FileCommandInputTest {
   /**
    * Read commands from given test text file and verify result

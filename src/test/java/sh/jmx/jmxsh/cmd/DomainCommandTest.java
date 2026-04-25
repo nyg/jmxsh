@@ -2,7 +2,7 @@ package sh.jmx.jmxsh.cmd;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,35 +12,48 @@ import java.io.StringWriter;
 import javax.management.JMException;
 import javax.management.MBeanServerConnection;
 
-import sh.jmx.jmxsh.MockSession;
+import sh.jmx.jmxsh.Connection;
+import sh.jmx.jmxsh.Session;
+import sh.jmx.jmxsh.io.WriterCommandOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Test of {@link DomainCommand}
  *
  */
+@ExtendWith(MockitoExtension.class)
 class DomainCommandTest {
-  private DomainCommand command;
+  @Mock
+  private Session session;
+  @Mock
+  private Connection connection;
+  @Mock
+  private MBeanServerConnection con;
 
-  private StringWriter output;
+  private DomainCommand command;
+  private StringWriter writer;
 
   private void setDomainAndVerify(String domainName, String[] knownDomains) throws IOException {
-    MBeanServerConnection con = mock(MBeanServerConnection.class);
     command.setDomain(domainName);
-    MockSession session = new MockSession(output, con);
+    when(session.getConnection()).thenReturn(connection);
+    when(connection.getServerConnection()).thenReturn(con);
     when(con.getDomains()).thenReturn(knownDomains);
     command.setSession(session);
     command.execute();
-    assertThat(session.getDomain()).isEqualTo(domainName);
+    verify(session).setDomain(domainName);
     verify(con).getDomains();
   }
 
   /** Set up command to test */
   @BeforeEach
-  void setUp() {
+  void setUp() throws IOException {
     command = new DomainCommand();
-    output = new StringWriter();
+    writer = new StringWriter();
+    lenient().when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
   }
 
   /**
@@ -51,9 +64,10 @@ class DomainCommandTest {
    */
   @Test
   void executeWithGettingNull() throws Exception {
-    command.setSession(new MockSession(output, null));
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
+    command.setSession(session);
     command.execute();
-    assertThat(output.toString().trim()).isEqualTo("null");
+    assertThat(writer.toString().trim()).isEqualTo("null");
   }
 
   /**
@@ -64,11 +78,11 @@ class DomainCommandTest {
    */
   @Test
   void executeWithGettingSomething() throws Exception {
-    MockSession session = new MockSession(output, null);
-    session.setDomain("something");
+    when(session.getDomain()).thenReturn("something");
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
     command.setSession(session);
     command.execute();
-    assertThat(output.toString().trim()).isEqualTo("something");
+    assertThat(writer.toString().trim()).isEqualTo("something");
   }
 
   /**

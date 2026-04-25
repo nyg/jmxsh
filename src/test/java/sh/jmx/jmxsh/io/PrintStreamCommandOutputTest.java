@@ -7,10 +7,6 @@ import java.io.PrintStream;
 
 import org.junit.jupiter.api.Test;
 
-/**
- * Test case of {@link PrintStreamCommandOutput}
- *
- */
 class PrintStreamCommandOutputTest {
   /** Write something to output and verify what's written */
   @Test

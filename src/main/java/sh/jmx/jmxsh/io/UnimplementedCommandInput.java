@@ -6,7 +6,7 @@ import java.io.IOException;
  * Unimplemented version of command input
  *
  */
-public class UnimplementedCommandInput extends CommandInput {
+public class UnimplementedCommandInput implements CommandInput {
   @Override
   public String readLine() throws IOException {
     throw new UnsupportedOperationException();

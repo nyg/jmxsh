@@ -4,12 +4,12 @@ import java.io.Closeable;
 import java.io.IOException;
 
 /**
- * An abstract class that provides command line input line by line
+ * Interface that provides command line input line by line
  *
  */
-public abstract class CommandInput implements Closeable {
+public interface CommandInput extends Closeable {
   @Override
-  public void close() throws IOException {}
+  default void close() throws IOException {}
 
   /**
    * Reads a single line from input.
@@ -17,7 +17,7 @@ public abstract class CommandInput implements Closeable {
    * @return The line it reads.
    * @throws IOException allows any communication error.
    */
-  public abstract String readLine() throws IOException;
+  String readLine() throws IOException;
 
   /**
    * Reads input without echoing back keyboard input.
@@ -26,5 +26,5 @@ public abstract class CommandInput implements Closeable {
    * @return The string it reads.
    * @throws IOException allows any communication error.
    */
-  public abstract String readMaskedString(String prompt) throws IOException;
+  String readMaskedString(String prompt) throws IOException;
 }

@@ -13,7 +13,7 @@ import java.util.Objects;
  * Output with a file
  *
  */
-public class FileCommandOutput extends CommandOutput {
+public class FileCommandOutput implements CommandOutput {
   private final PrintWriter fileWriter;
 
   private final WriterCommandOutput output;

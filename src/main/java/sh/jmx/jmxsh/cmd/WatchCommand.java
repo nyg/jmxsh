@@ -35,38 +35,9 @@ import lombok.extern.slf4j.Slf4j;
     footer = "DO NOT call this command in a script and expect decent output")
 @Slf4j
 public class WatchCommand extends Command {
-  private static final class ConsoleOutput extends Output {
-    private final LineReaderImpl console;
-
-    private ConsoleOutput(Session session) {
-      if (!(session.getInput() instanceof JlineCommandInput)) {
-        throw new IllegalStateException("Under current context, watch command can't execute.");
-      }
-      this.console = ((JlineCommandInput) session.getInput()).getConsole();
-    }
-
-    void printLine(String line) throws IOException {
-      console.redrawLine();
-      console.getTerminal().writer().print(line);
-      console.flush();
-    }
-  }
-
-  private abstract static class Output {
-    abstract void printLine(String line) throws IOException;
-  }
-
-  private static final class ReportOutput extends Output {
-    private final CommandOutput out;
-
-    private ReportOutput(Session session) {
-      this.out = session.getOutput();
-    }
-
-    @Override
-    void printLine(String line) {
-      out.println(line);
-    }
+  @FunctionalInterface
+  private interface LineOutput {
+    void printLine(String line) throws IOException;
   }
 
   private static final String BUILDING_ATTRIBUTE_NOW = "%now";
@@ -117,11 +88,20 @@ public class WatchCommand extends Command {
 
     final ObjectName name = new ObjectName(beanName);
     final MBeanServerConnection con = session.getConnection().getServerConnection();
-    final Output output;
+    final LineOutput output;
     if (report) {
-      output = new ReportOutput(session);
+      CommandOutput out = session.getOutput();
+      output = line -> out.println(line);
     } else {
-      output = new ConsoleOutput(session);
+      if (!(session.getInput() instanceof JlineCommandInput jlineInput)) {
+        throw new IllegalStateException("Under current context, watch command can't execute.");
+      }
+      LineReaderImpl console = jlineInput.getConsole();
+      output = line -> {
+        console.redrawLine();
+        console.getTerminal().writer().print(line);
+        console.flush();
+      };
       getSession().getOutput().printMessage("press any key to stop. DO NOT press Ctrl+C !!!");
     }
 
@@ -167,7 +147,7 @@ public class WatchCommand extends Command {
     }
   }
 
-  private void printValues(ObjectName beanName, MBeanServerConnection connection, Output output)
+  private void printValues(ObjectName beanName, MBeanServerConnection connection, LineOutput output)
       throws IOException {
     String result;
     if (outputFormat == null) {

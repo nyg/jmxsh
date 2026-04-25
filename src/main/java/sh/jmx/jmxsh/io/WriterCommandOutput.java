@@ -8,7 +8,7 @@ import java.util.Objects;
  * A command output that writes result and message to given writers
  *
  */
-public class WriterCommandOutput extends CommandOutput {
+public class WriterCommandOutput implements CommandOutput {
   private final Writer messageOutput;
 
   private final Writer resultOutput;

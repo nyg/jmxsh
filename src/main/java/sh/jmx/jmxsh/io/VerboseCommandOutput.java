@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
  * are immediately reflected.
  */
 @Slf4j
-public class VerboseCommandOutput extends CommandOutput {
+public class VerboseCommandOutput implements CommandOutput {
 
   private final CommandOutput output;
   private final Supplier<OutputMode> modeSupplier;

@@ -7,7 +7,7 @@ import java.util.Objects;
  * Implementation of CommandOutput where output is written in given PrintStream objects
  *
  */
-public class PrintStreamCommandOutput extends CommandOutput {
+public class PrintStreamCommandOutput implements CommandOutput {
   private final PrintStream messageOutput;
 
   private final PrintStream resultOutput;

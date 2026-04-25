@@ -11,7 +11,7 @@ import java.util.Objects;
  * Implementation of CommandInput with given File
  *
  */
-public class FileCommandInput extends CommandInput {
+public class FileCommandInput implements CommandInput {
   private final LineNumberReader in;
 
   /**

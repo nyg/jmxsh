@@ -8,7 +8,7 @@ import org.jline.reader.impl.LineReaderImpl;
  * Implementation of input that reads command from jloin console input
  *
  */
-public class JlineCommandInput extends CommandInput {
+public class JlineCommandInput implements CommandInput {
   private final LineReaderImpl console;
 
   private final String prompt;

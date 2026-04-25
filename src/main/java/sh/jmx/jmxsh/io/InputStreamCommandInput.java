@@ -11,7 +11,7 @@ import java.util.Objects;
  * Implementation of {@link CommandInput} with an input stream
  *
  */
-public class InputStreamCommandInput extends CommandInput {
+public class InputStreamCommandInput implements CommandInput {
   private final LineNumberReader reader;
 
   /** @param in Given input stream */

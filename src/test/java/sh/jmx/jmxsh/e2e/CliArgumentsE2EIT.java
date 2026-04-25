@@ -8,7 +8,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-/** End-to-end integration tests for jmxterm CLI argument handling. */
+/** End-to-end integration tests for jmxsh CLI argument handling. */
 class CliArgumentsE2EIT {
 
   private static final Duration TIMEOUT = Duration.ofSeconds(30);
@@ -29,10 +29,9 @@ class CliArgumentsE2EIT {
 
   @Test
   void testAutoConnect() throws Exception {
-    try (JmxshProcessHelper jmxterm =
-        new JmxshProcessHelper("-l", "localhost:" + targetJvm.getJmxPort())) {
-      jmxterm.sendCommandAndClose("domains", "quit");
-      String output = jmxterm.readAllOutput(TIMEOUT);
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper("-l", "localhost:" + targetJvm.getJmxPort())) {
+      jmxsh.sendCommandAndClose("domains", "quit");
+      String output = jmxsh.readAllOutput(TIMEOUT);
       assertThat(output)
           .as("Expected 'JMImplementation' domain in output: " + output)
           .contains("JMImplementation");
@@ -41,13 +40,13 @@ class CliArgumentsE2EIT {
 
   @Test
   void testSilentMode() throws Exception {
-    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper("-q")) {
-      jmxterm.sendCommandAndClose(
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper("-q")) {
+      jmxsh.sendCommandAndClose(
           "open localhost:" + targetJvm.getJmxPort(),
           "bean test:type=TestMBean",
           "get Name",
           "quit");
-      String output = jmxterm.readAllOutput(TIMEOUT);
+      String output = jmxsh.readAllOutput(TIMEOUT);
       // In silent mode, informational messages prefixed with "#" should not appear
       for (String line : output.split("\\R")) {
         assertThat(line)
@@ -61,27 +60,27 @@ class CliArgumentsE2EIT {
 
   @Test
   void testExitOnFailure() throws Exception {
-    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper("-e")) {
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper("-e")) {
       // Send a command that fails (getting an attribute without a connection)
-      jmxterm.sendCommandAndClose("get Name");
-      String output = jmxterm.readAllOutput(TIMEOUT);
-      int exitCode = jmxterm.getExitCode();
-      assertThat(exitCode).as("Expected non-zero exit code for failed command, output: " + output).isNotEqualTo(0);
+      jmxsh.sendCommandAndClose("get Name");
+      String output = jmxsh.readAllOutput(TIMEOUT);
+      int exitCode = jmxsh.getExitCode();
+      assertThat(exitCode).as("Expected non-zero exit code for failed command, output: " + output).isNotZero();
     }
   }
 
   @Test
   void testHelpFlag() throws Exception {
-    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper("-h")) {
-      String output = jmxterm.readAllOutput(TIMEOUT);
-      int exitCode = jmxterm.getExitCode();
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper("-h")) {
+      String output = jmxsh.readAllOutput(TIMEOUT);
+      int exitCode = jmxsh.getExitCode();
       assertThat(output)
           .as("Expected usage information in output: " + output)
           .satisfiesAnyOf(
               o -> assertThat(o).contains("usage"),
               o -> assertThat(o).contains("Usage"),
-              o -> assertThat(o).contains("jmxterm"));
-      assertThat(exitCode).as("Help flag should result in exit code 0").isEqualTo(0);
+              o -> assertThat(o).contains("jmxsh"));
+      assertThat(exitCode).as("Help flag should result in exit code 0").isZero();
     }
   }
 }

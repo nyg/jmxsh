@@ -21,11 +21,10 @@ class StartupErrorsE2EIT {
    */
   @Test
   void invalidOutputFileProducesCleanError() throws Exception {
-    try (JmxshProcessHelper jmxterm =
-        new JmxshProcessHelper("-o", "/nonexistent/dir/output.txt")) {
-      String output = jmxterm.readAllOutput(TIMEOUT);
-      int exitCode = jmxterm.getExitCode();
-      assertThat(exitCode).as("Invalid output file should produce non-zero exit code").isNotEqualTo(0);
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper("-o", "/nonexistent/dir/output.txt")) {
+      String output = jmxsh.readAllOutput(TIMEOUT);
+      int exitCode = jmxsh.getExitCode();
+      assertThat(exitCode).as("Invalid output file should produce non-zero exit code").isNotZero();
       assertThat(output).as("Error should be prefixed with '#'").contains("#");
       assertThat(output)
           .as("Output should not contain a raw JVM stack trace: " + output)
@@ -41,10 +40,10 @@ class StartupErrorsE2EIT {
   @Test
   void failedAutoConnectProducesCleanError() throws Exception {
     // Port 1 is reserved and will always refuse the connection.
-    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper("-l", "localhost:1")) {
-      String output = jmxterm.readAllOutput(TIMEOUT);
-      int exitCode = jmxterm.getExitCode();
-      assertThat(exitCode).as("Failed auto-connect should produce non-zero exit code").isNotEqualTo(0);
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper("-l", "localhost:1")) {
+      String output = jmxsh.readAllOutput(TIMEOUT);
+      int exitCode = jmxsh.getExitCode();
+      assertThat(exitCode).as("Failed auto-connect should produce non-zero exit code").isNotZero();
       assertThat(output).as("Error should be prefixed with '#'").contains("#");
       assertThat(output)
           .as("Output should not contain a raw JVM stack trace: " + output)

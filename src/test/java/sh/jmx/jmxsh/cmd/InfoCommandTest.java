@@ -1,9 +1,11 @@
 package sh.jmx.jmxsh.cmd;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.io.StringWriter;
 
 import javax.management.MBeanAttributeInfo;
@@ -13,25 +15,39 @@ import javax.management.MBeanParameterInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
-import sh.jmx.jmxsh.MockSession;
+import sh.jmx.jmxsh.Connection;
 import sh.jmx.jmxsh.Session;
+import sh.jmx.jmxsh.io.WriterCommandOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Test for {@link InfoCommand}
  *
  */
+@ExtendWith(MockitoExtension.class)
 class InfoCommandTest {
-  private InfoCommand command;
+  @Mock
+  private Session session;
+  @Mock
+  private Connection connection;
+  @Mock
+  private MBeanServerConnection con;
 
-  private StringWriter output;
+  private InfoCommand command;
+  private StringWriter writer;
 
   /** Set up objects to test */
   @BeforeEach
-  void setUp() {
+  void setUp() throws IOException {
     command = new InfoCommand();
-    output = new StringWriter();
+    writer = new StringWriter();
+    lenient().when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
+    lenient().when(session.getConnection()).thenReturn(connection);
+    lenient().when(connection.getServerConnection()).thenReturn(con);
   }
 
   /**
@@ -43,10 +59,8 @@ class InfoCommandTest {
   void executeWithShowingAttributes() throws Exception {
     command.setBean("a:type=x");
     command.setType("a");
-    MBeanServerConnection con = mock(MBeanServerConnection.class);
     MBeanInfo beanInfo = mock(MBeanInfo.class);
     MBeanAttributeInfo attributeInfo = mock(MBeanAttributeInfo.class);
-    Session session = new MockSession(output, con);
     when(con.getMBeanInfo(new ObjectName("a:type=x"))).thenReturn(beanInfo);
     when(beanInfo.getClassName()).thenReturn("bogus class");
     when(beanInfo.getAttributes()).thenReturn(new MBeanAttributeInfo[] {attributeInfo});
@@ -57,7 +71,7 @@ class InfoCommandTest {
     when(attributeInfo.getDescription()).thenReturn("bingo");
     command.setSession(session);
     command.execute();
-    assertThat(output.toString().trim())
+    assertThat(writer.toString().trim())
         .isEqualTo("# attributes" + System.lineSeparator() + "  %0   - b (int, r)");
   }
 
@@ -70,11 +84,9 @@ class InfoCommandTest {
   void executeWithShowingOperations() throws Exception {
     command.setBean("a:type=x");
     command.setType("o");
-    MBeanServerConnection con = mock(MBeanServerConnection.class);
     MBeanInfo beanInfo = mock(MBeanInfo.class);
     MBeanOperationInfo opInfo = mock(MBeanOperationInfo.class);
     MBeanParameterInfo paramInfo = mock(MBeanParameterInfo.class);
-    Session session = new MockSession(output, con);
     when(con.getMBeanInfo(new ObjectName("a:type=x"))).thenReturn(beanInfo);
     when(beanInfo.getClassName()).thenReturn("bogus class");
     when(beanInfo.getOperations()).thenReturn(new MBeanOperationInfo[] {opInfo});
@@ -87,7 +99,7 @@ class InfoCommandTest {
     when(opInfo.getName()).thenReturn("x");
     command.setSession(session);
     command.execute();
-    assertThat(output.toString().trim())
+    assertThat(writer.toString().trim())
         .isEqualTo(
             "# operations" + System.lineSeparator() + "  %0   - int x(java.lang.String a)");
   }
@@ -101,11 +113,9 @@ class InfoCommandTest {
   void executeWithShowingSpecificOperation() throws Exception {
     command.setBean("a:type=x");
     command.setOperation("x");
-    MBeanServerConnection con = mock(MBeanServerConnection.class);
     MBeanInfo beanInfo = mock(MBeanInfo.class);
     MBeanOperationInfo opInfo = mock(MBeanOperationInfo.class);
     MBeanParameterInfo paramInfo = mock(MBeanParameterInfo.class);
-    Session session = new MockSession(output, con);
     when(con.getMBeanInfo(new ObjectName("a:type=x"))).thenReturn(beanInfo);
     when(beanInfo.getClassName()).thenReturn("bogus class");
     when(beanInfo.getOperations()).thenReturn(new MBeanOperationInfo[] {opInfo});
@@ -124,7 +134,7 @@ class InfoCommandTest {
         .append(System.lineSeparator());
     result.append("             parameters:").append(System.lineSeparator());
     result.append("                 + myfakeparameter      : My param description");
-    assertThat(output.toString().trim()).isEqualTo(result.toString());
+    assertThat(writer.toString().trim()).isEqualTo(result.toString());
   }
 
   /**
@@ -136,17 +146,15 @@ class InfoCommandTest {
   void executeWithShowingNonExistingOperation() throws Exception {
     command.setBean("a:type=x");
     command.setOperation("y");
-    MBeanServerConnection con = mock(MBeanServerConnection.class);
     MBeanInfo beanInfo = mock(MBeanInfo.class);
     MBeanOperationInfo opInfo = mock(MBeanOperationInfo.class);
-    Session session = new MockSession(output, con);
     when(con.getMBeanInfo(new ObjectName("a:type=x"))).thenReturn(beanInfo);
     when(beanInfo.getClassName()).thenReturn("bogus class");
     when(beanInfo.getOperations()).thenReturn(new MBeanOperationInfo[] {opInfo});
     when(opInfo.getName()).thenReturn("x");
     command.setSession(session);
     command.execute();
-    assertThat(output.toString().trim()).isEqualTo("# operations");
+    assertThat(writer.toString().trim()).isEqualTo("# operations");
   }
 
   /**
@@ -158,13 +166,11 @@ class InfoCommandTest {
   void executeWithShowingMultipleMatchingOperations() throws Exception {
     command.setBean("a:type=x");
     command.setOperation("x");
-    MBeanServerConnection con = mock(MBeanServerConnection.class);
     MBeanInfo beanInfo = mock(MBeanInfo.class);
     MBeanOperationInfo opInfo1 = mock(MBeanOperationInfo.class);
     MBeanOperationInfo opInfo2 = mock(MBeanOperationInfo.class);
     MBeanParameterInfo paramInfo1 = mock(MBeanParameterInfo.class);
     MBeanParameterInfo paramInfo2 = mock(MBeanParameterInfo.class);
-    Session session = new MockSession(output, con);
     when(con.getMBeanInfo(new ObjectName("a:type=x"))).thenReturn(beanInfo);
     when(beanInfo.getClassName()).thenReturn("bogus class");
     when(beanInfo.getOperations()).thenReturn(new MBeanOperationInfo[] {opInfo1, opInfo2});
@@ -195,6 +201,6 @@ class InfoCommandTest {
     result.append("  %1   - void x(double b), pilou").append(System.lineSeparator());
     result.append("             parameters:").append(System.lineSeparator());
     result.append("                 + b                    : My param 2 description");
-    assertThat(output.toString().trim()).isEqualTo(result.toString());
+    assertThat(writer.toString().trim()).isEqualTo(result.toString());
   }
 }

@@ -2,7 +2,7 @@ package sh.jmx.jmxsh.cmd;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -22,10 +22,16 @@ import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.SimpleType;
 
-import sh.jmx.jmxsh.MockSession;
+import sh.jmx.jmxsh.Connection;
+import sh.jmx.jmxsh.Session;
+import sh.jmx.jmxsh.io.WriterCommandOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class GetCommandTest {
 
   private static String randomAlphabetic(int length) {
@@ -36,9 +42,24 @@ class GetCommandTest {
     return sb.toString();
   }
 
-  private GetCommand command;
+  @Mock
+  private Session session;
+  @Mock
+  private Connection connection;
+  @Mock
+  private MBeanServerConnection con;
 
-  private StringWriter output;
+  private GetCommand command;
+  private StringWriter writer;
+
+  @BeforeEach
+  void setUp() throws IOException {
+    command = new GetCommand();
+    writer = new StringWriter();
+    lenient().when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
+    lenient().when(session.getConnection()).thenReturn(connection);
+    lenient().when(connection.getServerConnection()).thenReturn(con);
+  }
 
   private void getAttributeAndVerify(
       String domain,
@@ -57,9 +78,8 @@ class GetCommandTest {
 
     String[] attributePath = attribute.split("\\.");
 
-    MBeanServerConnection con = mock(MBeanServerConnection.class);
-    MBeanInfo beanInfo = mock(MBeanInfo.class);
-    MBeanAttributeInfo attributeInfo = mock(MBeanAttributeInfo.class);
+    MBeanInfo beanInfo = org.mockito.Mockito.mock(MBeanInfo.class);
+    MBeanAttributeInfo attributeInfo = org.mockito.Mockito.mock(MBeanAttributeInfo.class);
     try {
       when(con.getDomains())
           .thenReturn(new String[] {domain, randomAlphabetic(5)});
@@ -70,7 +90,7 @@ class GetCommandTest {
       when(con.getAttribute(new ObjectName(expectedBean), attributePath[0]))
           .thenReturn(expectedValue);
 
-      command.setSession(new MockSession(output, con));
+      command.setSession(session);
       command.execute();
 
       Object nestedExpectedValue = expectedValue;
@@ -79,7 +99,7 @@ class GetCommandTest {
         nestedExpectedValue = support.get(attributePath[1]);
       }
 
-      assertThat(output.toString())
+      assertThat(writer.toString())
           .isEqualTo(
               nestedExpectedValue.toString()
                   + delimiter
@@ -89,13 +109,6 @@ class GetCommandTest {
     } catch (IOException e) {
       throw new RuntimeException("Test failed for unexpected IOException", e);
     }
-  }
-
-  /** Set up class to test */
-  @BeforeEach
-  void setUp() {
-    command = new GetCommand();
-    output = new StringWriter();
   }
 
   /** Test normal execution */
@@ -124,7 +137,7 @@ class GetCommandTest {
   void executeWithStrangeAttributeName() throws Exception {
     Map<String, Object> entries = new HashMap<>();
     entries.put("d", "bingo");
-    CompositeType compositeType = mock(CompositeType.class);
+    CompositeType compositeType = org.mockito.Mockito.mock(CompositeType.class);
     when(compositeType.keySet()).thenReturn(entries.keySet());
     doReturn(SimpleType.STRING).when(compositeType).getType("d");
     Object expectedValue = new CompositeDataSupport(compositeType, entries);

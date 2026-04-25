@@ -5,15 +5,17 @@ import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import sh.jmx.jmxsh.io.CommandInput;
 import sh.jmx.jmxsh.io.CommandOutput;
+import sh.jmx.jmxsh.io.OutputMode;
 import sh.jmx.jmxsh.io.UnimplementedCommandInput;
 import sh.jmx.jmxsh.io.VerboseCommandOutput;
-import sh.jmx.jmxsh.io.VerboseCommandOutputConfig;
-import sh.jmx.jmxsh.io.VerboseLevel;
 import sh.jmx.jmxsh.jdk9.JavaProcessManager;
 
 /**
@@ -21,31 +23,28 @@ import sh.jmx.jmxsh.jdk9.JavaProcessManager;
  * is NOT thread safe. The caller(CommandCenter) makes sure all calls are synchronized.
  *
  */
-public abstract class Session implements VerboseCommandOutputConfig {
+@Getter
+@Slf4j
+public class Session {
 
-  @Getter
+  private Connection connection;
   private String bean;
   private boolean closed;
-  @Getter
   private String domain;
-  @Getter
   private final CommandInput input;
   private final CommandOutput output;
-
-  @Getter
   private final JavaProcessManager processManager;
-
-  private VerboseLevel verboseLevel = VerboseLevel.BRIEF;
+  private OutputMode outputMode = OutputMode.BRIEF;
 
   /**
    * @param output Output destination
    * @param input Command line input
    * @param processManager Process manager
    */
-  protected Session(CommandOutput output, CommandInput input, JavaProcessManager processManager) {
+  public Session(CommandOutput output, CommandInput input, JavaProcessManager processManager) {
     Objects.requireNonNull(output, "Output can't be NULL");
     Objects.requireNonNull(processManager, "Process manager can't be NULL");
-    this.output = new VerboseCommandOutput(output, this);
+    this.output = new VerboseCommandOutput(output, () -> this.outputMode);
     this.input = input == null ? new UnimplementedCommandInput() : input;
     this.processManager = processManager;
   }
@@ -70,35 +69,62 @@ public abstract class Session implements VerboseCommandOutputConfig {
    * @param env Environment variables
    * @throws IOException allows IO exceptions.
    */
-  public abstract void connect(JMXServiceURL url, Map<String, Object> env) throws IOException;
+  public void connect(JMXServiceURL url, Map<String, Object> env) throws IOException {
+    Objects.requireNonNull(url, "URL can't be NULL");
+    if (connection != null) {
+      throw new IllegalStateException("Session is already opened");
+    }
+    log.info("connecting to {}", url);
+    JMXConnector connector = doConnect(url, env);
+    connection = new Connection(connector, url);
+    log.info("connected to {}", url);
+  }
 
   /**
    * Close JMX connector
    *
    * @throws IOException Thrown when connection can't be closed
    */
-  public abstract void disconnect() throws IOException;
-
-  /** @return Current open JMX server connection */
-  public abstract Connection getConnection();
-
-    /** @return Command output destination */
-  public final CommandOutput getOutput() {
-    return output;
+  public void disconnect() throws IOException {
+    if (connection == null) {
+      return;
+    }
+    log.info("disconnecting from JMX server");
+    try {
+      connection.close();
+    } finally {
+      connection = null;
+    }
   }
 
-    @Override
-  public VerboseLevel getVerboseLevel() {
-    return verboseLevel;
+  /**
+   * Connect to MBean server
+   *
+   * @param url MBean server URL
+   * @param env A map of environment
+   * @return Connector that holds connection to MBean server
+   * @throws IOException Network errors
+   */
+  protected JMXConnector doConnect(JMXServiceURL url, Map<String, Object> env) throws IOException {
+    return JMXConnectorFactory.connect(url, env);
   }
 
-  /** @return True if {@link #close()} has been called */
+  public Connection getConnection() {
+    if (connection == null) {
+      throw new IllegalStateException(
+          "Connection isn't open yet. Run open command to open a connection");
+    }
+    return connection;
+  }
+
   public final boolean isClosed() {
     return closed;
   }
 
   /** @return True if there's a open connection to JMX server */
-  public abstract boolean isConnected();
+  public boolean isConnected() {
+    return connection != null;
+  }
 
   /**
    * Set current selected bean
@@ -119,10 +145,10 @@ public abstract class Session implements VerboseCommandOutputConfig {
     this.domain = domain;
   }
 
-  /** @param verboseLevel Level of verbose */
-  public final void setVerboseLevel(VerboseLevel verboseLevel) {
-    Objects.requireNonNull(verboseLevel, "Verbose level can't be NULL");
-    this.verboseLevel = verboseLevel;
+  /** @param outputMode Output mode (BRIEF or SILENT) */
+  public final void setOutputMode(OutputMode outputMode) {
+    Objects.requireNonNull(outputMode, "Output mode can't be NULL");
+    this.outputMode = outputMode;
   }
 
   /** Set domain and bean to be NULL */

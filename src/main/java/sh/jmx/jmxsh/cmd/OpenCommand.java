@@ -55,7 +55,7 @@ public class OpenCommand extends Command {
         session.getOutput().printMessage("not connected");
         session.getOutput().println(SyntaxUtils.NULL);
       } else {
-        session.getOutput().println("%s,%s".formatted(con.getConnectorId(), con.getUrl()));
+        session.getOutput().println("%s,%s".formatted(con.getConnectorId(), con.url()));
       }
       return;
     }

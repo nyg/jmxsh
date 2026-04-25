@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * End-to-end integration tests that launch jmxterm as a separate OS process, connect to a target
+ * End-to-end integration tests that launch jmxsh as a separate OS process, connect to a target
  * JVM, and verify command output.
  */
 class ScriptExecutionE2EIT {
@@ -32,10 +32,10 @@ class ScriptExecutionE2EIT {
 
   @Test
   void testBasicCommandExecution() throws Exception {
-    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
-      jmxterm.sendCommandAndClose(
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper()) {
+      jmxsh.sendCommandAndClose(
           "open localhost:" + targetJvm.getJmxPort(), "domains", "quit");
-      String output = jmxterm.readAllOutput(TIMEOUT);
+      String output = jmxsh.readAllOutput(TIMEOUT);
       // The platform MBeanServer always exposes the JMImplementation domain
       assertThat(output)
           .as("Expected 'JMImplementation' domain in output: " + output)
@@ -45,41 +45,41 @@ class ScriptExecutionE2EIT {
 
   @Test
   void testGetAttribute() throws Exception {
-    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
-      jmxterm.sendCommandAndClose(
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper()) {
+      jmxsh.sendCommandAndClose(
           "open localhost:" + targetJvm.getJmxPort(),
           "bean test:type=TestMBean",
           "run reset",
           "get Name",
           "quit");
-      String output = jmxterm.readAllOutput(TIMEOUT);
+      String output = jmxsh.readAllOutput(TIMEOUT);
       assertThat(output).as("Expected 'default' in output: " + output).contains("default");
     }
   }
 
   @Test
   void testSetAndGetAttribute() throws Exception {
-    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
-      jmxterm.sendCommandAndClose(
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper()) {
+      jmxsh.sendCommandAndClose(
           "open localhost:" + targetJvm.getJmxPort(),
           "bean test:type=TestMBean",
           "set Name hello",
           "get Name",
           "quit");
-      String output = jmxterm.readAllOutput(TIMEOUT);
+      String output = jmxsh.readAllOutput(TIMEOUT);
       assertThat(output).as("Expected 'hello' in output: " + output).contains("hello");
     }
   }
 
   @Test
   void testRunOperation() throws Exception {
-    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
-      jmxterm.sendCommandAndClose(
+    try (JmxshProcessHelper jmxsh = new JmxshProcessHelper()) {
+      jmxsh.sendCommandAndClose(
           "open localhost:" + targetJvm.getJmxPort(),
           "bean test:type=TestMBean",
           "run echo world",
           "quit");
-      String output = jmxterm.readAllOutput(TIMEOUT);
+      String output = jmxsh.readAllOutput(TIMEOUT);
       assertThat(output).as("Expected 'echo:world' in output: " + output).contains("echo:world");
     }
   }

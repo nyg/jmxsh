@@ -3,8 +3,9 @@ package sh.jmx.jmxsh.cmd;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -13,29 +14,48 @@ import javax.management.JMException;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
-import sh.jmx.jmxsh.MockSession;
+import sh.jmx.jmxsh.Connection;
+import sh.jmx.jmxsh.Session;
+import sh.jmx.jmxsh.io.WriterCommandOutput;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Test case for {@link BeanCommand}
  *
  */
+@ExtendWith(MockitoExtension.class)
 class BeanCommandTest {
-  private final BeanCommand command = new BeanCommand();
+  @Mock
+  private Session session;
+  @Mock
+  private Connection connection;
+  @Mock
+  private MBeanServerConnection con;
 
-  private final StringWriter output = new StringWriter();
+  private final BeanCommand command = new BeanCommand();
+  private StringWriter writer;
+
+  @BeforeEach
+  void setUp() throws IOException {
+    writer = new StringWriter();
+    lenient().when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
+    lenient().when(session.getConnection()).thenReturn(connection);
+    lenient().when(connection.getServerConnection()).thenReturn(con);
+  }
 
   private void setBeanAndVerify(String beanName, String domainName, String expectedBean)
       throws IOException, JMException {
-    MBeanServerConnection con = mock(MBeanServerConnection.class);
     command.setBean(beanName);
-    MockSession s = new MockSession(output, con);
     if (domainName != null) {
-      s.setDomain(domainName);
+      when(session.getDomain()).thenReturn(domainName);
     }
-    command.setSession(s);
+    command.setSession(session);
     command.execute();
-    assertThat(s.getBean()).isEqualTo(expectedBean);
+    verify(session).setBean(expectedBean);
     verify(con, atLeastOnce()).getMBeanInfo(new ObjectName(expectedBean));
   }
 
@@ -47,9 +67,9 @@ class BeanCommandTest {
    */
   @Test
   void executeWithGettingNull() throws Exception {
-    command.setSession(new MockSession(output, null));
+    command.setSession(session);
     command.execute();
-    assertThat(output.toString().trim()).isEqualTo("null");
+    assertThat(writer.toString().trim()).isEqualTo("null");
   }
 
   /**
@@ -60,11 +80,10 @@ class BeanCommandTest {
    */
   @Test
   void executeWithGettingSomething() throws Exception {
-    MockSession s = new MockSession(output, null);
-    s.setBean("something");
-    command.setSession(s);
+    when(session.getBean()).thenReturn("something");
+    command.setSession(session);
     command.execute();
-    assertThat(output.toString().trim()).isEqualTo("something");
+    assertThat(writer.toString().trim()).isEqualTo("something");
   }
 
   /**
@@ -76,12 +95,12 @@ class BeanCommandTest {
   @Test
   void executeWithInvalidBean() throws Exception {
     command.setBean("blablabla");
-    command.setSession(new MockSession(output, null));
+    command.setSession(session);
     assertThatThrownBy(() -> command.execute()).isInstanceOf(IllegalArgumentException.class);
   }
 
   /**
-   * Test the case where NULL is get
+   * Test the case where NULL is set
    *
    * @throws IOException Allows network IO errors
    * @throws JMException Allows JMX exceptions
@@ -89,11 +108,9 @@ class BeanCommandTest {
   @Test
   void executeWithSettingNull() throws Exception {
     command.setBean("null");
-    MockSession s = new MockSession(output, null);
-    s.setBean("something");
-    command.setSession(s);
+    command.setSession(session);
     command.execute();
-    assertThat(s.getBean()).isNull();
+    verify(session).setBean(null);
   }
 
   /**

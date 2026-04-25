@@ -2,6 +2,7 @@ package sh.jmx.jmxsh.cc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,25 +14,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import sh.jmx.jmxsh.MockSession;
 import sh.jmx.jmxsh.SelfRecordingCommand;
+import sh.jmx.jmxsh.Session;
+import sh.jmx.jmxsh.io.WriterCommandOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Test case for {@link HelpCommand}
  *
  */
+@ExtendWith(MockitoExtension.class)
 class HelpCommandTest {
-  private HelpCommand command;
+  @Mock
+  private Session session;
 
-  private StringWriter output;
+  private HelpCommand command;
+  private StringWriter writer;
 
   /** Set up objects to test */
   @BeforeEach
   void setUp() {
     command = new HelpCommand();
-    output = new StringWriter();
+    writer = new StringWriter();
+    lenient().when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
   }
 
   /**
@@ -50,7 +59,7 @@ class HelpCommandTest {
     doReturn(SelfRecordingCommand.class).when(cc).getCommandType("b");
     doReturn(new SelfRecordingCommand(new ArrayList<>())).when(cc).createCommand("a");
     doReturn(new SelfRecordingCommand(new ArrayList<>())).when(cc).createCommand("b");
-    command.setSession(new MockSession(output, null));
+    command.setSession(session);
     command.execute();
     verify(cc).getCommandType("a");
     verify(cc).getCommandType("b");
@@ -66,13 +75,11 @@ class HelpCommandTest {
     CommandCenter cc = mock(CommandCenter.class);
     command.setCommandCenter(cc);
     when(cc.getCommandNames()).thenReturn(new HashSet<String>(Arrays.asList("a", "b")));
-    doReturn(SelfRecordingCommand.class).when(cc).getCommandType("a");
-    doReturn(SelfRecordingCommand.class).when(cc).getCommandType("b");
     doReturn(new SelfRecordingCommand(new ArrayList<>())).when(cc).createCommand("a");
     doReturn(new SelfRecordingCommand(new ArrayList<>())).when(cc).createCommand("b");
-    command.setSession(new MockSession(output, null));
+    command.setSession(session);
     command.execute();
-    assertThat(output.toString().trim())
+    assertThat(writer.toString().trim())
         .isEqualTo("a        - desc" + System.lineSeparator() + "b        - desc");
   }
 }

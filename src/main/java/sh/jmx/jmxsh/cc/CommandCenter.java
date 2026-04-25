@@ -20,7 +20,7 @@ import sh.jmx.jmxsh.Session;
 import sh.jmx.jmxsh.io.CommandInput;
 import sh.jmx.jmxsh.io.CommandOutput;
 import sh.jmx.jmxsh.io.RuntimeIOException;
-import sh.jmx.jmxsh.io.VerboseLevel;
+import sh.jmx.jmxsh.io.OutputMode;
 import sh.jmx.jmxsh.jdk9.JavaProcessManager;
 import sh.jmx.jmxsh.utils.EscapingTokenizer;
 
@@ -68,7 +68,7 @@ public class CommandCenter {
     Objects.requireNonNull(output, "Output can't be NULL");
     Objects.requireNonNull(commandFactory, "Command factory can't be NULL");
     this.processManager = new JavaProcessManager();
-    this.session = new SessionImpl(output, input, processManager);
+    this.session = new Session(output, input, processManager);
     this.commandFactory = commandFactory;
   }
 
@@ -207,8 +207,8 @@ public class CommandCenter {
     return session.isClosed();
   }
 
-  /** @param verboseLevel New verbose level value */
-  public void setVerboseLevel(VerboseLevel verboseLevel) {
-    session.setVerboseLevel(verboseLevel);
+  /** @param outputMode New output mode */
+  public void setOutputMode(OutputMode outputMode) {
+    session.setOutputMode(outputMode);
   }
 }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,27 +20,41 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
-import sh.jmx.jmxsh.MockSession;
+import sh.jmx.jmxsh.Connection;
+import sh.jmx.jmxsh.Session;
+import sh.jmx.jmxsh.io.WriterCommandOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class SetCommandTest {
-  private SetCommand command;
+  @Mock
+  private Session session;
+  @Mock
+  private Connection connection;
+  @Mock
+  private MBeanServerConnection con;
 
-  private StringWriter output;
+  private SetCommand command;
+  private StringWriter writer;
 
   /** Set up objects to test */
   @BeforeEach
-  void setUp() {
+  void setUp() throws IOException {
     command = new SetCommand();
-    output = new StringWriter();
+    writer = new StringWriter();
+    lenient().when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
+    lenient().when(session.getConnection()).thenReturn(connection);
+    lenient().when(connection.getServerConnection()).thenReturn(con);
   }
 
   private void setValueAndVerify(String expr, String type, Object expected) {
     command.setBean("a:type=x");
     command.setArguments(Arrays.asList("var", expr));
 
-    MBeanServerConnection con = mock(MBeanServerConnection.class);
     MBeanInfo beanInfo = mock(MBeanInfo.class);
     MBeanAttributeInfo attributeInfo = mock(MBeanAttributeInfo.class);
     AtomicReference<Attribute> setAttribute = new AtomicReference<>();
@@ -54,7 +69,7 @@ class SetCommandTest {
         return null;
       }).when(con).setAttribute(eq(new ObjectName("a:type=x")), any(Attribute.class));
 
-      command.setSession(new MockSession(output, con));
+      command.setSession(session);
       command.execute();
     } catch (IOException | JMException e) {
       throw new RuntimeException(e);

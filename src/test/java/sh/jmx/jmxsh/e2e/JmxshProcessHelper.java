@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -37,9 +38,7 @@ public class JmxshProcessHelper implements AutoCloseable {
     command.add("-jar");
     command.add(uberJar.toAbsolutePath().toString());
     command.add("-n");
-    for (String arg : extraArgs) {
-      command.add(arg);
-    }
+    Collections.addAll(command, extraArgs);
 
     ProcessBuilder pb = new ProcessBuilder(command);
     pb.redirectErrorStream(true);
@@ -47,7 +46,7 @@ public class JmxshProcessHelper implements AutoCloseable {
   }
 
   /**
-   * Sends a single command to jmxterm's stdin.
+   * Sends a single command to jmxsh's stdin.
    *
    * @param command the command string (without newline)
    * @throws IOException if writing fails

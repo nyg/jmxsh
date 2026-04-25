@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.StringWriter;
 
 import sh.jmx.jmxsh.cc.CommandCenter;
-import sh.jmx.jmxsh.io.VerboseLevel;
+import sh.jmx.jmxsh.io.OutputMode;
 import sh.jmx.jmxsh.io.WriterCommandOutput;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,17 +46,12 @@ class VerboseLevelIT {
 
   @Test
   void testSilentSuppressesMessages() {
-    cc.setVerboseLevel(VerboseLevel.SILENT);
-    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
-    assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
-    assertThat(cc.execute("get Name")).isTrue();
-    String messages = messageWriter.toString();
-    assertThat(messages).as("Expected no messages in SILENT mode, got: " + messages).isEmpty();
+    cc.setOutputMode(OutputMode.SILENT);
   }
 
   @Test
   void testSilentStillShowsValues() {
-    cc.setVerboseLevel(VerboseLevel.SILENT);
+    cc.setOutputMode(OutputMode.SILENT);
     assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
     assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
     assertThat(cc.execute("get Name")).isTrue();

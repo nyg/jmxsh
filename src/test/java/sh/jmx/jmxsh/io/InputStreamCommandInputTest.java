@@ -7,10 +7,6 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-/**
- * Unit test case for class {@link InputStreamCommandInput}
- *
- */
 class InputStreamCommandInputTest {
   /**
    * Read from string line by line and verify result

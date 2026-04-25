@@ -44,7 +44,7 @@ public class CliMain {
 
   private static final String COMMAND_PROMPT = "$> ";
 
-  public static void main(String[] args) {
+  static void main(String[] args) {
     try {
       System.exit(new CliMain().execute(args));
     } catch (Exception e) {

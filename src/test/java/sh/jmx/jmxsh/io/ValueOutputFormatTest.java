@@ -5,14 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-/**
- * Test case for {@link ValueOutputFormat}
- *
- */
 class ValueOutputFormatTest {
   /** Print out expression and verify output */
   @Test
@@ -29,8 +26,8 @@ class ValueOutputFormatTest {
   void printList() {
     ValueOutputFormat f = new ValueOutputFormat();
     StringWriter out = new StringWriter();
-    f.printValue(new WriterCommandOutput(out), Arrays.asList("abc", "xyz"));
-    assertThat(out.toString()).isEqualTo("( \"abc\", \"xyz\" )");
+    f.printValue(new WriterCommandOutput(out), List.of("abc", "xyz"));
+    assertThat(out).hasToString("( \"abc\", \"xyz\" )");
   }
 
   /** Print out a map and verify output */

@@ -74,27 +74,48 @@ class CommandCenterTest {
 
   @Test
   void multipleArguments() {
-    runCommandAndVerifyArguments("test a b c d", Arrays.asList("a", "b", "c", "d"));
+    runCommandAndVerifyArguments("test a b c d", List.of("a", "b", "c", "d"));
   }
 
   @Test
   void multipleEscapedArguments() {
-    runCommandAndVerifyArguments("test a\\ \\ b \\-3\\ ,4", Arrays.asList("a  b", "-3 ,4"));
+    runCommandAndVerifyArguments("test a\\ \\ b \\-3\\ ,4", List.of("a  b", "-3 ,4"));
   }
 
   @Test
   void singleArgumentWithEscape() {
-    runCommandAndVerifyArguments("test \\-1", Arrays.asList("-1"));
+    runCommandAndVerifyArguments("test \\-1", List.of("-1"));
   }
 
   @Test
   void singleArgumentWithSpace() {
-    runCommandAndVerifyArguments("test a\\ b\\ c\\ d", Arrays.asList("a b c d"));
+    runCommandAndVerifyArguments("test a\\ b\\ c\\ d", List.of("a b c d"));
   }
 
   @Test
   void singleSimpleArgument() {
-    runCommandAndVerifyArguments("test 1", Arrays.asList("1"));
+    runCommandAndVerifyArguments("test 1", List.of("1"));
+  }
+
+  @Test
+  void singleQuotedArgument() {
+    runCommandAndVerifyArguments("test 'hello world'", List.of("hello world"));
+  }
+
+  @Test
+  void doubleQuotedArgument() {
+    runCommandAndVerifyArguments("test \"hello world\"", List.of("hello world"));
+  }
+
+  @Test
+  void quotedArgumentMixedWithUnquoted() {
+    runCommandAndVerifyArguments("test a 'b c' d", List.of("a", "b c", "d"));
+  }
+
+  @Test
+  void unclosedQuoteReturnsError() {
+    boolean result = cc.execute("test 'unclosed");
+    assertThat(result).isFalse();
   }
 
   @Test
@@ -106,7 +127,7 @@ class CommandCenterTest {
     final String s5 = "a \\#b c #".split(ESCAPE_CHAR_REGEX)[0];
     final String s6 = "a #b c \\# something".split(ESCAPE_CHAR_REGEX)[0];
 
-    assertThat(s1).isEqualTo("");
+    assertThat(s1).isEmpty();
     assertThat(s2).isEqualTo("a b c");
     assertThat(s3).isEqualTo("a ");
     assertThat(s4).isEqualTo("a ");

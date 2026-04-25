@@ -23,7 +23,6 @@ and dependency graph. Items are organized by category. Each item is labeled with
 ## Testing
 
 - 🟡 **Add test coverage reporting (JaCoCo)** — No coverage tool is configured. Add `jacoco-maven-plugin` to generate reports and optionally enforce minimum coverage thresholds.
-- 🟢 **Address existing TODO in `WatchCommand`** — Line 28: `TODO Consider the use case for CSV file backend generation`. Decide whether to implement or remove the comment.
 
 ## Legacy
 
@@ -35,7 +34,6 @@ and dependency graph. Items are organized by category. Each item is labeled with
 ### Legacy Architecture
 
 - 🟠 **Mutable static listener registry + memory leak in `SubscribeCommand`** — `listeners` is a public mutable static `ConcurrentHashMap` shared across all command instances, coupling `SubscribeCommand` and `UnsubscribeCommand` through global state. Worse: `BeanNotificationListener` is a non-static inner class that holds an implicit reference to its outer `SubscribeCommand` instance. Every registered listener permanently roots that instance (and through it, the `Session`, `Connection`, and `CommandCenter`) preventing garbage collection — a structural memory leak. (`cmd/SubscribeCommand.java`, `cmd/UnsubscribeCommand.java`)
-- 🟡 **Hand-rolled command tokenizer** — `EscapingTokenizer` is a custom regex-and-loop parser; `CommandCenter` splits on delimiters manually. This brittle plumbing predates mature tokenizer libraries and could be simplified or replaced. (`utils/EscapingTokenizer.java`, `cc/CommandCenter.java`)
 - 🟡 **`Runtime.getRuntime().addShutdownHook(new Thread(...))` pattern** — Registering an anonymous `Thread` as a shutdown hook is the pre-virtual-thread way to handle teardown. (`boot/CliMain.java`)
 - 🟡 **Raw `synchronized` locking around session state** — `CommandCenter` guards mutable session state with a raw lock object. `java.util.concurrent.locks.ReentrantLock` provides equivalent semantics with better observability and more flexible lock/unlock control. (`cc/CommandCenter.java`)
 

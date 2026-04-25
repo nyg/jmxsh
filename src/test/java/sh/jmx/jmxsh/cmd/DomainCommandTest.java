@@ -50,7 +50,7 @@ class DomainCommandTest {
 
   /** Set up command to test */
   @BeforeEach
-  void setUp() throws IOException {
+  void setUp() {
     command = new DomainCommand();
     writer = new StringWriter();
     lenient().when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));

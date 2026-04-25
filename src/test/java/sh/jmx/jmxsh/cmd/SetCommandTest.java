@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.Attribute;
@@ -53,7 +54,7 @@ class SetCommandTest {
 
   private void setValueAndVerify(String expr, String type, Object expected) {
     command.setBean("a:type=x");
-    command.setArguments(Arrays.asList("var", expr));
+    command.setArguments(List.of("var", expr));
 
     MBeanInfo beanInfo = mock(MBeanInfo.class);
     MBeanAttributeInfo attributeInfo = mock(MBeanAttributeInfo.class);

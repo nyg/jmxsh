@@ -27,8 +27,7 @@ import picocli.CommandLine.Parameters;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Command to watch an MBean attribute TODO Consider the use case for CSV file backend generation
- *
+ * Command to watch an MBean attribute.
  */
 @CommandLine.Command(
     name = "watch",

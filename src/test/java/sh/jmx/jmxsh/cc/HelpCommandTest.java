@@ -12,6 +12,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import sh.jmx.jmxsh.SelfRecordingCommand;
 import sh.jmx.jmxsh.Session;
@@ -22,10 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-/**
- * Test case for {@link HelpCommand}
- *
- */
 @ExtendWith(MockitoExtension.class)
 class HelpCommandTest {
   @Mock
@@ -50,11 +47,11 @@ class HelpCommandTest {
    */
   @Test
   void executeWithOption() throws Exception {
-    command.setArgNames(Arrays.asList("a", "b"));
+    command.setArgNames(List.of("a", "b"));
     CommandCenter cc = mock(CommandCenter.class);
     command.setCommandCenter(cc);
 
-    when(cc.getCommandNames()).thenReturn(new HashSet<String>(Arrays.asList("a", "b")));
+    when(cc.getCommandNames()).thenReturn(new HashSet<>(List.of("a", "b")));
     doReturn(new SelfRecordingCommand(new ArrayList<>())).when(cc).createCommand("a");
     doReturn(new SelfRecordingCommand(new ArrayList<>())).when(cc).createCommand("b");
     command.setSession(session);
@@ -70,7 +67,7 @@ class HelpCommandTest {
   void executeWithoutOption() throws Exception {
     CommandCenter cc = mock(CommandCenter.class);
     command.setCommandCenter(cc);
-    when(cc.getCommandNames()).thenReturn(new HashSet<String>(Arrays.asList("a", "b")));
+    when(cc.getCommandNames()).thenReturn(new HashSet<>(List.of("a", "b")));
     doReturn(new SelfRecordingCommand(new ArrayList<>())).when(cc).createCommand("a");
     doReturn(new SelfRecordingCommand(new ArrayList<>())).when(cc).createCommand("b");
     command.setSession(session);

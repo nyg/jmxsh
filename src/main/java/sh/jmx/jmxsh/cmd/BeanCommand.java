@@ -52,7 +52,7 @@ public class BeanCommand extends Command {
       return null;
     }
     MBeanServerConnection con = session.getConnection().getServerConnection();
-    if (bean.indexOf(':') != -1) {
+    if (bean.contains(":")) {
       try {
         ObjectName name = new ObjectName(bean);
         con.getMBeanInfo(name);

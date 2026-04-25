@@ -32,7 +32,7 @@ class JmxmpConnectionE2EIT {
 
   @Test
   void testOpenWithJmxmpShorthand() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper()) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
       jmxterm.sendCommandAndClose(
           "open jmxmp://localhost:" + targetJvm.getJmxmpPort(), "domains", "quit");
       String output = jmxterm.readAllOutput(TIMEOUT);
@@ -44,7 +44,7 @@ class JmxmpConnectionE2EIT {
 
   @Test
   void testOpenWithFullJmxmpServiceUrl() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper()) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
       jmxterm.sendCommandAndClose(
           "open service:jmx:jmxmp://localhost:" + targetJvm.getJmxmpPort(), "domains", "quit");
       String output = jmxterm.readAllOutput(TIMEOUT);
@@ -56,7 +56,7 @@ class JmxmpConnectionE2EIT {
 
   @Test
   void testGetAttributeOverJmxmp() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper()) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
       jmxterm.sendCommandAndClose(
           "open jmxmp://localhost:" + targetJvm.getJmxmpPort(),
           "bean test:type=TestMBean",
@@ -70,7 +70,7 @@ class JmxmpConnectionE2EIT {
 
   @Test
   void testRunOperationOverJmxmp() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper()) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper()) {
       jmxterm.sendCommandAndClose(
           "open jmxmp://localhost:" + targetJvm.getJmxmpPort(),
           "bean test:type=TestMBean",

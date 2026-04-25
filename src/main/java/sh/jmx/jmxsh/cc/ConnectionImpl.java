@@ -1,15 +1,11 @@
 package sh.jmx.jmxsh.cc;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXServiceURL;
-
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import sh.jmx.jmxsh.Connection;
 
@@ -17,22 +13,18 @@ import sh.jmx.jmxsh.Connection;
  * Identifies a JMX connection
  *
  */
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-class ConnectionImpl implements Connection {
+record ConnectionImpl(JMXConnector connector, JMXServiceURL url) implements Connection {
 
-  @Getter
-  @NonNull
-  private final JMXConnector connector;
+  ConnectionImpl {
+    Objects.requireNonNull(connector, "connector");
+    Objects.requireNonNull(url, "url");
+  }
 
-  @Getter
-  @NonNull
-  private final JMXServiceURL url;
+  @Override
+  public JMXServiceURL getUrl() {
+    return url;
+  }
 
-  /**
-   * Close current connection
-   *
-   * @throws IOException Communication error
-   */
   void close() throws IOException {
     connector.close();
   }

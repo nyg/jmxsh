@@ -104,7 +104,7 @@ public class CommandCenter {
         command.split(ESCAPE_CHAR_REGEX)[0] // take out all commented out sections
             .replace("\\#", "#"); // fix escaped to non-escaped comment charaters
     // If command includes multiple segments, call them one by one using recursive call
-    if (command.indexOf(COMMAND_DELIMITER) != -1) {
+    if (command.contains(COMMAND_DELIMITER)) {
       String[] commands = command.split(COMMAND_DELIMITER);
       for (String c : commands) {
         execute(c);
@@ -116,7 +116,7 @@ public class CommandCenter {
     final List<String> args = new ArrayList<>(EscapingTokenizer.tokenize(command));
     String commandName = args.remove(0);
     // Leave the rest of arguments for command
-    String[] commandArgs = args.toArray(new String[0]);
+    String[] commandArgs = args.toArray(String[]::new);
     // Call command with parsed command name and arguments
     try {
       doExecute(commandName, commandArgs);

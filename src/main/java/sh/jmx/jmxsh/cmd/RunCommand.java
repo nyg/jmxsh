@@ -1,7 +1,6 @@
 package sh.jmx.jmxsh.cmd;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -57,11 +56,7 @@ public class RunCommand extends Command {
               .getServerConnection()
               .getMBeanInfo(new ObjectName(session.getBean()));
       MBeanOperationInfo[] operationInfos = info.getOperations();
-      List<String> ops = new ArrayList<>(operationInfos.length);
-      for (MBeanOperationInfo op : operationInfos) {
-        ops.add(op.getName());
-      }
-      return ops;
+      return Arrays.stream(operationInfos).map(MBeanOperationInfo::getName).toList();
     }
     return null;
   }
@@ -158,11 +153,11 @@ public class RunCommand extends Command {
     // Invoke operation, record execution time if measure flag is on
     Object result;
     if (measure) {
-      long start = System.currentTimeMillis();
+      long start = System.nanoTime();
       try {
         result = con.invoke(name, operationName, params, signatures);
       } finally {
-        long latency = System.currentTimeMillis() - start;
+        long latency = (System.nanoTime() - start) / 1_000_000;
         session.getOutput().printMessage(latency + "ms is taken by invocation");
       }
     } else {

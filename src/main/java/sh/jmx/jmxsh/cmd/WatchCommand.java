@@ -1,13 +1,14 @@
 package sh.jmx.jmxsh.cmd;
 
 import java.io.IOException;
-import java.text.MessageFormat;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
@@ -89,12 +90,10 @@ public class WatchCommand extends Command {
       MBeanServerConnection con = getSession().getConnection().getServerConnection();
       MBeanAttributeInfo[] ais =
           con.getMBeanInfo(new ObjectName(getSession().getBean())).getAttributes();
-      List<String> results = new ArrayList<>(ais.length);
-      for (MBeanAttributeInfo ai : ais) {
-        results.add(ai.getName());
-      }
-      results.add(BUILDING_ATTRIBUTE_NOW);
-      return results;
+      return Stream.concat(
+              Arrays.stream(ais).map(MBeanAttributeInfo::getName),
+              Stream.of(BUILDING_ATTRIBUTE_NOW))
+          .toList();
     }
     return null;
   }
@@ -158,9 +157,9 @@ public class WatchCommand extends Command {
   private Object getAttributeValue(
       ObjectName beanName, String attributeName, MBeanServerConnection connection)
       throws IOException {
-    // $now is a reserved keyword for current java.util.Date
+    // %now is a reserved keyword for current instant
     if (BUILDING_ATTRIBUTE_NOW.equals(attributeName)) {
-      return new Date();
+      return Instant.now();
     }
     try {
       return connection.getAttribute(beanName, attributeName);
@@ -190,7 +189,7 @@ public class WatchCommand extends Command {
       for (String attributeNamne : attributes) {
         values[i++] = getAttributeValue(beanName, attributeNamne, connection);
       }
-      result = new MessageFormat(outputFormat).format(values);
+      result = outputFormat.formatted(values);
     }
     output.printLine(result);
   }
@@ -201,11 +200,11 @@ public class WatchCommand extends Command {
     this.attributes = attributes;
   }
 
-  /** @param outputFormat Pattern used in {@link MessageFormat} */
+  /** @param outputFormat printf-style format string to print attribute values */
   @Option(
       names = {"-f", "--format"},
       paramLabel = "expr",
-      description = "Java pattern(java.text.MessageFormat) to print attribute values")
+      description = "printf-style format string (e.g. '%s %s') to print attribute values")
   public final void setOutputFormat(String outputFormat) {
     this.outputFormat = outputFormat;
   }

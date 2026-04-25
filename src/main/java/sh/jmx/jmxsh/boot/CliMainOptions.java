@@ -1,6 +1,7 @@
 package sh.jmx.jmxsh.boot;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 
 import lombok.Getter;
@@ -13,8 +14,8 @@ import picocli.CommandLine.Option;
  *
  */
 @Command(
-    name = "jmxterm",
-    description = "Main executable of JMX terminal CLI tool",
+    name = "jmxsh",
+    description = "Interactive JMX shell",
     mixinStandardHelpOptions = false,
     versionProvider = VersionProvider.class,
     footer = {
@@ -74,7 +75,7 @@ public class CliMainOptions {
           "Input script file. There can only be one input file. \"stdin\" is the default value which means console input")
   public final void setInput(String file) {
     Objects.requireNonNull(file, "Input file can't be NULL");
-    if (!new File(file).isFile()) {
+    if (!Files.isRegularFile(Path.of(file))) {
       throw new IllegalArgumentException("File " + file + " doesn't exist");
     }
     this.input = file;
@@ -84,7 +85,7 @@ public class CliMainOptions {
   @Option(
       names = {"-n", "--noninteract"},
       description =
-          "Non interactive mode. Use this mode if input doesn't come from human or jmxterm is embedded")
+          "Non interactive mode. Use this mode if input doesn't come from human or jmxsh is embedded")
   public final void setNonInteractive(boolean nonInteractive) {
     this.nonInteractive = nonInteractive;
   }

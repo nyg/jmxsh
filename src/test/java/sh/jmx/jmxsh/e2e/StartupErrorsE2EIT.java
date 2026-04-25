@@ -21,8 +21,8 @@ class StartupErrorsE2EIT {
    */
   @Test
   void invalidOutputFileProducesCleanError() throws Exception {
-    try (JmxTermProcessHelper jmxterm =
-        new JmxTermProcessHelper("-o", "/nonexistent/dir/output.txt")) {
+    try (JmxshProcessHelper jmxterm =
+        new JmxshProcessHelper("-o", "/nonexistent/dir/output.txt")) {
       String output = jmxterm.readAllOutput(TIMEOUT);
       int exitCode = jmxterm.getExitCode();
       assertThat(exitCode).as("Invalid output file should produce non-zero exit code").isNotEqualTo(0);
@@ -41,7 +41,7 @@ class StartupErrorsE2EIT {
   @Test
   void failedAutoConnectProducesCleanError() throws Exception {
     // Port 1 is reserved and will always refuse the connection.
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper("-l", "localhost:1")) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper("-l", "localhost:1")) {
       String output = jmxterm.readAllOutput(TIMEOUT);
       int exitCode = jmxterm.getExitCode();
       assertThat(exitCode).as("Failed auto-connect should produce non-zero exit code").isNotEqualTo(0);

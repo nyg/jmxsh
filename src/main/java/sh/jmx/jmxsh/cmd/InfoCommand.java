@@ -64,8 +64,7 @@ public class InfoCommand extends Command {
     for (MBeanAttributeInfo attr : infos) {
       String rw = (attr.isReadable() ? "r" : "") + (attr.isWritable() ? "w" : "");
       session.getOutput().println(
-          String.format(
-              "  %%%-3d - %s (%s, %s)" + (showDescription ? ", %s" : ""),
+          ("  %%%-3d - %s (%s, %s)" + (showDescription ? ", %s" : "")).formatted(
               index++,
               attr.getName(),
               attr.getType(),
@@ -85,8 +84,7 @@ public class InfoCommand extends Command {
     session.getOutput().println(TEXT_NOTIFICATIONS);
     for (MBeanNotificationInfo notification : notificationInfos) {
       session.getOutput().println(
-          String.format(
-              "  %%%-3d - %s(%s)" + (showDescription ? ", %s" : ""),
+          ("  %%%-3d - %s(%s)" + (showDescription ? ", %s" : "")).formatted(
               index++,
               notification.getName(),
               String.join(",", notification.getNotifTypes()),
@@ -116,8 +114,7 @@ public class InfoCommand extends Command {
       String parametersDesc =
           paramDescriptions.isEmpty() ? "" : '\n' + String.join("\n", paramDescriptions);
       session.getOutput().println(
-          String.format(
-              "  %%%-3d - %s %s(%s)" + (showDescription ? ", %s%s" : ""),
+          ("  %%%-3d - %s %s(%s)" + (showDescription ? ", %s%s" : "")).formatted(
               index++,
               op.getReturnType(),
               op.getName(),
@@ -147,8 +144,8 @@ public class InfoCommand extends Command {
             new StringBuilder("             parameters:" + System.lineSeparator());
         for (MBeanParameterInfo paramInfo : paramInfos) {
           String parameter = paramInfo.getName();
-          paramsDesc.append(String.format(
-                  "                 + %-20s : %s" + System.lineSeparator(),
+          paramsDesc.append(
+              ("                 + %-20s : %s" + System.lineSeparator()).formatted(
                   parameter,
                   paramInfo.getDescription()));
           paramTypes.add(paramInfo.getType() + " " + parameter);
@@ -188,18 +185,11 @@ public class InfoCommand extends Command {
     if (operation == null) {
       for (char t : type.toCharArray()) {
         switch (t) {
-          case 'a':
-            displayAttributes(info);
-            break;
-          case 'o':
-            displayOperations(info);
-            break;
-          case 'n':
-            displayNotifications(info);
-            break;
-          default:
-            throw new IllegalArgumentException(
-                "Unrecognizable character " + t + " in type option " + type);
+          case 'a' -> displayAttributes(info);
+          case 'o' -> displayOperations(info);
+          case 'n' -> displayNotifications(info);
+          default -> throw new IllegalArgumentException(
+              "Unrecognizable character " + t + " in type option " + type);
         }
       }
     } else {

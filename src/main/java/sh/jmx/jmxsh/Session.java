@@ -1,7 +1,7 @@
 package sh.jmx.jmxsh;
 
-import java.io.IOError;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -54,8 +54,8 @@ public abstract class Session implements VerboseCommandOutputConfig {
     }
     try {
       disconnect();
-    } catch (Exception e) {
-      throw new IOError(e);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
     }
     closed = true;
   }

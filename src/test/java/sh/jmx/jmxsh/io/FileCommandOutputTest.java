@@ -2,10 +2,10 @@ package sh.jmx.jmxsh.io;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.jupiter.api.AfterEach;
@@ -17,17 +17,14 @@ import org.junit.jupiter.api.Test;
  *
  */
 class FileCommandOutputTest {
-  private File testFile;
+  private Path testFile;
 
   /** prepare for test output file */
   @BeforeEach
   void setUpTestFile() {
-    testFile =
-        new File(
-            System.getProperty("java.io.tmpdir")
-                + "/test-"
-                + randomAlphabetic(20)
-                + ".txt");
+    testFile = Path.of(
+        System.getProperty("java.io.tmpdir"),
+        "test-" + randomAlphabetic(20) + ".txt");
   }
 
   /**
@@ -37,7 +34,7 @@ class FileCommandOutputTest {
    */
   @AfterEach
   void tearDownTestFile() throws IOException {
-    Files.deleteIfExists(testFile.toPath());
+    Files.deleteIfExists(testFile);
   }
 
   /**
@@ -52,7 +49,7 @@ class FileCommandOutputTest {
     output.printMessage("say hello");
     output.close();
 
-    assertThat(Files.readString(testFile.toPath(), StandardCharsets.UTF_8).trim())
+    assertThat(Files.readString(testFile, StandardCharsets.UTF_8).trim())
         .isEqualTo("helloworld");
   }
 
@@ -73,7 +70,7 @@ class FileCommandOutputTest {
     output2.printMessage("say hello2");
     output2.close();
 
-    assertThat(Files.readString(testFile.toPath(), StandardCharsets.UTF_8).trim())
+    assertThat(Files.readString(testFile, StandardCharsets.UTF_8).trim())
         .isEqualTo("helloworld" + System.lineSeparator() + "helloworld2");
   }
 

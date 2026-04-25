@@ -2,8 +2,8 @@ package sh.jmx.jmxsh.io;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ class FileCommandInputTest {
    */
   @Test
   void read() throws Exception {
-    File testFile = new File("src/test/resources/testscript.jmx");
+    Path testFile = Path.of("src/test/resources/testscript.jmx");
     try(FileCommandInput input = new FileCommandInput(testFile)) {
       assertThat(input.readLine()).isEqualTo("beans");
       assertThat(input.readLine()).isEqualTo("exit");

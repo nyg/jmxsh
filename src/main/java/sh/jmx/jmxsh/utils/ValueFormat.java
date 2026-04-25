@@ -5,7 +5,6 @@ package sh.jmx.jmxsh.utils;
  * attribute value or parameter of operation. It's NOT designed to parse MBean name or other type of
  * input.
  *
- * @version $Revision$ in $Change$ submitted at $DateTime$
  */
 public final class ValueFormat {
   /** Keyword that identifies NULL pointer <code>null</code> */

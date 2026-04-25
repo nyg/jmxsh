@@ -29,8 +29,8 @@ class CliArgumentsE2EIT {
 
   @Test
   void testAutoConnect() throws Exception {
-    try (JmxTermProcessHelper jmxterm =
-        new JmxTermProcessHelper("-l", "localhost:" + targetJvm.getJmxPort())) {
+    try (JmxshProcessHelper jmxterm =
+        new JmxshProcessHelper("-l", "localhost:" + targetJvm.getJmxPort())) {
       jmxterm.sendCommandAndClose("domains", "quit");
       String output = jmxterm.readAllOutput(TIMEOUT);
       assertThat(output)
@@ -41,7 +41,7 @@ class CliArgumentsE2EIT {
 
   @Test
   void testSilentMode() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper("-q")) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper("-q")) {
       jmxterm.sendCommandAndClose(
           "open localhost:" + targetJvm.getJmxPort(),
           "bean test:type=TestMBean",
@@ -61,7 +61,7 @@ class CliArgumentsE2EIT {
 
   @Test
   void testExitOnFailure() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper("-e")) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper("-e")) {
       // Send a command that fails (getting an attribute without a connection)
       jmxterm.sendCommandAndClose("get Name");
       String output = jmxterm.readAllOutput(TIMEOUT);
@@ -72,7 +72,7 @@ class CliArgumentsE2EIT {
 
   @Test
   void testHelpFlag() throws Exception {
-    try (JmxTermProcessHelper jmxterm = new JmxTermProcessHelper("-h")) {
+    try (JmxshProcessHelper jmxterm = new JmxshProcessHelper("-h")) {
       String output = jmxterm.readAllOutput(TIMEOUT);
       int exitCode = jmxterm.getExitCode();
       assertThat(output)

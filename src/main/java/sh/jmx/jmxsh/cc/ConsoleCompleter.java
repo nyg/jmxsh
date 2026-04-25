@@ -14,17 +14,17 @@ import picocli.CommandLine.Model.OptionSpec;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * JLine completor that handles tab key
+ * JLine completer that handles tab key
  *
  */
 @Slf4j
-public class ConsoleCompletor implements Completer {
+public class ConsoleCompleter implements Completer {
 
   private final CommandCenter commandCenter;
 
   private final List<Candidate> commandNames;
 
-  public ConsoleCompletor(CommandCenter commandCenter) {
+  public ConsoleCompleter(CommandCenter commandCenter) {
     Objects.requireNonNull(commandCenter, "Command center can't be NULL");
     this.commandCenter = commandCenter;
     this.commandNames = commandCenter.getCommandNames().stream()

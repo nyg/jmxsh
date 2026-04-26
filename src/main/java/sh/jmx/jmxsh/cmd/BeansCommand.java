@@ -37,7 +37,7 @@ public class BeansCommand extends Command {
     if ("d".equals(optionName)) {
       return DomainsCommand.getCandidateDomains(getSession());
     }
-    return null;
+    return List.of();
   }
 
   @Override

@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -115,5 +114,11 @@ class SetCommandTest {
   @Test
   void executeWithQuotedNegativeNumber() {
     setValueAndVerify("\"-2\"", "int", -2);
+  }
+
+  @Test
+  void suggestArgumentWithNoBean() {
+    command.setSession(session);
+    assertThat(command.suggestArgument(null)).isEmpty();
   }
 }

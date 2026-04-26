@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.management.MBeanInfo;
@@ -103,5 +102,11 @@ class RunCommandTest {
     verify(con, never())
         .invoke(new ObjectName("a:type=x"), "exe", new Object[] {33}, new String[] {"int"});
     assertThat(writer.toString().trim()).isEqualTo("bingo-string");
+  }
+
+  @Test
+  void suggestArgumentWithNoBean() {
+    command.setSession(session);
+    assertThat(command.suggestArgument(null)).isEmpty();
   }
 }

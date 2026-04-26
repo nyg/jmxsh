@@ -65,7 +65,7 @@ public class WatchCommand extends Command {
               Stream.of(BUILDING_ATTRIBUTE_NOW))
           .toList();
     }
-    return null;
+    return List.of();
   }
 
   @Override
@@ -91,7 +91,7 @@ public class WatchCommand extends Command {
     final LineOutput output;
     if (report) {
       CommandOutput out = session.getOutput();
-      output = line -> out.println(line);
+      output = out::println;
     } else {
       if (!(session.getInput() instanceof JlineCommandInput jlineInput)) {
         throw new IllegalStateException("Under current context, watch command can't execute.");

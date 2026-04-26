@@ -44,7 +44,7 @@ public class CommandCenter {
 
   final Session session;
 
-  public CommandCenter(CommandOutput output, CommandInput input) throws IOException {
+  public CommandCenter(CommandOutput output, CommandInput input) {
     this(output, input, new PredefinedCommandFactory());
   }
 

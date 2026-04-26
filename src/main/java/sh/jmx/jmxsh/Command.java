@@ -22,12 +22,14 @@ public abstract class Command implements Completable {
 
   private Session session;
 
+  @SuppressWarnings("java:S1130") // throws are required API contract for subclass overrides
   protected List<String> doSuggestArgument() throws IOException, JMException {
-    return null;
+    return List.of();
   }
 
+  @SuppressWarnings("java:S1130") // throws are required API contract for subclass overrides
   protected List<String> doSuggestOption(String optionName) throws IOException, JMException {
-    return null;
+    return List.of();
   }
 
   public abstract void execute() throws IOException, JMException;
@@ -52,7 +54,7 @@ public abstract class Command implements Completable {
 
   public final List<String> suggestArgument(String partialArg) {
     if (partialArg != null) {
-      return null;
+      return List.of();
     }
     try {
       return doSuggestArgument();
@@ -60,13 +62,13 @@ public abstract class Command implements Completable {
       if (log.isDebugEnabled()) {
         log.debug("Couldn't suggest argument", e);
       }
-      return null;
+      return List.of();
     }
   }
 
   public final List<String> suggestOption(String name, String partialValue) {
     if (partialValue != null) {
-      return null;
+      return List.of();
     }
     try {
       return doSuggestOption(name);
@@ -74,7 +76,7 @@ public abstract class Command implements Completable {
       if (log.isDebugEnabled()) {
         log.debug("Couldn't suggest option", e);
       }
-      return null;
+      return List.of();
     }
   }
 }

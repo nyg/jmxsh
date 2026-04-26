@@ -4,7 +4,7 @@ package sh.jmx.jmxsh.io;
  * Interface to output messages and values
  *
  */
-public interface CommandOutput {
+public interface CommandOutput extends AutoCloseable {
   /** Close the output. */
   default void close() {}
 

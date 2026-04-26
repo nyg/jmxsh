@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import sh.jmx.jmxsh.utils.AppConfig;
 import sh.jmx.jmxsh.utils.XdgDirectories;
 import org.slf4j.LoggerFactory;
+import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -40,7 +41,7 @@ public final class LoggingConfigurator {
       return;
     }
     LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-    Logger root = context.getLogger(Logger.ROOT_LOGGER_NAME);
+    Logger root = context.getLogger(ROOT_LOGGER_NAME);
 
     // Detach any pre-existing FILE appender that failed to start on a previous call.
     Appender<ILoggingEvent> existing = root.getAppender("FILE");

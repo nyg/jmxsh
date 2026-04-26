@@ -94,7 +94,7 @@ public class TargetJmxmpProcess implements AutoCloseable {
                   }
                 }
                 return false;
-              } catch (IOException e) {
+              } catch (IOException _) {
                 return false;
               }
             });
@@ -103,7 +103,7 @@ public class TargetJmxmpProcess implements AutoCloseable {
       if (!ready) {
         throw new IllegalStateException("JMXMP target JVM exited without printing READY");
       }
-    } catch (TimeoutException e) {
+    } catch (TimeoutException _) {
       throw new IllegalStateException(
           "JMXMP target JVM did not become ready within " + timeout.toSeconds() + " seconds");
     } catch (InterruptedException e) {
@@ -124,7 +124,7 @@ public class TargetJmxmpProcess implements AutoCloseable {
     process.destroyForcibly();
     try {
       process.waitFor(5, TimeUnit.SECONDS);
-    } catch (InterruptedException e) {
+    } catch (InterruptedException _) {
       Thread.currentThread().interrupt();
     }
   }

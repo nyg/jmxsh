@@ -1,7 +1,6 @@
 package sh.jmx.jmxsh;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 import java.io.Writer;
 import java.util.Map;
@@ -38,7 +37,7 @@ class SessionTest {
   @Test
   void connect() throws Exception {
     session.connect(SyntaxUtils.getUrl("localhost:9991", null), null);
-    Connection con = session.getConnection();
-    assertThat(con.url()).hasToString("service:jmx:rmi:///jndi/rmi://localhost:9991/jmxrmi");
+    Connection connection = session.getConnection();
+    assertThat(connection.url()).hasToString("service:jmx:rmi:///jndi/rmi://localhost:9991/jmxrmi");
   }
 }

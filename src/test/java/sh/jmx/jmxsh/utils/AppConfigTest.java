@@ -5,9 +5,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class AppConfigTest {
 
@@ -17,35 +21,20 @@ class AppConfigTest {
     assertThat(config.isLoggingFileEnabled()).isFalse();
   }
 
-  @Test
-  void loggingFileEnabledWhenSetToTrue(@TempDir Path dir) throws IOException {
-    Path configFile = dir.resolve("config.properties");
-    Files.writeString(configFile, "logging.file.enabled=true\n");
-    AppConfig config = AppConfig.load(configFile);
-    assertThat(config.isLoggingFileEnabled()).isTrue();
+  static Stream<Arguments> loggingFileEnabledCases() {
+    return Stream.of(
+        Arguments.of("logging.file.enabled=true\n", true),
+        Arguments.of("logging.file.enabled=false\n", false),
+        Arguments.of("logging.file.enabled=yes\n", false),
+        Arguments.of("some.other.key=value\n", false));
   }
 
-  @Test
-  void loggingFileDisabledWhenSetToFalse(@TempDir Path dir) throws IOException {
+  @ParameterizedTest
+  @MethodSource("loggingFileEnabledCases")
+  void loggingFileEnabled(String content, boolean expected, @TempDir Path dir) throws IOException {
     Path configFile = dir.resolve("config.properties");
-    Files.writeString(configFile, "logging.file.enabled=false\n");
+    Files.writeString(configFile, content);
     AppConfig config = AppConfig.load(configFile);
-    assertThat(config.isLoggingFileEnabled()).isFalse();
-  }
-
-  @Test
-  void malformedValueFallsBackToDefault(@TempDir Path dir) throws IOException {
-    Path configFile = dir.resolve("config.properties");
-    Files.writeString(configFile, "logging.file.enabled=yes\n");
-    AppConfig config = AppConfig.load(configFile);
-    assertThat(config.isLoggingFileEnabled()).isFalse();
-  }
-
-  @Test
-  void missingKeyFallsBackToDefault(@TempDir Path dir) throws IOException {
-    Path configFile = dir.resolve("config.properties");
-    Files.writeString(configFile, "some.other.key=value\n");
-    AppConfig config = AppConfig.load(configFile);
-    assertThat(config.isLoggingFileEnabled()).isFalse();
+    assertThat(config.isLoggingFileEnabled()).isEqualTo(expected);
   }
 }

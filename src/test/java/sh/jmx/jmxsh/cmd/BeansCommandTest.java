@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -42,8 +41,8 @@ class BeansCommandTest {
     writer = new StringWriter();
     command = new BeansCommand();
     lenient().when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
-    when(session.getConnection()).thenReturn(connection);
-    when(connection.getServerConnection()).thenReturn(conn);
+    lenient().when(session.getConnection()).thenReturn(connection);
+    lenient().when(connection.getServerConnection()).thenReturn(conn);
   }
 
   /**
@@ -114,5 +113,11 @@ class BeansCommandTest {
     command.setSession(session);
     command.execute();
     assertThat(writer).hasToString("a:type=1" + EOL + "a:type=2" + EOL + "b:type=1" + EOL);
+  }
+
+  @Test
+  void suggestOptionWithUnknownOption() {
+    command.setSession(session);
+    assertThat(command.suggestOption("x", null)).isEmpty();
   }
 }

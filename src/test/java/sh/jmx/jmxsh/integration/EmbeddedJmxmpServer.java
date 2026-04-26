@@ -49,7 +49,7 @@ public class EmbeddedJmxmpServer implements BeforeAllCallback, AfterAllCallback 
         connectorServer.start();
         this.port = candidatePort;
         return;
-      } catch (Exception e) {
+      } catch (Exception _) {
         // Port already in use or bind failure, retry with a different port
       }
     }

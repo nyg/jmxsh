@@ -65,7 +65,7 @@ public class EmbeddedJmxServer implements BeforeAllCallback, AfterAllCallback {
         Registry reg = LocateRegistry.createRegistry(candidatePort);
         this.port = candidatePort;
         return reg;
-      } catch (ExportException e) {
+      } catch (ExportException _) {
         // Port already in use, retry with a different port
       }
     }

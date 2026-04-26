@@ -43,7 +43,8 @@ public class BeanCommand extends Command {
         ObjectName name = new ObjectName(bean);
         con.getMBeanInfo(name);
         return bean;
-      } catch (MalformedObjectNameException | InstanceNotFoundException e) {
+      } catch (MalformedObjectNameException | InstanceNotFoundException _) {
+        // Invalid or unknown bean name — fall through to domain-qualified lookup
       }
     }
 
@@ -56,7 +57,8 @@ public class BeanCommand extends Command {
       ObjectName name = new ObjectName(domainName + ":" + bean);
       con.getMBeanInfo(name);
       return domainName + ":" + bean;
-    } catch (MalformedObjectNameException | InstanceNotFoundException e) {
+    } catch (MalformedObjectNameException | InstanceNotFoundException _) {
+      // Invalid or unknown bean name — fall through to throw IllegalArgumentException
     }
     throw new IllegalArgumentException("Bean name " + bean + " isn't valid");
   }
@@ -91,7 +93,7 @@ public class BeanCommand extends Command {
     if ("d".equals(optionName)) {
       return DomainsCommand.getCandidateDomains(getSession());
     }
-    return null;
+    return List.of();
   }
 
   @Override

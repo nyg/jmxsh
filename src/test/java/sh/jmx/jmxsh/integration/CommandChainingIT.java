@@ -48,13 +48,10 @@ class CommandChainingIT {
                 "open " + jmxServer.getConnectionUrl() + " && domains && beans -d test"))
         .isTrue();
     String result = resultWriter.toString();
-    assertThat(result).as("Expected 'test' domain in output, got: " + result).contains("test");
     assertThat(result)
-        .as("Expected 'JMImplementation' domain in output, got: " + result)
-        .contains("JMImplementation");
-    assertThat(result)
-        .as("Expected 'test:type=TestMBean' in output, got: " + result)
-        .contains("test:type=TestMBean");
+        .as("Expected 'test' domain in output, got: " + result).contains("test")
+        .as("Expected 'JMImplementation' domain in output, got: " + result).contains("JMImplementation")
+        .as("Expected 'test:type=TestMBean' in output, got: " + result).contains("test:type=TestMBean");
   }
 
   @Test
@@ -69,7 +66,7 @@ class CommandChainingIT {
   @Test
   void testFullLineComment() {
     assertThat(cc.execute("# this is a comment")).isTrue();
-    assertThat(resultWriter.toString()).as("Full-line comment should produce no output").isEqualTo("");
+    assertThat(resultWriter.toString()).as("Full-line comment should produce no output").isEmpty();
   }
 
   @Test
@@ -87,6 +84,6 @@ class CommandChainingIT {
   @Test
   void testEmptyCommand() {
     assertThat(cc.execute("")).as("Empty command should succeed").isTrue();
-    assertThat(resultWriter.toString()).as("Empty command should produce no output").isEqualTo("");
+    assertThat(resultWriter.toString()).as("Empty command should produce no output").isEmpty();
   }
 }

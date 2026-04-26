@@ -6,7 +6,6 @@ import static sh.jmx.jmxsh.cc.CommandCenter.ESCAPE_CHAR_REGEX;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

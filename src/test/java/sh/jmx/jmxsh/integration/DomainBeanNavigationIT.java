@@ -21,7 +21,7 @@ class DomainBeanNavigationIT {
   private StringWriter messageWriter;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     resultWriter = new StringWriter();
     messageWriter = new StringWriter();
     cc = new CommandCenter(new WriterCommandOutput(resultWriter, messageWriter), null);
@@ -38,10 +38,9 @@ class DomainBeanNavigationIT {
     resultWriter.getBuffer().setLength(0);
     assertThat(cc.execute("domains")).isTrue();
     String result = resultWriter.toString();
-    assertThat(result).as("Expected 'test' domain, got: " + result).contains("test");
     assertThat(result)
-        .as("Expected 'JMImplementation' domain, got: " + result)
-        .contains("JMImplementation");
+        .as("Expected 'test' domain, got: " + result).contains("test")
+        .as("Expected 'JMImplementation' domain, got: " + result).contains("JMImplementation");
   }
 
   @Test
@@ -92,11 +91,12 @@ class DomainBeanNavigationIT {
     assertThat(cc.execute("info")).isTrue();
     String result = resultWriter.toString();
     // Verify attributes are listed
-    assertThat(result).as("Expected attribute 'Name' in info, got: " + result).contains("Name");
-    assertThat(result).as("Expected attribute 'Count' in info, got: " + result).contains("Count");
-    // Verify operations are listed
-    assertThat(result).as("Expected operation 'echo' in info, got: " + result).contains("echo");
-    assertThat(result).as("Expected operation 'add' in info, got: " + result).contains("add");
-    assertThat(result).as("Expected operation 'reset' in info, got: " + result).contains("reset");
+    assertThat(result)
+        .as("Expected attribute 'Name' in info, got: " + result).contains("Name")
+        .as("Expected attribute 'Count' in info, got: " + result).contains("Count")
+        // Verify operations are listed
+        .as("Expected operation 'echo' in info, got: " + result).contains("echo")
+        .as("Expected operation 'add' in info, got: " + result).contains("add")
+        .as("Expected operation 'reset' in info, got: " + result).contains("reset");
   }
 }

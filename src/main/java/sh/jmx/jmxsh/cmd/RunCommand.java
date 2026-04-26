@@ -54,7 +54,7 @@ public class RunCommand extends Command {
       MBeanOperationInfo[] operationInfos = info.getOperations();
       return Arrays.stream(operationInfos).map(MBeanOperationInfo::getName).toList();
     }
-    return null;
+    return List.of();
   }
 
   @Override

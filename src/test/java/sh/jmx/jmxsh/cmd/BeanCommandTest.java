@@ -155,4 +155,36 @@ class BeanCommandTest {
     setBeanAndVerify(
         "attr.name_1-1=a.b", "domain_name.with-dash", "domain_name.with-dash:attr.name_1-1=a.b");
   }
+
+  @Test
+  void suggestOptionWithUnknownOption() {
+    command.setSession(session);
+    assertThat(command.suggestOption("x", null)).isEmpty();
+  }
+
+  @Test
+  void executeWhenColonBeanNotFound() throws Exception {
+    command.setBean("some:type=Thing");
+    when(session.getConnection()).thenReturn(connection);
+    when(connection.getServerConnection()).thenReturn(con);
+    when(con.getMBeanInfo(new ObjectName("some:type=Thing")))
+        .thenThrow(new javax.management.InstanceNotFoundException("not found"));
+    // domain is null → triggers IAE about specifying domain
+    command.setSession(session);
+    assertThatThrownBy(command::execute).isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("Please specify domain");
+  }
+
+  @Test
+  void executeWhenBeanNotFoundInDomain() throws Exception {
+    command.setBean("type=Thing");
+    when(session.getDomain()).thenReturn("mydomain");
+    when(session.getConnection()).thenReturn(connection);
+    when(connection.getServerConnection()).thenReturn(con);
+    when(con.getMBeanInfo(new ObjectName("mydomain:type=Thing")))
+        .thenThrow(new javax.management.InstanceNotFoundException("not found"));
+    command.setSession(session);
+    assertThatThrownBy(command::execute).isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("isn't valid");
+  }
 }

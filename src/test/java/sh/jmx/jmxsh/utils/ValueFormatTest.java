@@ -18,4 +18,9 @@ class ValueFormatTest {
     assertThat(ValueFormat.parseValue("ab\\nc")).isEqualTo("ab\nc");
     assertThat(ValueFormat.parseValue("ab\\u3160c")).isEqualTo("ab\u3160c");
   }
+
+  @Test
+  void parseWithInvalidUnicodeEscape() {
+    assertThat(ValueFormat.parseValue("ab\\uGGGGc")).isEqualTo("ab\\uGGGGc");
+  }
 }

@@ -15,7 +15,6 @@ import javax.management.ObjectName;
 import javax.management.RuntimeMBeanException;
 import javax.management.openmbean.CompositeDataSupport;
 
-import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.Session;
 import sh.jmx.jmxsh.io.ValueOutputFormat;
 
@@ -29,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
     description = "Get value of MBean attribute(s)",
     footer = "* stands for all attributes. eg. get Attribute1 Attribute2 or get *")
 @Slf4j
-public class GetCommand extends Command {
+public class GetCommand extends DomainBeanAwareCommand {
   private List<String> attributes = new ArrayList<>();
 
   private String bean;
@@ -128,17 +127,6 @@ public class GetCommand extends Command {
       return Arrays.stream(ais).map(MBeanAttributeInfo::getName).toList();
     }
     return List.of();
-  }
-
-  @Override
-  protected List<String> doSuggestOption(String optionName) throws JMException {
-    if ("d".equals(optionName)) {
-      return DomainsCommand.getCandidateDomains(getSession());
-    } else if ("b".equals(optionName)) {
-      return BeanCommand.getCandidateBeanNames(getSession());
-    } else {
-      return List.of();
-    }
   }
 
   @Override

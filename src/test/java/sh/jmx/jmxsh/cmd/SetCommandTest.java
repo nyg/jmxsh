@@ -115,4 +115,10 @@ class SetCommandTest {
   void executeWithQuotedNegativeNumber() {
     setValueAndVerify("\"-2\"", "int", -2);
   }
+
+  @Test
+  void suggestArgumentWithNoBean() {
+    command.setSession(session);
+    assertThat(command.suggestArgument(null)).isEmpty();
+  }
 }

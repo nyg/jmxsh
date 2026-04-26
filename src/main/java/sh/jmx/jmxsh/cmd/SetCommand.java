@@ -13,7 +13,6 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
-import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.Session;
 import sh.jmx.jmxsh.SyntaxUtils;
 import sh.jmx.jmxsh.utils.ValueFormat;
@@ -25,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @CommandLine.Command(name = "set", description = "Set value of an MBean attribute")
 @Slf4j
-public class SetCommand extends Command {
+public class SetCommand extends DomainBeanAwareCommand {
   private List<String> arguments = Collections.emptyList();
 
   private String bean;
@@ -42,17 +41,6 @@ public class SetCommand extends Command {
       return Arrays.stream(attrs).map(MBeanAttributeInfo::getName).toList();
     }
     return List.of();
-  }
-
-  @Override
-  protected List<String> doSuggestOption(String optionName) throws JMException {
-    if ("d".equals(optionName)) {
-      return DomainsCommand.getCandidateDomains(getSession());
-    } else if ("b".equals(optionName)) {
-      return BeanCommand.getCandidateBeanNames(getSession());
-    } else {
-      return List.of();
-    }
   }
 
   @Override

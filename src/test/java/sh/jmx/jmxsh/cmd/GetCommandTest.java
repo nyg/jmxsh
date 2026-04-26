@@ -160,4 +160,30 @@ class GetCommandTest {
   void executeForSingleLineOutput() {
     getAttributeAndVerify("a", "type=x", "a", "a:type=x", "bingo", true, "");
   }
+
+  @Test
+  void suggestArgumentWithNoBean() {
+    command.setSession(session);
+    assertThat(command.suggestArgument(null)).isEmpty();
+  }
+
+  @Test
+  void suggestOptionWithDomain() throws Exception {
+    when(con.getDomains()).thenReturn(new String[] {"a", "b"});
+    command.setSession(session);
+    assertThat(command.suggestOption("d", null)).containsExactly("a", "b");
+  }
+
+  @Test
+  void suggestOptionWithBean() throws Exception {
+    when(con.queryNames(null, null)).thenReturn(java.util.Set.of());
+    command.setSession(session);
+    assertThat(command.suggestOption("b", null)).isEmpty();
+  }
+
+  @Test
+  void suggestOptionUnknown() {
+    command.setSession(session);
+    assertThat(command.suggestOption("x", null)).isEmpty();
+  }
 }

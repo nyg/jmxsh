@@ -49,7 +49,7 @@ public final class ValueFormat {
             try {
               sb.append((char) Integer.parseInt(input.substring(i + 2, i + 6), 16));
               i += 5;
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException _) {
               sb.append("\\\\u");
               i++;
             }

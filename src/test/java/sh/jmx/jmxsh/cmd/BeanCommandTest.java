@@ -92,7 +92,7 @@ class BeanCommandTest {
   void executeWithInvalidBean() throws Exception {
     command.setBean("blablabla");
     command.setSession(session);
-    assertThatThrownBy(() -> command.execute()).isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(command::execute).isInstanceOf(IllegalArgumentException.class);
   }
 
   /**

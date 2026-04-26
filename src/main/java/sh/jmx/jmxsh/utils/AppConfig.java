@@ -39,7 +39,7 @@ public final class AppConfig {
     if (Files.isRegularFile(configFile)) {
       try (InputStream in = Files.newInputStream(configFile)) {
         props.load(in);
-      } catch (IOException e) {
+      } catch (IOException _) {
         // Silently fall back to defaults if the file cannot be read.
       }
     }
@@ -83,7 +83,7 @@ public final class AppConfig {
     try {
       Files.createDirectories(configFile.getParent());
       Files.writeString(configFile, DEFAULT_CONFIG_CONTENT, StandardCharsets.UTF_8);
-    } catch (IOException e) {
+    } catch (IOException _) {
       // Non-fatal: if we cannot write the config, continue without it.
     }
   }

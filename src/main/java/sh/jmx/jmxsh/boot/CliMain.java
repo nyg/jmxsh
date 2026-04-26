@@ -93,7 +93,7 @@ public class CliMain {
     } else {
       output = new FileCommandOutput(Path.of(options.getOutput()), options.isAppendToOutput());
     }
-    try {
+    try (output) {
       CommandInput input;
       if (CliMainOptions.STDIN.equals(options.getInput())) {
         if (options.isNonInteractive()) {
@@ -180,8 +180,6 @@ public class CliMain {
       log.error("Fatal startup error", e);
       output.printError(e);
       return 1;
-    } finally {
-      output.close();
     }
   }
 

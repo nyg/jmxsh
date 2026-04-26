@@ -39,9 +39,8 @@ class VerboseLevelIT {
     assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
     String messages = messageWriter.toString();
     assertThat(messages)
-        .as("Expected '#' prefixed messages in BRIEF mode, got: " + messages)
-        .contains("#");
-    assertThat(messages).as("Expected connection message, got: " + messages).contains("Connection to");
+        .as("Expected '#' prefixed messages in BRIEF mode, got: " + messages).contains("#")
+        .as("Expected connection message, got: " + messages).contains("Connection to");
   }
 
   @Test
@@ -66,10 +65,7 @@ class VerboseLevelIT {
     assertThat(cc.execute("get Name")).isFalse();
     String messages = messageWriter.toString();
     assertThat(messages)
-        .as("Expected '#' prefixed error in BRIEF mode, got: " + messages)
-        .contains("#");
-    assertThat(messages)
-        .as("Expected no stack trace in BRIEF mode, got: " + messages)
-        .doesNotContain("\tat ");
+        .as("Expected '#' prefixed error in BRIEF mode, got: " + messages).contains("#")
+        .as("Expected no stack trace in BRIEF mode, got: " + messages).doesNotContain("\tat ");
   }
 }

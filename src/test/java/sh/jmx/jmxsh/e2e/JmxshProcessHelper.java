@@ -83,7 +83,7 @@ public class JmxshProcessHelper implements AutoCloseable {
   public String readAllOutput(Duration timeout) throws IOException {
     try {
       process.getOutputStream().close();
-    } catch (IOException ignored) {
+    } catch (IOException _) {
       // stdin may already be closed
     }
 
@@ -125,7 +125,7 @@ public class JmxshProcessHelper implements AutoCloseable {
     process.destroyForcibly();
     try {
       process.waitFor(5, TimeUnit.SECONDS);
-    } catch (InterruptedException e) {
+    } catch (InterruptedException _) {
       Thread.currentThread().interrupt();
     }
   }

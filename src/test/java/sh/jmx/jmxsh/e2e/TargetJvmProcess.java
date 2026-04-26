@@ -99,7 +99,7 @@ public class TargetJvmProcess implements AutoCloseable {
                   }
                 }
                 return false;
-              } catch (IOException e) {
+              } catch (IOException _) {
                 return false;
               }
             });
@@ -108,7 +108,7 @@ public class TargetJvmProcess implements AutoCloseable {
       if (!ready) {
         throw new IllegalStateException("Target JVM exited without printing READY");
       }
-    } catch (TimeoutException e) {
+    } catch (TimeoutException _) {
       throw new IllegalStateException(
           "Target JVM did not become ready within " + timeout.toSeconds() + " seconds");
     } catch (InterruptedException e) {
@@ -134,7 +134,7 @@ public class TargetJvmProcess implements AutoCloseable {
     process.destroyForcibly();
     try {
       process.waitFor(5, TimeUnit.SECONDS);
-    } catch (InterruptedException e) {
+    } catch (InterruptedException _) {
       Thread.currentThread().interrupt();
     }
   }

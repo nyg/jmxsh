@@ -66,8 +66,9 @@ class AttributeReadWriteIT {
     assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
     assertThat(cc.execute("get *")).isTrue();
     String result = resultWriter.toString();
-    assertThat(result).as("Expected output to contain 'Name', got: " + result).contains("Name");
-    assertThat(result).as("Expected output to contain 'Count', got: " + result).contains("Count");
+    assertThat(result)
+        .as("Expected output to contain 'Name', got: " + result).contains("Name")
+        .as("Expected output to contain 'Count', got: " + result).contains("Count");
   }
 
   @Test
@@ -104,10 +105,9 @@ class AttributeReadWriteIT {
     assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
     assertThat(cc.execute("get -s -b test:type=TestMBean Name")).isTrue();
     String result = resultWriter.toString().trim();
-    assertThat(result).as("Expected simple format value 'default', got: " + result).contains("default");
     assertThat(result)
-        .as("Simple format should not contain 'Name =', got: " + result)
-        .doesNotContain("Name =");
+        .as("Expected simple format value 'default', got: " + result).contains("default")
+        .as("Simple format should not contain 'Name =', got: " + result).doesNotContain("Name =");
   }
 
   @Test

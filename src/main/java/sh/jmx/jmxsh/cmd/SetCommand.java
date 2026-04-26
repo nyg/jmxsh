@@ -41,7 +41,7 @@ public class SetCommand extends Command {
       MBeanAttributeInfo[] attrs = info.getAttributes();
       return Arrays.stream(attrs).map(MBeanAttributeInfo::getName).toList();
     }
-    return null;
+    return List.of();
   }
 
   @Override
@@ -51,7 +51,7 @@ public class SetCommand extends Command {
     } else if ("b".equals(optionName)) {
       return BeanCommand.getCandidateBeanNames(getSession());
     } else {
-      return null;
+      return List.of();
     }
   }
 

@@ -11,7 +11,7 @@ class ValueFormatTest {
     assertThat(ValueFormat.parseValue("null")).isNull();
     assertThat(ValueFormat.parseValue(null)).isNull();
     assertThat(ValueFormat.parseValue("")).isNull();
-    assertThat(ValueFormat.parseValue("\"\"")).isEqualTo("");
+    assertThat(ValueFormat.parseValue("\"\"")).isEmpty();
     assertThat(ValueFormat.parseValue("abc")).isEqualTo("abc");
     assertThat(ValueFormat.parseValue("\"abc\"")).isEqualTo("abc");
     assertThat(ValueFormat.parseValue("ab c")).isEqualTo("ab c");

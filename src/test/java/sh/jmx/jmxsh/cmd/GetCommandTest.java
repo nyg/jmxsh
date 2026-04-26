@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,8 +99,7 @@ class GetCommandTest {
         nestedExpectedValue = support.get(attributePath[1]);
       }
 
-      assertThat(writer.toString())
-          .isEqualTo(
+      assertThat(writer).hasToString(
               nestedExpectedValue.toString()
                   + delimiter
                   + (singleLine ? "" : System.lineSeparator()));

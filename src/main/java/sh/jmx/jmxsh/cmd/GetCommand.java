@@ -127,7 +127,7 @@ public class GetCommand extends Command {
           con.getMBeanInfo(new ObjectName(getSession().getBean())).getAttributes();
       return Arrays.stream(ais).map(MBeanAttributeInfo::getName).toList();
     }
-    return null;
+    return List.of();
   }
 
   @Override
@@ -137,7 +137,7 @@ public class GetCommand extends Command {
     } else if ("b".equals(optionName)) {
       return BeanCommand.getCandidateBeanNames(getSession());
     } else {
-      return null;
+      return List.of();
     }
   }
 

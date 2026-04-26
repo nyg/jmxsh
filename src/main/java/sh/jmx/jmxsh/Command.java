@@ -22,10 +22,12 @@ public abstract class Command implements Completable {
 
   private Session session;
 
+  @SuppressWarnings("java:S1130") // throws are required API contract for subclass overrides
   protected List<String> doSuggestArgument() throws IOException, JMException {
     return List.of();
   }
 
+  @SuppressWarnings("java:S1130") // throws are required API contract for subclass overrides
   protected List<String> doSuggestOption(String optionName) throws IOException, JMException {
     return List.of();
   }

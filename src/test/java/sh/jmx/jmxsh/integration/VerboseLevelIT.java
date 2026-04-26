@@ -22,7 +22,7 @@ class VerboseLevelIT {
   private StringWriter messageWriter;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     resultWriter = new StringWriter();
     messageWriter = new StringWriter();
     cc = new CommandCenter(new WriterCommandOutput(resultWriter, messageWriter), null);

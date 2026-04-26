@@ -18,7 +18,9 @@ class CommandTest {
   /** Minimal Command subclass that throws from its doSuggest* methods to exercise catch branches. */
   private static class ThrowingCommand extends Command {
     @Override
-    public void execute() {}
+    public void execute() {
+      // no-op for testing
+    }
 
     @Override
     protected List<String> doSuggestArgument() throws IOException {

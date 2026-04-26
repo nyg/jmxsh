@@ -50,7 +50,14 @@
     <assertj.version>3.27.7</assertj.version>
     <junit.version>6.0.3</junit.version>
 
+    <!-- SonarCloud -->
+    <sonar.organization>nyg</sonar.organization>
+    <sonar.projectKey>nyg_jmxsh</sonar.projectKey>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+
     <!-- Plugins -->
+    <jacoco.version>0.8.14</jacoco.version>
     <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
     <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
     <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
@@ -219,6 +226,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
         <configuration>
+          <argLine>@{argLine}</argLine>
           <excludes>
             <exclude>sh.jmx.jmxsh.jdk*</exclude>
           </excludes>
@@ -229,6 +237,7 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>${maven-failsafe-plugin.version}</version>
         <configuration>
+          <argLine>@{argLine}</argLine>
           <includes>
             <include>**/*IT.java</include>
           </includes>
@@ -239,6 +248,42 @@
               <goal>integration-test</goal>
               <goal>verify</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <destFile>${project.build.directory}/jacoco.exec</destFile>
+            </configuration>
+          </execution>
+          <execution>
+            <id>prepare-agent-integration</id>
+            <goals>
+              <goal>prepare-agent-integration</goal>
+            </goals>
+            <configuration>
+              <destFile>${project.build.directory}/jacoco.exec</destFile>
+              <append>true</append>
+            </configuration>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+              <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+            </configuration>
           </execution>
         </executions>
       </plugin>

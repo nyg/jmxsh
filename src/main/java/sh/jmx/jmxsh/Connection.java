@@ -22,4 +22,18 @@ public record Connection(JMXConnector connector, JMXServiceURL url) {
   public MBeanServerConnection getServerConnection() throws IOException {
     return connector.getMBeanServerConnection();
   }
+
+  /**
+   * Check if the connection is still alive by performing a lightweight call.
+   *
+   * @return True if the connection is responsive, false if it appears broken
+   */
+  public boolean isAlive() {
+    try {
+      connector.getConnectionId();
+      return true;
+    } catch (IOException e) {
+      return false;
+    }
+  }
 }

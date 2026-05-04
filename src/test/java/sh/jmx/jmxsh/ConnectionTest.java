@@ -30,4 +30,20 @@ class ConnectionTest {
     assertThat(c.getConnectorId()).isEqualTo("xyz");
     verify(con).getConnectionId();
   }
+
+  @Test
+  void isAliveReturnsTrueWhenConnected() throws Exception {
+    JMXConnector con = mock(JMXConnector.class);
+    when(con.getConnectionId()).thenReturn("abc");
+    Connection c = new Connection(con, SyntaxUtils.getUrl("localhost:9991", null));
+    assertThat(c.isAlive()).isTrue();
+  }
+
+  @Test
+  void isAliveReturnsFalseWhenBroken() throws Exception {
+    JMXConnector con = mock(JMXConnector.class);
+    when(con.getConnectionId()).thenThrow(new IOException("Connection reset"));
+    Connection c = new Connection(con, SyntaxUtils.getUrl("localhost:9991", null));
+    assertThat(c.isAlive()).isFalse();
+  }
 }

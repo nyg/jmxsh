@@ -27,7 +27,12 @@ import sh.jmx.jmxsh.attach.JavaProcessManager;
 @Slf4j
 public class Session {
 
+  public static final int DEFAULT_RETRY_INTERVAL_SECONDS = 5;
+  public static final int DEFAULT_MAX_RETRY_ATTEMPTS = 12;
+
   private Connection connection;
+  private JMXServiceURL lastUrl;
+  private Map<String, Object> lastEnv;
   private String bean;
   private boolean closed;
   private String domain;
@@ -64,16 +69,31 @@ public class Session {
     log.info("connecting to {}", url);
     JMXConnector connector = doConnect(url, env);
     connection = new Connection(connector, url);
+    lastUrl = url;
+    lastEnv = env;
     log.info("connected to {}", url);
   }
 
   public void disconnect() throws IOException {
+    closeConnection();
+    lastUrl = null;
+    lastEnv = null;
+    unsetDomain();
+  }
+
+  /**
+   * Close the current connection without clearing reconnection state (lastUrl, lastEnv) or
+   * domain/bean selection. Used internally during reconnection attempts.
+   */
+  private void closeConnection() {
     if (connection == null) {
       return;
     }
     log.info("disconnecting from JMX server");
     try {
       connection.close();
+    } catch (IOException e) {
+      // Connection is already broken — force cleanup
     } finally {
       connection = null;
     }
@@ -97,6 +117,71 @@ public class Session {
 
   public boolean isConnected() {
     return connection != null;
+  }
+
+  /**
+   * @return True if this session has enough information to attempt a reconnect (i.e., a previous
+   *     connection was established and the URL was stored).
+   */
+  public boolean canReconnect() {
+    return lastUrl != null;
+  }
+
+  /**
+   * Check if the current connection is alive by performing a lightweight RMI call.
+   *
+   * @return True if the connection is alive, false if broken or not connected
+   */
+  public boolean isConnectionAlive() {
+    if (connection == null) {
+      return false;
+    }
+    return connection.isAlive();
+  }
+
+  /**
+   * Attempt to reconnect to the last known JMX endpoint. Closes the current (broken) connection
+   * without clearing domain/bean selection, then retries every {@code intervalSeconds} seconds up
+   * to {@code maxAttempts} times. On failure, performs a full disconnect (clearing all state).
+   *
+   * @param intervalSeconds Seconds to wait between retry attempts
+   * @param maxAttempts Maximum number of reconnection attempts
+   * @return True if reconnection was successful
+   */
+  public boolean reconnect(int intervalSeconds, int maxAttempts) {
+    closeConnection();
+
+    for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+      output.printMessage(
+          "Reconnection attempt %d/%d in %d seconds..."
+              .formatted(attempt, maxAttempts, intervalSeconds));
+      try {
+        Thread.sleep(intervalSeconds * 1000L);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        output.printMessage("Reconnection interrupted.");
+        fullDisconnect();
+        return false;
+      }
+      try {
+        JMXConnector connector = doConnect(lastUrl, lastEnv);
+        connection = new Connection(connector, lastUrl);
+        return true;
+      } catch (IOException e) {
+        // Will retry
+      }
+    }
+    output.printMessage("All reconnection attempts failed.");
+    fullDisconnect();
+    return false;
+  }
+
+  /** Clear all connection state including reconnection parameters and domain/bean. */
+  private void fullDisconnect() {
+    closeConnection();
+    lastUrl = null;
+    lastEnv = null;
+    unsetDomain();
   }
 
   public final void setBean(String bean) {

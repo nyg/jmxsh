@@ -129,9 +129,37 @@ public class CommandCenter {
     lock.lock();
     try {
       cmd.execute();
+    } catch (IOException e) {
+      if (attemptReconnect(e)) {
+        session.getOutput().printMessage(
+            "Reconnected to " + session.getConnection().url()
+                + ". Please retry your command.");
+      }
+      throw e;
     } finally {
       lock.unlock();
     }
+  }
+
+  /**
+   * Attempt to reconnect if the IOException appears to be caused by a broken JMX connection. Does
+   * NOT auto-retry the failed command — the user must retry manually to avoid double-execution of
+   * side-effecting operations.
+   *
+   * @param cause The IOException that triggered the reconnect attempt
+   * @return True if reconnection was successful
+   */
+  private boolean attemptReconnect(IOException cause) {
+    if (!session.isConnected() || !session.canReconnect()) {
+      return false;
+    }
+    // If connection is still alive, the IOException is from something else (e.g., file IO)
+    if (session.isConnectionAlive()) {
+      return false;
+    }
+    session.getOutput().printMessage("Connection lost: " + cause.getMessage());
+    return session.reconnect(
+        Session.DEFAULT_RETRY_INTERVAL_SECONDS, Session.DEFAULT_MAX_RETRY_ATTEMPTS);
   }
 
   public boolean execute(String command) {

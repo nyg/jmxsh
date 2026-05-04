@@ -67,6 +67,20 @@ public class EmbeddedJmxmpServer implements BeforeAllCallback, AfterAllCallback 
     }
   }
 
+  /** Stop the connector server, freeing the port. The MBeanServer is preserved for restart. */
+  public void stop() throws Exception {
+    if (connectorServer != null && connectorServer.isActive()) {
+      connectorServer.stop();
+    }
+  }
+
+  /** Restart the connector server on the same port, reusing the existing MBeanServer. */
+  public void restart() throws Exception {
+    JMXServiceURL url = new JMXServiceURL("service:jmx:jmxmp://localhost:" + port);
+    connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, mBeanServer);
+    connectorServer.start();
+  }
+
   /** @return The port the JMXMP connector server is listening on */
   public int getPort() {
     return port;
@@ -85,5 +99,10 @@ public class EmbeddedJmxmpServer implements BeforeAllCallback, AfterAllCallback 
   /** @return The underlying MBeanServer for direct manipulation in tests */
   public MBeanServer getMBeanServer() {
     return mBeanServer;
+  }
+
+  /** @return The JMXConnectorServer, for lifecycle inspection in tests */
+  public JMXConnectorServer getConnectorServer() {
+    return connectorServer;
   }
 }

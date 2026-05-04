@@ -31,6 +31,8 @@ public class Session {
   public static final int DEFAULT_MAX_RETRY_ATTEMPTS = 12;
 
   private Connection connection;
+  private int retryIntervalSeconds = DEFAULT_RETRY_INTERVAL_SECONDS;
+  private int maxRetryAttempts = DEFAULT_MAX_RETRY_ATTEMPTS;
   private JMXServiceURL lastUrl;
   private Map<String, Object> lastEnv;
   private String bean;
@@ -125,6 +127,11 @@ public class Session {
    */
   public boolean canReconnect() {
     return lastUrl != null;
+  }
+
+  public void setRetryParams(int intervalSeconds, int maxAttempts) {
+    this.retryIntervalSeconds = intervalSeconds;
+    this.maxRetryAttempts = maxAttempts;
   }
 
   /**

@@ -136,6 +136,13 @@ public class CommandCenter {
                 + ". Please retry your command.");
       }
       throw e;
+    } catch (RuntimeIOException e) {
+      if (e.getCause() instanceof IOException cause && attemptReconnect(cause)) {
+        session.getOutput().printMessage(
+            "Reconnected to " + session.getConnection().url()
+                + ". Please retry your command.");
+      }
+      throw e;
     } finally {
       lock.unlock();
     }
@@ -158,8 +165,7 @@ public class CommandCenter {
       return false;
     }
     session.getOutput().printMessage("Connection lost: " + cause.getMessage());
-    return session.reconnect(
-        Session.DEFAULT_RETRY_INTERVAL_SECONDS, Session.DEFAULT_MAX_RETRY_ATTEMPTS);
+    return session.reconnect(session.getRetryIntervalSeconds(), session.getMaxRetryAttempts());
   }
 
   public boolean execute(String command) {
@@ -182,6 +188,14 @@ public class CommandCenter {
 
   public final JavaProcessManager getProcessManager() {
     return processManager;
+  }
+
+  public void setRetryParams(int intervalSeconds, int maxAttempts) {
+    session.setRetryParams(intervalSeconds, maxAttempts);
+  }
+
+  public Session getSession() {
+    return session;
   }
 
   public boolean isClosed() {

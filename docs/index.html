@@ -45,6 +45,10 @@
         <pre><code>curl -fsSL https://jmx.sh/apt/gpg.asc | sudo gpg --dearmor -o /usr/share/keyrings/jmxsh.gpg
 echo "deb [signed-by=/usr/share/keyrings/jmxsh.gpg] https://jmx.sh/apt stable main" | sudo tee /etc/apt/sources.list.d/jmxsh.list
 sudo apt update &amp;&amp; sudo apt install jmxsh</code></pre>
+        <p>Ubuntu Noble (24.04) users can use the codename-based suite:</p>
+        <pre><code>curl -fsSL https://jmx.sh/apt/gpg.asc | sudo gpg --dearmor -o /usr/share/keyrings/jmxsh.gpg
+echo "deb [signed-by=/usr/share/keyrings/jmxsh.gpg] https://jmx.sh/apt noble main" | sudo tee /etc/apt/sources.list.d/jmxsh.list
+sudo apt update &amp;&amp; sudo apt install jmxsh</code></pre>
       </div>
     </div>
   </section>

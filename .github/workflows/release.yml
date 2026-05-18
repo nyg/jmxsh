@@ -236,12 +236,24 @@ jobs:
             cp dists/stable/main/binary-all/Packages.gz "dists/stable/main/binary-${arch}/"
           done
 
-          # Generate Release file
-          apt-ftparchive -c apt-ftparchive.conf release dists/stable > dists/stable/Release
+          # Mirror Packages index to noble distribution
+          cp dists/stable/main/binary-all/Packages dists/noble/main/binary-all/Packages
+          cp dists/stable/main/binary-all/Packages.gz dists/noble/main/binary-all/Packages.gz
+          for arch in amd64 arm64 i386; do
+            mkdir -p "dists/noble/main/binary-${arch}"
+            cp dists/stable/main/binary-all/Packages "dists/noble/main/binary-${arch}/"
+            cp dists/stable/main/binary-all/Packages.gz "dists/noble/main/binary-${arch}/"
+          done
 
-          # Sign Release file
+          # Generate Release files
+          apt-ftparchive -c apt-ftparchive.conf release dists/stable > dists/stable/Release
+          apt-ftparchive -c apt-ftparchive-noble.conf release dists/noble > dists/noble/Release
+
+          # Sign Release files
           gpg --batch --yes --default-key "$FINGERPRINT" --detach-sign --armor --output dists/stable/Release.gpg dists/stable/Release
           gpg --batch --yes --default-key "$FINGERPRINT" --clearsign --output dists/stable/InRelease dists/stable/Release
+          gpg --batch --yes --default-key "$FINGERPRINT" --detach-sign --armor --output dists/noble/Release.gpg dists/noble/Release
+          gpg --batch --yes --default-key "$FINGERPRINT" --clearsign --output dists/noble/InRelease dists/noble/Release
 
           cd ../..
 
@@ -249,7 +261,12 @@ jobs:
           rm -rf "$GNUPGHOME"
 
           # Remove .gitkeep files (no longer needed once real files exist)
-          rm -f docs/apt/pool/main/.gitkeep docs/apt/dists/stable/main/binary-all/.gitkeep
+          rm -f docs/apt/pool/main/.gitkeep \
+                docs/apt/dists/stable/main/binary-all/.gitkeep \
+                docs/apt/dists/noble/main/binary-all/.gitkeep \
+                docs/apt/dists/noble/main/binary-amd64/.gitkeep \
+                docs/apt/dists/noble/main/binary-arm64/.gitkeep \
+                docs/apt/dists/noble/main/binary-i386/.gitkeep
 
           # Commit and push
           git add docs/apt/

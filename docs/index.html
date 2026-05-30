@@ -41,17 +41,18 @@
       </div>
       <div class="card card-fullwidth">
         <h3>Debian/Ubuntu</h3>
-        <p>1. Import the GPG key and add the repository:</p>
+        <p>Add the repository and install:</p>
         <pre><code>curl -fsSL https://jmx.sh/apt/gpg.asc | sudo gpg --dearmor -o /usr/share/keyrings/jmxsh.gpg
+
 sudo tee /etc/apt/sources.list.d/jmxsh.sources &lt;&lt; 'EOF'
 Types: deb
 URIs: https://jmx.sh/apt
 Suites: stable
 Components: main
 Signed-By: /usr/share/keyrings/jmxsh.gpg
-EOF</code></pre>
-        <p>2. Install:</p>
-        <pre><code>sudo apt update &amp;&amp; sudo apt install jmxsh</code></pre>
+EOF
+
+sudo apt update &amp;&amp; sudo apt install jmxsh</code></pre>
       </div>
     </div>
   </section>

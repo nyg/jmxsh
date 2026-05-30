@@ -1,6 +1,38 @@
 # Changelog
 
 
+## [1.3.1](https://github.com/nyg/jmxsh/compare/v1.3.0..v1.3.1) - 2026-05-30
+
+### ⛰️  Features
+
+- [`29ef859`](https://github.com/nyg/jmxsh/commit/29ef859ef6887a3bb64535a08abbb34eb29f2750) *(io)* **[breaking]** Add logback logging, XDG config, quiet mode ([#44](https://github.com/nyg/jmxsh/issues/44))
+
+### 🐛 Bug Fixes
+
+- [`7d5cfb0`](https://github.com/nyg/jmxsh/commit/7d5cfb087aaa72475311bb6947da600dc0ef6847) *(deps)* Update all stable non-major dependencies ([#58](https://github.com/nyg/jmxsh/issues/58))
+- [`0a9444b`](https://github.com/nyg/jmxsh/commit/0a9444bc7fc085f5afdc59a33627eb342e2051b1) Remediate SonarQube issues ([#55](https://github.com/nyg/jmxsh/issues/55))
+
+### 🚜 Refactor
+
+- [`d597de4`](https://github.com/nyg/jmxsh/commit/d597de467ae49662c28fbcebc0bc638610fc6510) Convert CommandInput/Output to interfaces, simplify WatchCommand ([#53](https://github.com/nyg/jmxsh/issues/53))
+- [`bf4b6eb`](https://github.com/nyg/jmxsh/commit/bf4b6eba6b7b72e5844eb702b3f73eb5e8b9ca34) Replace EscapingTokenizer with JLine DefaultParser ([#52](https://github.com/nyg/jmxsh/issues/52))
+- [`f0ca73b`](https://github.com/nyg/jmxsh/commit/f0ca73bc872fc66abb5b0dd7710b8508b4e618c0) Replace reflection-based command instantiation with suppliers ([#51](https://github.com/nyg/jmxsh/issues/51))
+- [`706aaae`](https://github.com/nyg/jmxsh/commit/706aaae20a39d75107b5865fa27d0fa9961e7eba) Collapse abstractions in Session, Connection, and process management ([#50](https://github.com/nyg/jmxsh/issues/50))
+- [`a0d0b1a`](https://github.com/nyg/jmxsh/commit/a0d0b1ae6233f7513485a680cfbf578f87ac37c4) **[breaking]** Modernize legacy code patterns ([#49](https://github.com/nyg/jmxsh/issues/49))
+- [`2339b7f`](https://github.com/nyg/jmxsh/commit/2339b7f1ccb3e38e99f43fce2b07a04e10764965) Rename package to sh.jmx.jmxsh ([#48](https://github.com/nyg/jmxsh/issues/48))
+
+### 📚 Documentation
+
+- [`6935ca0`](https://github.com/nyg/jmxsh/commit/6935ca0af17077c547917e5bd7c0da2d8be72b40) Use DEB822 format for apt install instructions ([#60](https://github.com/nyg/jmxsh/issues/60))
+
+### ⚙️ Miscellaneous
+
+- [`1f5597c`](https://github.com/nyg/jmxsh/commit/1f5597cd98956b0c35a691b5da84b9d5fbe6f1b4) Dispatch formula update to homebrew-tap ([#61](https://github.com/nyg/jmxsh/issues/61))
+- [`1a2f82e`](https://github.com/nyg/jmxsh/commit/1a2f82eb5bfd97f0cc405e183704a3c4340233b6) *(deps)* Update orhun/git-cliff-action digest to f50e115 ([#57](https://github.com/nyg/jmxsh/issues/57))
+- [`49c78df`](https://github.com/nyg/jmxsh/commit/49c78df4e072c42777da39183991ce4fc9c8d913) Add JaCoCo coverage and SonarCloud analysis ([#54](https://github.com/nyg/jmxsh/issues/54))
+- [`e9d0847`](https://github.com/nyg/jmxsh/commit/e9d0847e06eba63a673955e94d9e2e271b12c967) Remove @author javadoc tags ([#47](https://github.com/nyg/jmxsh/issues/47))
+- [`fb4c826`](https://github.com/nyg/jmxsh/commit/fb4c826b2dd8e92856ac12f93721f81eb6083b55) Add Lombok and use it throughout the codebase ([#46](https://github.com/nyg/jmxsh/issues/46))
+
 ## [1.3.0](https://github.com/nyg/jmxsh/compare/v1.2.3..v1.3.0) - 2026-04-17
 
 ### ⛰️  Features

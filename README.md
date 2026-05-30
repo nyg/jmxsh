@@ -34,9 +34,17 @@ brew install nyg/jmxsh/jmxsh
 ### Debian/Ubuntu
 
 ```bash
-# Add the GPG key and repository
+# Import the GPG key
 curl -fsSL https://jmx.sh/apt/gpg.asc | sudo gpg --dearmor -o /usr/share/keyrings/jmxsh.gpg
-echo "deb [signed-by=/usr/share/keyrings/jmxsh.gpg] https://jmx.sh/apt stable main" | sudo tee /etc/apt/sources.list.d/jmxsh.list
+
+# Add the repository
+sudo tee /etc/apt/sources.list.d/jmxsh.sources << 'EOF'
+Types: deb
+URIs: https://jmx.sh/apt
+Suites: stable
+Components: main
+Signed-By: /usr/share/keyrings/jmxsh.gpg
+EOF
 
 # Install
 sudo apt update && sudo apt install jmxsh
@@ -113,13 +121,13 @@ Full service URLs are also supported: `open service:jmx:jmxmp://localhost:9999`
 Run commands from a script file:
 
 ```bash
-java -jar jmxsh-<version>.jar -l localhost:9999 --input commands.txt
+jmxsh -l localhost:9999 --input commands.txt
 ```
 
 Or pipe commands via stdin:
 
 ```bash
-echo "open localhost:9999 && beans" | java -jar jmxsh-<version>.jar -n
+echo "open localhost:9999 && beans" | jmxsh -n
 ```
 
 ## Documentation

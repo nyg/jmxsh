@@ -35,10 +35,10 @@ brew install nyg/jmxsh/jmxsh
 
 ```bash
 # Import the GPG key
-$ curl -fsSL https://jmx.sh/apt/gpg.asc | sudo gpg --dearmor -o /usr/share/keyrings/jmxsh.gpg
+curl -fsSL https://jmx.sh/apt/gpg.asc | sudo gpg --dearmor -o /usr/share/keyrings/jmxsh.gpg
 
 # Add the repository
-$ sudo tee /etc/apt/sources.list.d/jmxsh.sources << 'EOF'
+sudo tee /etc/apt/sources.list.d/jmxsh.sources << 'EOF'
 Types: deb
 URIs: https://jmx.sh/apt
 Suites: stable
@@ -47,7 +47,7 @@ Signed-By: /usr/share/keyrings/jmxsh.gpg
 EOF
 
 # Install
-$ sudo apt update && sudo apt install jmxsh
+sudo apt update && sudo apt install jmxsh
 ```
 
 ## Features

@@ -104,15 +104,12 @@ null
         <div class="card">
           <h3>Script File</h3>
           <p>Run commands from a file:</p>
-          <pre><code>jmxsh \
-  -l localhost:9999 \
-  --input commands.txt</code></pre>
+          <pre><code>jmxsh -l localhost:9999 --input commands.txt</code></pre>
         </div>
         <div class="card">
           <h3>Piped Input</h3>
           <p>Pipe commands via stdin:</p>
-          <pre><code>echo "open localhost:9999 && beans" \
-  | jmxsh -n</code></pre>
+          <pre><code>echo "open localhost:9999 && beans" | jmxsh -n</code></pre>
         </div>
       </div>
     </div>

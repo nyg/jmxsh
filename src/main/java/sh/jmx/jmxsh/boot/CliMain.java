@@ -153,7 +153,7 @@ public class CliMain {
                 env.isEmpty() ? null : env);
           }
           commandCenter.setOutputMode(outputMode);
-          if (!options.isQuiet()) {
+          if (!options.isQuiet() && !options.isNonInteractive()) {
             output.printMessage("Welcome to jmx.sh, type \"help\" for available commands.");
           }
           String line;

@@ -41,7 +41,7 @@
       </div>
       <div class="card card-fullwidth">
         <h3>Debian/Ubuntu</h3>
-        <p>Add the repository and install:</p>
+        <p>1. Import the GPG key and add the repository:</p>
         <pre><code>curl -fsSL https://jmx.sh/apt/gpg.asc | sudo gpg --dearmor -o /usr/share/keyrings/jmxsh.gpg
 sudo tee /etc/apt/sources.list.d/jmxsh.sources &lt;&lt; 'EOF'
 Types: deb
@@ -49,8 +49,9 @@ URIs: https://jmx.sh/apt
 Suites: stable
 Components: main
 Signed-By: /usr/share/keyrings/jmxsh.gpg
-EOF
-sudo apt update &amp;&amp; sudo apt install jmxsh</code></pre>
+EOF</code></pre>
+        <p>2. Install:</p>
+        <pre><code>sudo apt update &amp;&amp; sudo apt install jmxsh</code></pre>
       </div>
     </div>
   </section>
@@ -102,7 +103,7 @@ null
         <div class="card">
           <h3>Script File</h3>
           <p>Run commands from a file:</p>
-          <pre><code>java -jar jmxsh-&lt;version&gt;.jar \
+          <pre><code>jmxsh \
   -l localhost:9999 \
   --input commands.txt</code></pre>
         </div>
@@ -110,7 +111,7 @@ null
           <h3>Piped Input</h3>
           <p>Pipe commands via stdin:</p>
           <pre><code>echo "open localhost:9999 && beans" \
-  | java -jar jmxsh-&lt;version&gt;.jar -n</code></pre>
+  | jmxsh -n</code></pre>
         </div>
       </div>
     </div>

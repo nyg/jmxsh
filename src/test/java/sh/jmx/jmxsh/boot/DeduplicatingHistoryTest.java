@@ -2,6 +2,7 @@ package sh.jmx.jmxsh.boot;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -163,6 +164,68 @@ class DeduplicatingHistoryTest {
       // "old" should appear exactly once — in the most recent position
       assertThat(saved).containsExactly("old");
       assertThat(h.size()).isEqualTo(1);
+    } finally {
+      t.close();
+    }
+  }
+
+  // -- save() fallback paths ---------------------------------------------------
+
+  @Test
+  void saveIsNoopWhenHistoryNotAttached() throws IOException {
+    // DeduplicatingHistory with no reader attached → falls back to super.save()
+    DeduplicatingHistory h = new DeduplicatingHistory();
+    h.save(); // must not throw
+  }
+
+  @Test
+  void saveIsNoopWhenNoHistoryFileConfigured() throws IOException {
+    // Attach reader but leave HISTORY_FILE variable unset → path resolves to null
+    DeduplicatingHistory h = new DeduplicatingHistory();
+    Terminal t = TerminalBuilder.builder().dumb(true).build();
+    try {
+      LineReader r = LineReaderBuilder.builder().terminal(t).history(h).build();
+      h.attach(r); // HISTORY_FILE not set → getVariable returns null
+      h.add("cmd1");
+      h.save(); // must not throw
+    } finally {
+      t.close();
+    }
+  }
+
+  @Test
+  void saveAcceptsFileObjectAsHistoryPath(@TempDir Path dir) throws IOException {
+    Path file = dir.resolve("history");
+    DeduplicatingHistory h = new DeduplicatingHistory();
+    Terminal t = TerminalBuilder.builder().dumb(true).build();
+    try {
+      LineReader r = LineReaderBuilder.builder().terminal(t).history(h).build();
+      r.setVariable(LineReader.HISTORY_FILE, new File(file.toString())); // java.io.File, not Path
+      r.option(LineReader.Option.HISTORY_TIMESTAMPED, false);
+      h.attach(r);
+      h.add("cmd1");
+      h.save();
+
+      assertThat(Files.readAllLines(file)).containsExactly("cmd1");
+    } finally {
+      t.close();
+    }
+  }
+
+  @Test
+  void saveAcceptsStringAsHistoryPath(@TempDir Path dir) throws IOException {
+    Path file = dir.resolve("history");
+    DeduplicatingHistory h = new DeduplicatingHistory();
+    Terminal t = TerminalBuilder.builder().dumb(true).build();
+    try {
+      LineReader r = LineReaderBuilder.builder().terminal(t).history(h).build();
+      r.setVariable(LineReader.HISTORY_FILE, file.toString()); // String, not Path
+      r.option(LineReader.Option.HISTORY_TIMESTAMPED, false);
+      h.attach(r);
+      h.add("cmd1");
+      h.save();
+
+      assertThat(Files.readAllLines(file)).containsExactly("cmd1");
     } finally {
       t.close();
     }

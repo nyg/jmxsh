@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
@@ -173,14 +172,13 @@ class DeduplicatingHistoryTest {
 
   @Test
   void saveIsNoopWhenHistoryNotAttached() throws IOException {
-    // DeduplicatingHistory with no reader attached → falls back to super.save()
     DeduplicatingHistory h = new DeduplicatingHistory();
     h.save(); // must not throw
+    assertThat(h.size()).isEqualTo(0);
   }
 
   @Test
   void saveIsNoopWhenNoHistoryFileConfigured() throws IOException {
-    // Attach reader but leave HISTORY_FILE variable unset → path resolves to null
     DeduplicatingHistory h = new DeduplicatingHistory();
     Terminal t = TerminalBuilder.builder().dumb(true).build();
     try {
@@ -188,6 +186,7 @@ class DeduplicatingHistoryTest {
       h.attach(r); // HISTORY_FILE not set → getVariable returns null
       h.add("cmd1");
       h.save(); // must not throw
+      assertThat(h.size()).isEqualTo(1);
     } finally {
       t.close();
     }

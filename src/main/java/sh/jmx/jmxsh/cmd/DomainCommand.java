@@ -65,6 +65,15 @@ public class DomainCommand extends Command {
       session.unsetDomain();
       session.getOutput().printMessage("domain is unset");
     } else {
+      String currentBean = session.getBean();
+      if (currentBean != null) {
+        int colonIdx = currentBean.indexOf(':');
+        String beanDomain = colonIdx > 0 ? currentBean.substring(0, colonIdx) : null;
+        if (!domainName.equals(beanDomain)) {
+          session.setBean(null);
+          session.getOutput().printMessage("bean was unset (not part of domain " + domainName + ")");
+        }
+      }
       session.setDomain(domainName);
       log.debug("selected domain: {}", domainName);
       session.getOutput().printMessage("domain is set to " + session.getDomain());

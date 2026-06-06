@@ -72,6 +72,6 @@ class HelpCommandTest {
     command.setSession(session);
     command.execute();
     assertThat(writer.toString().trim())
-        .isEqualTo("a        - desc" + System.lineSeparator() + "b        - desc");
+        .isEqualTo("a           - desc" + System.lineSeparator() + "b           - desc");
   }
 }

@@ -25,6 +25,50 @@ class PromptTemplateTest {
   private Connection connection;
 
   @Test
+  void optionalBlockHiddenWhenAllVarsEmpty() {
+    when(session.isConnected()).thenReturn(false);
+    assertThat(PromptTemplate.resolve("{?[{server}] }> ", session)).isEqualTo("> ");
+  }
+
+  @Test
+  void optionalBlockShownWhenVarNonEmpty() throws Exception {
+    when(session.isConnected()).thenReturn(true);
+    when(session.getConnection()).thenReturn(connection);
+    when(connection.url()).thenReturn(new JMXServiceURL("service:jmx:jmxmp://srv:9010"));
+    assertThat(PromptTemplate.resolve("{?[{server}] }> ", session)).isEqualTo("[srv:9010] > ");
+  }
+
+  @Test
+  void optionalBlocksComposed() throws Exception {
+    when(session.isConnected()).thenReturn(true);
+    when(session.getConnection()).thenReturn(connection);
+    when(connection.url()).thenReturn(new JMXServiceURL("service:jmx:jmxmp://srv:9010"));
+    when(session.getDomain()).thenReturn("java.lang");
+    when(session.getBean()).thenReturn("java.lang:type=Memory");
+    assertThat(PromptTemplate.resolve("{?[{server}] }{?{domain}}{?/{bean}}> ", session))
+        .isEqualTo("[srv:9010] java.lang/java.lang:type=Memory> ");
+  }
+
+  @Test
+  void optionalBlockPartiallyEmptyStillShown() throws Exception {
+    when(session.isConnected()).thenReturn(false);
+    when(session.getDomain()).thenReturn("java.lang");
+    when(session.getBean()).thenReturn(null);
+    // {?[{server}] } hidden (server empty), {?{domain}} shown, {?/{bean}} hidden (bean empty)
+    assertThat(PromptTemplate.resolve("{?[{server}] }{?{domain}}{?/{bean}}> ", session))
+        .isEqualTo("java.lang> ");
+  }
+
+  @Test
+  void unclosedOptionalBlockTreatedAsLiteral() {
+    when(session.isConnected()).thenReturn(false);
+    when(session.getDomain()).thenReturn(null);
+    when(session.getBean()).thenReturn(null);
+    // unclosed {? — the {? characters are emitted literally
+    assertThat(PromptTemplate.resolve("{?[{server}]> ", session)).isEqualTo("{?[]> ");
+  }
+
+  @Test
   void nullSessionReturnsTemplateUnchanged() {
     assertThat(PromptTemplate.resolve("[{server}]> ", null)).isEqualTo("[{server}]> ");
   }

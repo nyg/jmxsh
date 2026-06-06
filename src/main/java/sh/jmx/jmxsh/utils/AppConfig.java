@@ -87,9 +87,11 @@ public final class AppConfig {
       #   {server}  - connected JMX server (host:port), empty when not connected
       #   {domain}  - currently selected domain, empty when none
       #   {bean}    - currently selected bean, empty when none
+      #
+      # Wrap sections in {?...} to hide them when all variables inside are empty:
+      #   {?[{server}] }> 
+      #   {?[{server}] }{?{domain}}{?/{bean}}> 
       # prompt=> 
-      # prompt=[{server}]> 
-      # prompt=[{domain}/{bean}]> 
       """;
 
   /**

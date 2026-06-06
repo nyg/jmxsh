@@ -42,7 +42,7 @@ public class VerboseCommandOutput implements CommandOutput {
   @Override
   public void printMessage(String message) {
     if (modeSupplier.get() != OutputMode.SILENT) {
-      output.printMessage("#" + message);
+      output.printMessage(message);
     }
   }
 }

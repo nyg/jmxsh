@@ -85,6 +85,29 @@ class DomainCommandTest {
     assertThat(writer.toString().trim()).isEqualTo("something");
   }
 
+  @Test
+  void settingDomainUnsetsBeanFromDifferentDomain() throws Exception {
+    when(session.getBean()).thenReturn("other.domain:type=Thing");
+    setDomainAndVerify("something", new String[] {"something"});
+    // bean belongs to "other.domain", not "something" → should be unset
+    verify(session).setBean(null);
+  }
+
+  @Test
+  void settingDomainKeepsBeanFromSameDomain() throws Exception {
+    when(session.getBean()).thenReturn("something:type=Thing");
+    setDomainAndVerify("something", new String[] {"something"});
+    // bean already belongs to "something" → should NOT be unset
+    verify(session, org.mockito.Mockito.never()).setBean(null);
+  }
+
+  @Test
+  void settingDomainWithNoBeanDoesNothing() throws Exception {
+    when(session.getBean()).thenReturn(null);
+    setDomainAndVerify("something", new String[] {"something"});
+    verify(session, org.mockito.Mockito.never()).setBean(null);
+  }
+
   /**
    * Test the case where invalid value is declined
    *

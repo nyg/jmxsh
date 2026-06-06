@@ -28,6 +28,7 @@ import sh.jmx.jmxsh.utils.AppConfig;
 import sh.jmx.jmxsh.utils.PromptTemplate;
 import sh.jmx.jmxsh.utils.XdgDirectories;
 import org.jline.reader.LineReader;
+import org.jline.reader.UserInterruptException;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;
@@ -165,7 +166,16 @@ public class CliMain {
           String line;
           int exitCode = 0;
           int lineNumber = 0;
-          while ((line = input.readLine()) != null) {
+          while (true) {
+            try {
+              line = input.readLine();
+            } catch (UserInterruptException _) {
+              output.printMessage("Interrupted.");
+              break;
+            }
+            if (line == null) {
+              break;
+            }
             lineNumber++;
             if (!commandCenter.execute(line) && options.isExitOnFailure()) {
               exitCode = -lineNumber;

@@ -51,7 +51,7 @@ public class CliMain {
       System.exit(new CliMain().execute(args));
     } catch (Exception e) {
       String message = e.getMessage() != null ? e.getMessage() : e.toString();
-      System.err.println("# " + message);
+      System.err.println(message);
       log.error("Fatal error", e);
       System.exit(1);
     }

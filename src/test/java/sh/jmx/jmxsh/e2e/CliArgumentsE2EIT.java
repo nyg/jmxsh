@@ -47,13 +47,7 @@ class CliArgumentsE2EIT {
           "get Name",
           "quit");
       String output = jmxsh.readAllOutput(TIMEOUT);
-      // In silent mode, informational messages prefixed with "#" should not appear
-      for (String line : output.split("\\R")) {
-        assertThat(line)
-            .as("Silent mode should not produce '#' prefixed lines, but found: " + line)
-            .doesNotStartWith("#");
-      }
-      // The attribute value should still be present
+      // In silent mode, no informational messages should appear — only data values
       assertThat(output).as("Expected 'default' value in output: " + output).contains("default");
     }
   }

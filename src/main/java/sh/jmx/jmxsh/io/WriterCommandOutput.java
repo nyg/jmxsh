@@ -34,7 +34,8 @@ public class WriterCommandOutput implements CommandOutput {
   @Override
   public void printError(Throwable e) {
     try {
-      messageOutput.write("#" + e.getMessage());
+      String message = e.getMessage() != null ? e.getMessage() : e.toString();
+      messageOutput.write(message);
     } catch (IOException ex) {
       throw new RuntimeIOException("Can't print error message", ex);
     }

@@ -18,11 +18,18 @@ public final class AppConfig {
   private static final String KEY_LOGGING_FILE_ENABLED = "logging.file.enabled";
   private static final boolean DEFAULT_LOGGING_FILE_ENABLED = false;
 
+  private static final String KEY_PROMPT = "prompt";
+  static final String DEFAULT_PROMPT = "> ";
+
   @Getter
   private final boolean loggingFileEnabled;
 
-  private AppConfig(boolean loggingFileEnabled) {
+  @Getter
+  private final String prompt;
+
+  private AppConfig(boolean loggingFileEnabled, String prompt) {
     this.loggingFileEnabled = loggingFileEnabled;
+    this.prompt = prompt;
   }
 
   /**
@@ -45,7 +52,8 @@ public final class AppConfig {
     }
     boolean loggingFileEnabled =
         parseBoolean(props.getProperty(KEY_LOGGING_FILE_ENABLED), DEFAULT_LOGGING_FILE_ENABLED);
-    return new AppConfig(loggingFileEnabled);
+    String prompt = parseString(props.getProperty(KEY_PROMPT), DEFAULT_PROMPT);
+    return new AppConfig(loggingFileEnabled, prompt);
   }
 
   private static boolean parseBoolean(String value, boolean defaultValue) {
@@ -62,6 +70,10 @@ public final class AppConfig {
     return defaultValue;
   }
 
+  private static String parseString(String value, String defaultValue) {
+    return (value == null) ? defaultValue : value;
+  }
+
   private static final String DEFAULT_CONFIG_CONTENT =
       """
       # jmxsh configuration file
@@ -70,6 +82,14 @@ public final class AppConfig {
       # Log files are stored in $XDG_STATE_HOME/jmxsh/logs/
       # (default: ~/.local/state/jmxsh/logs/)
       # logging.file.enabled=false
+      #
+      # REPL prompt. Supports the following variables:
+      #   {server}  - connected JMX server (host:port), empty when not connected
+      #   {domain}  - currently selected domain, empty when none
+      #   {bean}    - currently selected bean, empty when none
+      # prompt=> 
+      # prompt=[{server}]> 
+      # prompt=[{domain}/{bean}]> 
       """;
 
   /**

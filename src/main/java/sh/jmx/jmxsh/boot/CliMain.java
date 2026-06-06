@@ -25,7 +25,6 @@ import sh.jmx.jmxsh.io.PrintStreamCommandOutput;
 import sh.jmx.jmxsh.io.OutputMode;
 import sh.jmx.jmxsh.utils.AppConfig;
 import sh.jmx.jmxsh.utils.XdgDirectories;
-import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.LineReaderImpl;
@@ -99,13 +98,13 @@ public class CliMain {
         if (options.isNonInteractive()) {
           input = new InputStreamCommandInput(System.in);
         } else {
-          LineReaderImpl consoleReader = (LineReaderImpl) LineReaderBuilder.builder().build();
+          DeduplicatingHistory history = new DeduplicatingHistory();
+          LineReaderImpl consoleReader = (LineReaderImpl) LineReaderBuilder.builder().history(history).build();
           Path historyPath = XdgDirectories.INSTANCE.getHistoryFile();
           migrateHistory(XdgDirectories.INSTANCE.getLegacyHistoryFile(), historyPath);
           Files.createDirectories(historyPath.getParent());
           consoleReader.setVariable(LineReader.HISTORY_FILE, historyPath);
-          History history = consoleReader.getHistory();
-          history.load();
+          history.attach(consoleReader);
           Runtime.getRuntime()
               .addShutdownHook(
                   new Thread(

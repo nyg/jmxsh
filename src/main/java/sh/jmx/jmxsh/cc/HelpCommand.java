@@ -24,14 +24,14 @@ public class HelpCommand extends sh.jmx.jmxsh.Command {
     Objects.requireNonNull(commandCenter, "Command center hasn't been set yet");
     if (argNames.isEmpty()) {
       List<String> commandNames = commandCenter.getCommandNames().stream().sorted().toList();
-      getSession().getOutput().printMessage("following commands are available to use:");
+      getSession().getOutput().printMessage("The following commands are available to use:");
       for (String commandName : commandNames) {
         sh.jmx.jmxsh.Command cmd =
             commandCenter.createCommand(commandName);
         CommandLine cl = new CommandLine(cmd);
         String[] desc = cl.getCommandSpec().usageMessage().description();
         String description = desc.length > 0 ? String.join(" ", desc) : "";
-        getSession().getOutput().println("%-8s - %s".formatted(commandName, description));
+        getSession().getOutput().println("%-11s - %s".formatted(commandName, description));
       }
     } else {
       for (String argName : argNames) {

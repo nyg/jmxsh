@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.management.remote.JMXConnector;
 import javax.rmi.ssl.SslRMIClientSocketFactory;
 
+import sh.jmx.jmxsh.Session;
 import sh.jmx.jmxsh.SyntaxUtils;
 import sh.jmx.jmxsh.cc.CommandCenter;
 import sh.jmx.jmxsh.cc.ConsoleCompleter;
@@ -24,8 +25,10 @@ import sh.jmx.jmxsh.io.JlineCommandInput;
 import sh.jmx.jmxsh.io.PrintStreamCommandOutput;
 import sh.jmx.jmxsh.io.OutputMode;
 import sh.jmx.jmxsh.utils.AppConfig;
+import sh.jmx.jmxsh.utils.PromptTemplate;
 import sh.jmx.jmxsh.utils.XdgDirectories;
 import org.jline.reader.LineReader;
+import org.jline.reader.UserInterruptException;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;
@@ -43,14 +46,12 @@ import picocli.CommandLine;
 public class CliMain {
   private static final PrintWriter STDOUT_WRITER = new PrintWriter(System.out, true);
 
-  private static final String COMMAND_PROMPT = "$> ";
-
   static void main(String[] args) {
     try {
       System.exit(new CliMain().execute(args));
     } catch (Exception e) {
       String message = e.getMessage() != null ? e.getMessage() : e.toString();
-      System.err.println("# " + message);
+      System.err.println(message);
       log.error("Fatal error", e);
       System.exit(1);
     }
@@ -95,6 +96,7 @@ public class CliMain {
       output = new FileCommandOutput(Path.of(options.getOutput()), options.isAppendToOutput());
     }
     try (output) {
+      Session[] sessionRef = {null};
       CommandInput input;
       if (CliMainOptions.STDIN.equals(options.getInput())) {
         if (options.isNonInteractive()) {
@@ -118,7 +120,9 @@ public class CliMain {
                           log.warn("failed to flush command history", e);
                         }
                       }));
-          input = new JlineCommandInput(consoleReader, COMMAND_PROMPT);
+          String promptTemplate = appConfig.getPrompt();
+          input = new JlineCommandInput(consoleReader,
+              () -> PromptTemplate.resolve(promptTemplate, sessionRef[0]));
         }
       } else {
         Path inputPath = Path.of(options.getInput());
@@ -131,6 +135,7 @@ public class CliMain {
         CommandCenter commandCenter = new CommandCenter(output, input);
         try {
           if (input instanceof JlineCommandInput commandInput) {
+            sessionRef[0] = commandCenter.getSession();
             commandInput
                 .getConsole()
                 .setCompleter(new ConsoleCompleter(commandCenter));
@@ -161,7 +166,16 @@ public class CliMain {
           String line;
           int exitCode = 0;
           int lineNumber = 0;
-          while ((line = input.readLine()) != null) {
+          while (true) {
+            try {
+              line = input.readLine();
+            } catch (UserInterruptException _) {
+              output.printMessage("Interrupted.");
+              break;
+            }
+            if (line == null) {
+              break;
+            }
             lineNumber++;
             if (!commandCenter.execute(line) && options.isExitOnFailure()) {
               exitCode = -lineNumber;

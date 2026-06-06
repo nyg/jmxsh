@@ -156,6 +156,10 @@ public class CommandCenter {
     return processManager;
   }
 
+  public Session getSession() {
+    return session;
+  }
+
   public boolean isClosed() {
     return session.isClosed();
   }

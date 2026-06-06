@@ -35,11 +35,10 @@ class VerboseLevelIT {
 
   @Test
   void testBriefMessages() {
-    // Default level is BRIEF — messages should appear with '#' prefix
+    // Default level is BRIEF — messages should appear (without '#' prefix)
     assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
     String messages = messageWriter.toString();
     assertThat(messages)
-        .as("Expected '#' prefixed messages in BRIEF mode, got: " + messages).contains("#")
         .as("Expected connection message, got: " + messages).contains("Connection to");
   }
 
@@ -61,11 +60,11 @@ class VerboseLevelIT {
 
   @Test
   void testBriefShowsShortErrors() {
-    // Default level is BRIEF
+    // Default level is BRIEF — errors appear without stack trace
     assertThat(cc.execute("get Name")).isFalse();
     String messages = messageWriter.toString();
     assertThat(messages)
-        .as("Expected '#' prefixed error in BRIEF mode, got: " + messages).contains("#")
+        .as("Expected error message in BRIEF mode, got: " + messages).isNotBlank()
         .as("Expected no stack trace in BRIEF mode, got: " + messages).doesNotContain("\tat ");
   }
 }

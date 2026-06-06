@@ -119,6 +119,10 @@ public class BeanCommand extends Command {
     session.setBean(beanName);
     log.debug("selected bean: {}", beanName);
     session.getOutput().printMessage("bean is set to " + beanName);
+    int colonIdx = beanName.indexOf(':');
+    if (colonIdx > 0) {
+      session.setDomain(beanName.substring(0, colonIdx));
+    }
   }
 
   @Parameters(paramLabel = "bean", description = "MBean name with or without domain", arity = "0..1")

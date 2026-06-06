@@ -157,6 +157,27 @@ class BeanCommandTest {
   }
 
   @Test
+  void settingFullyQualifiedBeanAutoSetsDomain() throws Exception {
+    command.setBean("java.lang:type=Memory");
+    command.setSession(session);
+    command.execute();
+    verify(session).setBean("java.lang:type=Memory");
+    verify(session).setDomain("java.lang");
+  }
+
+  @Test
+  void settingPartialBeanAutoSetsDomainFromResolvedName() throws Exception {
+    // Partial bean "type=x" is resolved to "something:type=x" using the session domain
+    command.setBean("type=x");
+    when(session.getDomain()).thenReturn("something");
+    command.setSession(session);
+    command.execute();
+    verify(session).setBean("something:type=x");
+    // domain is extracted from the resolved fully-qualified name
+    verify(session).setDomain("something");
+  }
+
+  @Test
   void suggestOptionWithUnknownOption() {
     command.setSession(session);
     assertThat(command.suggestOption("x", null)).isEmpty();

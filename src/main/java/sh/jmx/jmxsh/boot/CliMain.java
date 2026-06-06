@@ -28,6 +28,8 @@ import sh.jmx.jmxsh.utils.XdgDirectories;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.LineReaderImpl;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -99,7 +101,8 @@ public class CliMain {
           input = new InputStreamCommandInput(System.in);
         } else {
           DeduplicatingHistory history = new DeduplicatingHistory();
-          LineReaderImpl consoleReader = (LineReaderImpl) LineReaderBuilder.builder().history(history).build();
+          Terminal terminal = TerminalBuilder.builder().graphemeCluster(false).build();
+          LineReaderImpl consoleReader = (LineReaderImpl) LineReaderBuilder.builder().terminal(terminal).history(history).build();
           Path historyPath = XdgDirectories.INSTANCE.getHistoryFile();
           migrateHistory(XdgDirectories.INSTANCE.getLegacyHistoryFile(), historyPath);
           Files.createDirectories(historyPath.getParent());

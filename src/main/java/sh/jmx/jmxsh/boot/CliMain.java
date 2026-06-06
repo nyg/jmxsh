@@ -101,7 +101,7 @@ public class CliMain {
           input = new InputStreamCommandInput(System.in);
         } else {
           DeduplicatingHistory history = new DeduplicatingHistory();
-          Terminal terminal = TerminalBuilder.builder().graphemeCluster(false).build();
+          Terminal terminal = TerminalBuilder.builder().ffm(false).graphemeCluster(false).build();
           LineReaderImpl consoleReader = (LineReaderImpl) LineReaderBuilder.builder().terminal(terminal).history(history).build();
           Path historyPath = XdgDirectories.INSTANCE.getHistoryFile();
           migrateHistory(XdgDirectories.INSTANCE.getLegacyHistoryFile(), historyPath);

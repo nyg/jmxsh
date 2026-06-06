@@ -174,7 +174,7 @@ class DeduplicatingHistoryTest {
   void saveIsNoopWhenHistoryNotAttached() throws IOException {
     DeduplicatingHistory h = new DeduplicatingHistory();
     h.save(); // must not throw
-    assertThat(h.size()).isEqualTo(0);
+    assertThat(h.size()).isZero();
   }
 
   @Test

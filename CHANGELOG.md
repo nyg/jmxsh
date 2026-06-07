@@ -1,6 +1,23 @@
 # Changelog
 
 
+## [1.4.0](https://github.com/nyg/jmxsh/compare/v1.3.1..v1.4.0) - 2026-06-07
+
+### ⛰️  Features
+
+- [`3b2b3a1`](https://github.com/nyg/jmxsh/commit/3b2b3a18ebde66f3b40b9d8275f162be5d89541c) Configurable prompt, clean UX — remove # prefix, Ctrl+C, domain/bean sync ([#67](https://github.com/nyg/jmxsh/issues/67))
+- [`cbb97f2`](https://github.com/nyg/jmxsh/commit/cbb97f227272174dfa0bc0788207555c2ba88bf7) *(cmd)* Deduplicate JLine command history in-session and on disk ([#66](https://github.com/nyg/jmxsh/issues/66))
+
+### 🐛 Bug Fixes
+
+- [`6989d2a`](https://github.com/nyg/jmxsh/commit/6989d2a33b3a1dc35e11a04eaaf9a929229bdedf) *(deps)* Update all stable non-major dependencies ([#63](https://github.com/nyg/jmxsh/issues/63))
+- [`b59fedb`](https://github.com/nyg/jmxsh/commit/b59fedbe15c5e9b14a6e50086be04a53f6a68048) *(cmd)* Suppress welcome message when using -n flag ([#62](https://github.com/nyg/jmxsh/issues/62))
+
+### ⚙️ Miscellaneous
+
+- [`678b76f`](https://github.com/nyg/jmxsh/commit/678b76fc3d79de4c81b62ab457f6e94bc69b8c82) *(deps)* Pin dependencies ([#64](https://github.com/nyg/jmxsh/issues/64))
+- [`67d10b8`](https://github.com/nyg/jmxsh/commit/67d10b82863450f79ac5d1bf18b395b98accfe61) *(deps)* Update actions/checkout digest to df4cb1c ([#65](https://github.com/nyg/jmxsh/issues/65))
+
 ## [1.3.1](https://github.com/nyg/jmxsh/compare/v1.3.0..v1.3.1) - 2026-05-30
 
 ### ⛰️  Features

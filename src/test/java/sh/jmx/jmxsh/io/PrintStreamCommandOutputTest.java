@@ -1,6 +1,7 @@
 package sh.jmx.jmxsh.io;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -21,5 +22,17 @@ class PrintStreamCommandOutputTest {
 
     assertThat(new String(w1.toByteArray()).trim()).isEqualTo("hello world");
     assertThat(new String(w2.toByteArray()).trim()).isEqualTo("yeeha");
+  }
+
+  @Test
+  void constructorThrowsWhenResultOutputNull() {
+    assertThatThrownBy(() -> new PrintStreamCommandOutput(null, System.out))
+        .isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void constructorThrowsWhenMessageOutputNull() {
+    assertThatThrownBy(() -> new PrintStreamCommandOutput(System.out, null))
+        .isInstanceOf(NullPointerException.class);
   }
 }

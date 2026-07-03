@@ -3,13 +3,13 @@ package sh.jmx.jmxsh;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import sh.jmx.jmxsh.io.CommandInput;
 import sh.jmx.jmxsh.io.CommandOutput;
@@ -36,9 +36,8 @@ public class Session {
   private final JavaProcessManager processManager;
   private OutputMode outputMode = OutputMode.BRIEF;
 
-  public Session(CommandOutput output, CommandInput input, JavaProcessManager processManager) {
-    Objects.requireNonNull(output, "Output can't be NULL");
-    Objects.requireNonNull(processManager, "Process manager can't be NULL");
+  public Session(@NonNull CommandOutput output, CommandInput input,
+      @NonNull JavaProcessManager processManager) {
     this.output = new VerboseCommandOutput(output, () -> this.outputMode);
     this.input = input == null ? new UnimplementedCommandInput() : input;
     this.processManager = processManager;
@@ -56,8 +55,7 @@ public class Session {
     closed = true;
   }
 
-  public void connect(JMXServiceURL url, Map<String, Object> env) throws IOException {
-    Objects.requireNonNull(url, "URL can't be NULL");
+  public void connect(@NonNull JMXServiceURL url, Map<String, Object> env) throws IOException {
     if (connection != null) {
       throw new IllegalStateException("Session is already opened");
     }
@@ -103,13 +101,11 @@ public class Session {
     this.bean = bean;
   }
 
-  public final void setDomain(String domain) {
-    Objects.requireNonNull(domain, "domain can't be NULL");
+  public final void setDomain(@NonNull String domain) {
     this.domain = domain;
   }
 
-  public final void setOutputMode(OutputMode outputMode) {
-    Objects.requireNonNull(outputMode, "Output mode can't be NULL");
+  public final void setOutputMode(@NonNull OutputMode outputMode) {
     this.outputMode = outputMode;
   }
 

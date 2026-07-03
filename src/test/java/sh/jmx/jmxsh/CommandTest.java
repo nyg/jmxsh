@@ -1,6 +1,7 @@
 package sh.jmx.jmxsh;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.IOException;
 import java.util.List;
@@ -76,5 +77,11 @@ class CommandTest {
     ThrowingCommand cmd = new ThrowingCommand();
     cmd.setSession(session);
     assertThat(cmd.suggestOption("x", null)).isEmpty();
+  }
+
+  @Test
+  void setSessionThrowsWhenNull() {
+    SelfRecordingCommand cmd = new SelfRecordingCommand(new java.util.ArrayList<>());
+    assertThatThrownBy(() -> cmd.setSession(null)).isInstanceOf(NullPointerException.class);
   }
 }

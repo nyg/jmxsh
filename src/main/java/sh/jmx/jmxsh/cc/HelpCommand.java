@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import lombok.NonNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
@@ -46,13 +47,11 @@ public class HelpCommand extends sh.jmx.jmxsh.Command {
   }
 
   @Parameters(arity = "0..*")
-  public final void setArgNames(List<String> argNames) {
-    Objects.requireNonNull(argNames, "argNames can't be NULL");
+  public final void setArgNames(@NonNull List<String> argNames) {
     this.argNames = argNames;
   }
 
-  final void setCommandCenter(CommandCenter commandCenter) {
-    Objects.requireNonNull(commandCenter, "commandCenter can't be NULL");
+  final void setCommandCenter(@NonNull CommandCenter commandCenter) {
     this.commandCenter = commandCenter;
   }
 }

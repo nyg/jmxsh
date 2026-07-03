@@ -1,8 +1,9 @@
 package sh.jmx.jmxsh.io;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.function.Supplier;
+
+import lombok.NonNull;
 import org.jline.reader.impl.LineReaderImpl;
 
 public class JlineCommandInput implements CommandInput {
@@ -10,9 +11,7 @@ public class JlineCommandInput implements CommandInput {
 
   private final Supplier<String> promptSupplier;
 
-  public JlineCommandInput(LineReaderImpl console, Supplier<String> promptSupplier) {
-    Objects.requireNonNull(console, "Jline console reader can't be NULL");
-    Objects.requireNonNull(promptSupplier, "Prompt supplier can't be NULL");
+  public JlineCommandInput(@NonNull LineReaderImpl console, @NonNull Supplier<String> promptSupplier) {
     this.console = console;
     this.promptSupplier = promptSupplier;
   }

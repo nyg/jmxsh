@@ -2,7 +2,8 @@ package sh.jmx.jmxsh.io;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Objects;
+
+import lombok.NonNull;
 
 public class WriterCommandOutput implements CommandOutput {
   private final Writer messageOutput;
@@ -13,8 +14,7 @@ public class WriterCommandOutput implements CommandOutput {
     this(output, output);
   }
 
-  public WriterCommandOutput(Writer resultOutput, Writer messageOutput) {
-    Objects.requireNonNull(resultOutput, "Result output can't be NULL");
+  public WriterCommandOutput(@NonNull Writer resultOutput, Writer messageOutput) {
     this.resultOutput = resultOutput;
     this.messageOutput = messageOutput == null ? Writer.nullWriter() : messageOutput;
   }

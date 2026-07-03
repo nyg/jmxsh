@@ -5,13 +5,13 @@ import java.io.LineNumberReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
+
+import lombok.NonNull;
 
 public class FileCommandInput implements CommandInput {
   private final LineNumberReader in;
 
-  public FileCommandInput(Path inputFile) throws IOException {
-    Objects.requireNonNull(inputFile, "Input can't be NULL");
+  public FileCommandInput(@NonNull Path inputFile) throws IOException {
     this.in = new LineNumberReader(Files.newBufferedReader(inputFile, StandardCharsets.UTF_8));
   }
 

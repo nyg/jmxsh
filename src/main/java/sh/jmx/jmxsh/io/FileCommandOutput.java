@@ -7,15 +7,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-import java.util.Objects;
+import lombok.NonNull;
 
 public class FileCommandOutput implements CommandOutput {
   private final PrintWriter fileWriter;
 
   private final WriterCommandOutput output;
 
-  public FileCommandOutput(Path file, boolean appendToOutput) throws IOException {
-    Objects.requireNonNull(file, "File can't be NULL");
+  public FileCommandOutput(@NonNull Path file, boolean appendToOutput) throws IOException {
     Path af = file.toAbsolutePath();
     Files.createDirectories(af.getParent());
 

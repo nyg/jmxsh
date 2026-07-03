@@ -2,9 +2,9 @@ package sh.jmx.jmxsh.boot;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 import lombok.Getter;
+import lombok.NonNull;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -64,8 +64,7 @@ public class CliMainOptions {
       names = {"-i", "--input"},
       description =
           "Input script file. There can only be one input file. \"stdin\" is the default value which means console input")
-  public final void setInput(String file) {
-    Objects.requireNonNull(file, "Input file can't be NULL");
+  public final void setInput(@NonNull String file) {
     if (!Files.isRegularFile(Path.of(file))) {
       throw new IllegalArgumentException("File " + file + " doesn't exist");
     }
@@ -83,30 +82,26 @@ public class CliMainOptions {
   @Option(
       names = {"-o", "--output"},
       description = "Output file, stdout or stderr. Default value is stdout")
-  public final void setOutput(String outputFile) {
-    Objects.requireNonNull(outputFile, "Output file can't be NULL");
+  public final void setOutput(@NonNull String outputFile) {
     this.output = outputFile;
   }
 
   @Option(
       names = {"-p", "--password"},
       description = "Password for user/password authentication")
-  public final void setPassword(String password) {
-    Objects.requireNonNull(password, "Password can't be NULL");
+  public final void setPassword(@NonNull String password) {
     this.password = password;
   }
 
   @Option(
       names = {"-l", "--url"},
       description = "Location of MBean service. It can be <host>:<port>, jmxmp://<host>:<port>, or full service URL.")
-  public final void setUrl(String url) {
-    Objects.requireNonNull(url, "URL can't be NULL");
+  public final void setUrl(@NonNull String url) {
     this.url = url;
   }
 
   @Option(names = {"-u", "--user"}, description = "User name for user/password authentication")
-  public final void setUser(String user) {
-    Objects.requireNonNull(user, "User can't be NULL");
+  public final void setUser(@NonNull String user) {
     this.user = user;
   }
 

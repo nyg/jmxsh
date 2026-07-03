@@ -1,6 +1,7 @@
 package sh.jmx.jmxsh;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.Writer;
 import java.util.Map;
@@ -39,5 +40,37 @@ class SessionTest {
     session.connect(SyntaxUtils.getUrl("localhost:9991", null), null);
     Connection connection = session.getConnection();
     assertThat(connection.url()).hasToString("service:jmx:rmi:///jndi/rmi://localhost:9991/jmxrmi");
+  }
+
+  @Test
+  void constructorThrowsWhenOutputNull() {
+    JavaProcessManager processManager = new JavaProcessManager();
+    assertThatThrownBy(() -> new Session(null, null, processManager))
+        .isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void constructorThrowsWhenProcessManagerNull() {
+    WriterCommandOutput output = new WriterCommandOutput(Writer.nullWriter());
+    assertThatThrownBy(() -> new Session(output, null, null))
+        .isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void connectThrowsWhenUrlNull() {
+    assertThatThrownBy(() -> session.connect(null, null))
+        .isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void setDomainThrowsWhenNull() {
+    assertThatThrownBy(() -> session.setDomain(null))
+        .isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void setOutputModeThrowsWhenNull() {
+    assertThatThrownBy(() -> session.setOutputMode(null))
+        .isInstanceOf(NullPointerException.class);
   }
 }

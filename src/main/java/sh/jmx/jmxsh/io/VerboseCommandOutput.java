@@ -1,8 +1,8 @@
 package sh.jmx.jmxsh.io;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -16,9 +16,9 @@ public class VerboseCommandOutput implements CommandOutput {
   private final CommandOutput output;
   private final Supplier<OutputMode> modeSupplier;
 
-  public VerboseCommandOutput(CommandOutput output, Supplier<OutputMode> modeSupplier) {
-    this.output = Objects.requireNonNull(output, "output can't be NULL");
-    this.modeSupplier = Objects.requireNonNull(modeSupplier, "modeSupplier can't be NULL");
+  public VerboseCommandOutput(@NonNull CommandOutput output, @NonNull Supplier<OutputMode> modeSupplier) {
+    this.output = output;
+    this.modeSupplier = modeSupplier;
   }
 
   @Override

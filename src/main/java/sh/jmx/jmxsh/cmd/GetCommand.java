@@ -127,11 +127,6 @@ public class GetCommand extends DomainBeanAwareCommand {
     }
   }
 
-  /**
-   * Fetches all readable attributes in a single bulk {@code getAttributes} round trip. Attributes
-   * that the server failed to read are absent from the result; callers fall back to individual
-   * {@code getAttribute} calls for those to surface the error.
-   */
   private static Map<String, Object> fetchValues(
       MBeanServerConnection con, ObjectName name, Map<String, MBeanAttributeInfo> attributeNames)
       throws IOException, JMException {

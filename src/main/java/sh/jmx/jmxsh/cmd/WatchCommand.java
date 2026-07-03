@@ -156,11 +156,6 @@ public class WatchCommand extends Command {
     }
   }
 
-  /**
-   * Fetches all watched attributes in a single bulk {@code getAttributes} round trip. Attributes
-   * the server failed to read are absent from the result; {@code getAttributeValue} falls back to
-   * individual calls for those to preserve per-attribute error reporting.
-   */
   private Map<String, Object> fetchValues(ObjectName beanName, MBeanServerConnection connection)
       throws IOException {
     List<String> namesToFetch = attributes.stream()

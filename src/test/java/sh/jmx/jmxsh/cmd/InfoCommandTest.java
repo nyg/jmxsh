@@ -5,7 +5,6 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
 import javax.management.MBeanAttributeInfo;
@@ -42,12 +41,13 @@ class InfoCommandTest {
 
   /** Set up objects to test */
   @BeforeEach
-  void setUp() throws IOException {
+  void setUp() throws Exception {
     command = new InfoCommand();
     writer = new StringWriter();
     lenient().when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
     lenient().when(session.getConnection()).thenReturn(connection);
     lenient().when(connection.getServerConnection()).thenReturn(con);
+    lenient().when(con.isRegistered(new ObjectName("a:type=x"))).thenReturn(true);
   }
 
   /**

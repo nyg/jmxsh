@@ -12,11 +12,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.management.Attribute;
+import javax.management.AttributeList;
 import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
+import javax.management.RuntimeMBeanException;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.OpenDataException;
@@ -83,12 +86,13 @@ class GetCommandTest {
     try {
       when(con.getDomains())
           .thenReturn(new String[] {domain, randomAlphabetic(5)});
+      when(con.isRegistered(new ObjectName(expectedBean))).thenReturn(true);
       when(con.getMBeanInfo(new ObjectName(expectedBean))).thenReturn(beanInfo);
       when(beanInfo.getAttributes()).thenReturn(new MBeanAttributeInfo[] {attributeInfo});
       when(attributeInfo.getName()).thenReturn(attributePath[0]);
       when(attributeInfo.isReadable()).thenReturn(true);
-      when(con.getAttribute(new ObjectName(expectedBean), attributePath[0]))
-          .thenReturn(expectedValue);
+      when(con.getAttributes(new ObjectName(expectedBean), new String[] {attributePath[0]}))
+          .thenReturn(new AttributeList(List.of(new Attribute(attributePath[0], expectedValue))));
 
       command.setSession(session);
       command.execute();
@@ -159,6 +163,65 @@ class GetCommandTest {
   @Test
   void executeForSingleLineOutput() {
     getAttributeAndVerify("a", "type=x", "a", "a:type=x", "bingo", true, "");
+  }
+
+  @Test
+  void fetchesMultipleAttributesInSingleBulkCall() throws Exception {
+    ObjectName name = new ObjectName("a:type=x");
+    MBeanInfo beanInfo = org.mockito.Mockito.mock(MBeanInfo.class);
+    MBeanAttributeInfo attr1 = org.mockito.Mockito.mock(MBeanAttributeInfo.class);
+    MBeanAttributeInfo attr2 = org.mockito.Mockito.mock(MBeanAttributeInfo.class);
+    when(con.getDomains()).thenReturn(new String[] {"a"});
+    when(con.isRegistered(name)).thenReturn(true);
+    when(con.getMBeanInfo(name)).thenReturn(beanInfo);
+    when(beanInfo.getAttributes()).thenReturn(new MBeanAttributeInfo[] {attr1, attr2});
+    when(attr1.getName()).thenReturn("x");
+    when(attr1.isReadable()).thenReturn(true);
+    when(attr2.getName()).thenReturn("y");
+    when(attr2.isReadable()).thenReturn(true);
+    when(con.getAttributes(name, new String[] {"x", "y"}))
+        .thenReturn(new AttributeList(
+            List.of(new Attribute("x", "1"), new Attribute("y", "2"))));
+
+    command.setDomain("a");
+    command.setBean("type=x");
+    command.setAttributes(List.of("x", "y"));
+    command.setSimpleFormat(true);
+    command.setSession(session);
+    command.execute();
+
+    org.mockito.Mockito.verify(con).getAttributes(name, new String[] {"x", "y"});
+    org.mockito.Mockito.verify(con, org.mockito.Mockito.never())
+        .getAttribute(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any());
+    assertThat(writer).hasToString("1" + System.lineSeparator() + "2" + System.lineSeparator());
+  }
+
+  @Test
+  void fallsBackToSingleGetWhenAttributeMissingFromBulkResult() throws Exception {
+    StringWriter messageWriter = new StringWriter();
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, messageWriter));
+    ObjectName name = new ObjectName("a:type=x");
+    MBeanInfo beanInfo = org.mockito.Mockito.mock(MBeanInfo.class);
+    MBeanAttributeInfo attributeInfo = org.mockito.Mockito.mock(MBeanAttributeInfo.class);
+    when(con.getDomains()).thenReturn(new String[] {"a"});
+    when(con.isRegistered(name)).thenReturn(true);
+    when(con.getMBeanInfo(name)).thenReturn(beanInfo);
+    when(beanInfo.getAttributes()).thenReturn(new MBeanAttributeInfo[] {attributeInfo});
+    when(attributeInfo.getName()).thenReturn("x");
+    when(attributeInfo.isReadable()).thenReturn(true);
+    when(con.getAttributes(name, new String[] {"x"})).thenReturn(new AttributeList());
+    when(con.getAttribute(name, "x"))
+        .thenThrow(new RuntimeMBeanException(new IllegalStateException("boom"), "failed"));
+
+    command.setDomain("a");
+    command.setBean("type=x");
+    command.setAttributes(List.of("x"));
+    command.setSimpleFormat(true);
+    command.setSession(session);
+    command.execute();
+
+    assertThat(messageWriter.toString()).contains("Could not get attribute x");
+    assertThat(writer).hasToString("null" + System.lineSeparator());
   }
 
   @Test

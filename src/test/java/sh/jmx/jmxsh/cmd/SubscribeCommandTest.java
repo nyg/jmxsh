@@ -9,10 +9,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
-import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.Notification;
 import javax.management.NotificationListener;
@@ -42,12 +40,13 @@ class SubscribeCommandTest {
 
   /** Setup objects to test */
   @BeforeEach
-  void setUp() throws IOException {
+  void setUp() throws Exception {
     command = new SubscribeCommand();
     writer = new StringWriter();
     lenient().when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
     lenient().when(session.getConnection()).thenReturn(connection);
     lenient().when(connection.getServerConnection()).thenReturn(con);
+    lenient().when(con.isRegistered(new ObjectName("a:type=x"))).thenReturn(true);
   }
 
   @AfterEach
@@ -60,11 +59,9 @@ class SubscribeCommandTest {
   void executeOneNotification() throws Exception {
     command.setBean("a:type=x");
 
-    MBeanInfo beanInfo = mock(MBeanInfo.class);
     Notification notification = mock(Notification.class);
 
     ObjectName objectName = new ObjectName("a:type=x");
-    when(con.getMBeanInfo(objectName)).thenReturn(beanInfo);
     when(notification.getTimeStamp()).thenReturn(123L);
     when(notification.getSource()).thenReturn("xyz");
     when(notification.getType()).thenReturn("azerty");
@@ -97,11 +94,9 @@ class SubscribeCommandTest {
   void executeTwoNotifications() throws Exception {
     command.setBean("a:type=x");
 
-    MBeanInfo beanInfo = mock(MBeanInfo.class);
     Notification notification = mock(Notification.class);
 
     ObjectName objectName = new ObjectName("a:type=x");
-    when(con.getMBeanInfo(objectName)).thenReturn(beanInfo);
     when(notification.getTimeStamp()).thenReturn(123L);
     when(notification.getSource()).thenReturn("xyz");
     when(notification.getType()).thenReturn("azerty");

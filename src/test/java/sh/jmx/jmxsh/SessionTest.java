@@ -44,13 +44,15 @@ class SessionTest {
 
   @Test
   void constructorThrowsWhenOutputNull() {
-    assertThatThrownBy(() -> new Session(null, null, new JavaProcessManager()))
+    JavaProcessManager processManager = new JavaProcessManager();
+    assertThatThrownBy(() -> new Session(null, null, processManager))
         .isInstanceOf(NullPointerException.class);
   }
 
   @Test
   void constructorThrowsWhenProcessManagerNull() {
-    assertThatThrownBy(() -> new Session(new WriterCommandOutput(Writer.nullWriter()), null, null))
+    WriterCommandOutput output = new WriterCommandOutput(Writer.nullWriter());
+    assertThatThrownBy(() -> new Session(output, null, null))
         .isInstanceOf(NullPointerException.class);
   }
 

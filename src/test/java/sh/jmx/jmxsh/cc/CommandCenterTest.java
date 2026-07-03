@@ -137,15 +137,15 @@ class CommandCenterTest {
 
   @Test
   void constructorThrowsWhenOutputNull() {
-    assertThatThrownBy(
-            () -> new CommandCenter(null, null, new TypeMapCommandFactory(new HashMap<>())))
+    TypeMapCommandFactory commandFactory = new TypeMapCommandFactory(new HashMap<>());
+    assertThatThrownBy(() -> new CommandCenter(null, null, commandFactory))
         .isInstanceOf(NullPointerException.class);
   }
 
   @Test
   void constructorThrowsWhenCommandFactoryNull() {
-    assertThatThrownBy(
-            () -> new CommandCenter(new WriterCommandOutput(new StringWriter()), null, null))
+    WriterCommandOutput commandOutput = new WriterCommandOutput(new StringWriter());
+    assertThatThrownBy(() -> new CommandCenter(commandOutput, null, null))
         .isInstanceOf(NullPointerException.class);
   }
 

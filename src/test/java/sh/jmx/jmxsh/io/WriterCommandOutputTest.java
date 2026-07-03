@@ -12,7 +12,8 @@ class WriterCommandOutputTest {
 
   @Test
   void constructorThrowsWhenResultOutputNull() {
-    assertThatThrownBy(() -> new WriterCommandOutput(null, Writer.nullWriter()))
+    Writer messageOutput = Writer.nullWriter();
+    assertThatThrownBy(() -> new WriterCommandOutput(null, messageOutput))
         .isInstanceOf(NullPointerException.class);
   }
 
@@ -21,6 +22,6 @@ class WriterCommandOutputTest {
     StringWriter writer = new StringWriter();
     WriterCommandOutput output = new WriterCommandOutput(writer);
     output.print("hello world");
-    assertThat(writer.toString()).isEqualTo("hello world");
+    assertThat(writer).hasToString("hello world");
   }
 }

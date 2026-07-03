@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.management.InstanceNotFoundException;
 import javax.management.JMException;
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
@@ -41,10 +40,11 @@ public class BeanCommand extends Command {
     if (bean.contains(":")) {
       try {
         ObjectName name = new ObjectName(bean);
-        con.getMBeanInfo(name);
-        return bean;
-      } catch (MalformedObjectNameException | InstanceNotFoundException _) {
-        // Invalid or unknown bean name — fall through to domain-qualified lookup
+        if (con.isRegistered(name)) {
+          return bean;
+        }
+      } catch (MalformedObjectNameException _) {
+        // Invalid bean name — fall through to domain-qualified lookup
       }
     }
 
@@ -55,10 +55,11 @@ public class BeanCommand extends Command {
     }
     try {
       ObjectName name = new ObjectName(domainName + ":" + bean);
-      con.getMBeanInfo(name);
-      return domainName + ":" + bean;
-    } catch (MalformedObjectNameException | InstanceNotFoundException _) {
-      // Invalid or unknown bean name — fall through to throw IllegalArgumentException
+      if (con.isRegistered(name)) {
+        return domainName + ":" + bean;
+      }
+    } catch (MalformedObjectNameException _) {
+      // Invalid bean name — fall through to throw IllegalArgumentException
     }
     throw new IllegalArgumentException("Bean name " + bean + " isn't valid");
   }
@@ -113,9 +114,6 @@ public class BeanCommand extends Command {
       session.getOutput().printMessage("bean is unset");
       return;
     }
-    ObjectName name = new ObjectName(beanName);
-    MBeanServerConnection con = session.getConnection().getServerConnection();
-    con.getMBeanInfo(name);
     session.setBean(beanName);
     log.debug("selected bean: {}", beanName);
     session.getOutput().printMessage("bean is set to " + beanName);

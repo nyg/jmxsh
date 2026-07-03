@@ -3,11 +3,15 @@ package sh.jmx.jmxsh.cmd;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
+import javax.management.Attribute;
 import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServerConnection;
@@ -75,6 +79,7 @@ public class GetCommand extends DomainBeanAwareCommand {
       }
     }
     ValueOutputFormat format = new ValueOutputFormat(2, showDescription, showQuotationMarks);
+    Map<String, Object> fetchedValues = fetchValues(con, name, attributeNames);
     for (Map.Entry<String, MBeanAttributeInfo> entry : attributeNames.entrySet()) {
       String attributeName = entry.getKey();
       MBeanAttributeInfo i = entry.getValue();
@@ -88,11 +93,15 @@ public class GetCommand extends DomainBeanAwareCommand {
 
         Object result = null;
 
-        try {
-          result = con.getAttribute(name, attributeNameToRequest);
-        } catch (RuntimeMBeanException e) {
-          session.getOutput().printMessage(
-              "Could not get attribute " + attributeNameToRequest + ": " + e.getMessage());
+        if (fetchedValues.containsKey(attributeNameToRequest)) {
+          result = fetchedValues.get(attributeNameToRequest);
+        } else {
+          try {
+            result = con.getAttribute(name, attributeNameToRequest);
+          } catch (RuntimeMBeanException e) {
+            session.getOutput().printMessage(
+                "Could not get attribute " + attributeNameToRequest + ": " + e.getMessage());
+          }
         }
 
         if (result instanceof CompositeDataSupport support && attributeNameElements.length > 1) {
@@ -116,6 +125,30 @@ public class GetCommand extends DomainBeanAwareCommand {
         session.getOutput().printMessage(i.getName() + " is not readable");
       }
     }
+  }
+
+  /**
+   * Fetches all readable attributes in a single bulk {@code getAttributes} round trip. Attributes
+   * that the server failed to read are absent from the result; callers fall back to individual
+   * {@code getAttribute} calls for those to surface the error.
+   */
+  private static Map<String, Object> fetchValues(
+      MBeanServerConnection con, ObjectName name, Map<String, MBeanAttributeInfo> attributeNames)
+      throws IOException, JMException {
+    Set<String> namesToFetch = new LinkedHashSet<>();
+    for (Map.Entry<String, MBeanAttributeInfo> entry : attributeNames.entrySet()) {
+      if (entry.getValue().isReadable()) {
+        namesToFetch.add(entry.getKey().split("\\.")[0]);
+      }
+    }
+    Map<String, Object> values = new HashMap<>();
+    if (!namesToFetch.isEmpty()) {
+      for (Attribute attribute :
+          con.getAttributes(name, namesToFetch.toArray(String[]::new)).asList()) {
+        values.put(attribute.getName(), attribute.getValue());
+      }
+    }
+    return values;
   }
 
   @Override

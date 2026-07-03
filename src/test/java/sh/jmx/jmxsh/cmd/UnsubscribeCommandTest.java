@@ -13,7 +13,6 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.Notification;
 import javax.management.NotificationListener;
@@ -44,13 +43,14 @@ class UnsubscribeCommandTest {
 
   /** Setup objects to test */
   @BeforeEach
-  void setUp() throws IOException {
+  void setUp() throws Exception {
     subscribeCommand = new SubscribeCommand();
     unsubscribeCommand = new UnsubscribeCommand();
     writer = new StringWriter();
     lenient().when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
     lenient().when(session.getConnection()).thenReturn(connection);
     lenient().when(connection.getServerConnection()).thenReturn(con);
+    lenient().when(con.isRegistered(new ObjectName("a:type=x"))).thenReturn(true);
   }
 
   @AfterEach
@@ -64,10 +64,7 @@ class UnsubscribeCommandTest {
     subscribeCommand.setBean("a:type=x");
     unsubscribeCommand.setBean("a:type=x");
 
-    MBeanInfo beanInfo = mock(MBeanInfo.class);
     ObjectName objectName = new ObjectName("a:type=x");
-
-    when(con.getMBeanInfo(objectName)).thenReturn(beanInfo);
 
     subscribeCommand.setSession(session);
     subscribeCommand.execute();
@@ -77,7 +74,7 @@ class UnsubscribeCommandTest {
     unsubscribeCommand.execute();
     assertThat(SubscribeCommand.getListeners()).isEmpty();
 
-    verify(con, atLeast(2)).getMBeanInfo(objectName);
+    verify(con, atLeast(2)).isRegistered(objectName);
     verify(con)
         .addNotificationListener(
             eq(objectName),
@@ -93,11 +90,9 @@ class UnsubscribeCommandTest {
   void executeTwoNotifications() throws Exception {
     subscribeCommand.setBean("a:type=x");
 
-    MBeanInfo beanInfo = mock(MBeanInfo.class);
     Notification notification = mock(Notification.class);
 
     ObjectName objectName = new ObjectName("a:type=x");
-    when(con.getMBeanInfo(objectName)).thenReturn(beanInfo);
     when(notification.getTimeStamp()).thenReturn(123L);
     when(notification.getSource()).thenReturn("xyz");
     when(notification.getType()).thenReturn("azerty");

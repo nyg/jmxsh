@@ -49,10 +49,11 @@ class BeanCommandTest {
     if (domainName != null) {
       when(session.getDomain()).thenReturn(domainName);
     }
+    when(con.isRegistered(new ObjectName(expectedBean))).thenReturn(true);
     command.setSession(session);
     command.execute();
     verify(session).setBean(expectedBean);
-    verify(con, atLeastOnce()).getMBeanInfo(new ObjectName(expectedBean));
+    verify(con, atLeastOnce()).isRegistered(new ObjectName(expectedBean));
   }
 
   /**
@@ -159,6 +160,7 @@ class BeanCommandTest {
   @Test
   void settingFullyQualifiedBeanAutoSetsDomain() throws Exception {
     command.setBean("java.lang:type=Memory");
+    when(con.isRegistered(new ObjectName("java.lang:type=Memory"))).thenReturn(true);
     command.setSession(session);
     command.execute();
     verify(session).setBean("java.lang:type=Memory");
@@ -170,6 +172,7 @@ class BeanCommandTest {
     // Partial bean "type=x" is resolved to "something:type=x" using the session domain
     command.setBean("type=x");
     when(session.getDomain()).thenReturn("something");
+    when(con.isRegistered(new ObjectName("something:type=x"))).thenReturn(true);
     command.setSession(session);
     command.execute();
     verify(session).setBean("something:type=x");
@@ -188,8 +191,7 @@ class BeanCommandTest {
     command.setBean("some:type=Thing");
     when(session.getConnection()).thenReturn(connection);
     when(connection.getServerConnection()).thenReturn(con);
-    when(con.getMBeanInfo(new ObjectName("some:type=Thing")))
-        .thenThrow(new javax.management.InstanceNotFoundException("not found"));
+    when(con.isRegistered(new ObjectName("some:type=Thing"))).thenReturn(false);
     // domain is null → triggers IAE about specifying domain
     command.setSession(session);
     assertThatThrownBy(command::execute).isInstanceOf(IllegalArgumentException.class)
@@ -202,8 +204,7 @@ class BeanCommandTest {
     when(session.getDomain()).thenReturn("mydomain");
     when(session.getConnection()).thenReturn(connection);
     when(connection.getServerConnection()).thenReturn(con);
-    when(con.getMBeanInfo(new ObjectName("mydomain:type=Thing")))
-        .thenThrow(new javax.management.InstanceNotFoundException("not found"));
+    when(con.isRegistered(new ObjectName("mydomain:type=Thing"))).thenReturn(false);
     command.setSession(session);
     assertThatThrownBy(command::execute).isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining("isn't valid");

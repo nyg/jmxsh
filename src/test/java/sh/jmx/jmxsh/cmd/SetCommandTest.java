@@ -43,12 +43,13 @@ class SetCommandTest {
 
   /** Set up objects to test */
   @BeforeEach
-  void setUp() throws IOException {
+  void setUp() throws Exception {
     command = new SetCommand();
     writer = new StringWriter();
     lenient().when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
     lenient().when(session.getConnection()).thenReturn(connection);
     lenient().when(connection.getServerConnection()).thenReturn(con);
+    lenient().when(con.isRegistered(new ObjectName("a:type=x"))).thenReturn(true);
   }
 
   private void setValueAndVerify(String expr, String type, Object expected) {

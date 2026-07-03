@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+import javax.management.Attribute;
 import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServerConnection;
@@ -134,11 +137,17 @@ public class WatchCommand extends Command {
   }
 
   private Object getAttributeValue(
-      ObjectName beanName, String attributeName, MBeanServerConnection connection)
+      ObjectName beanName,
+      String attributeName,
+      MBeanServerConnection connection,
+      Map<String, Object> fetchedValues)
       throws IOException {
     // %now is a reserved keyword for current instant
     if (BUILDING_ATTRIBUTE_NOW.equals(attributeName)) {
       return Instant.now();
+    }
+    if (fetchedValues.containsKey(attributeName)) {
+      return fetchedValues.get(attributeName);
     }
     try {
       return connection.getAttribute(beanName, attributeName);
@@ -147,8 +156,34 @@ public class WatchCommand extends Command {
     }
   }
 
+  /**
+   * Fetches all watched attributes in a single bulk {@code getAttributes} round trip. Attributes
+   * the server failed to read are absent from the result; {@code getAttributeValue} falls back to
+   * individual calls for those to preserve per-attribute error reporting.
+   */
+  private Map<String, Object> fetchValues(ObjectName beanName, MBeanServerConnection connection)
+      throws IOException {
+    List<String> namesToFetch = attributes.stream()
+        .filter(a -> !BUILDING_ATTRIBUTE_NOW.equals(a))
+        .distinct()
+        .toList();
+    Map<String, Object> values = new HashMap<>();
+    if (!namesToFetch.isEmpty()) {
+      try {
+        for (Attribute attribute :
+            connection.getAttributes(beanName, namesToFetch.toArray(String[]::new)).asList()) {
+          values.put(attribute.getName(), attribute.getValue());
+        }
+      } catch (JMException e) {
+        log.debug("bulk attribute fetch failed, falling back to individual calls", e);
+      }
+    }
+    return values;
+  }
+
   private void printValues(ObjectName beanName, MBeanServerConnection connection, LineOutput output)
       throws IOException {
+    Map<String, Object> fetchedValues = fetchValues(beanName, connection);
     String result;
     if (outputFormat == null) {
       var sb = new StringBuilder();
@@ -159,14 +194,14 @@ public class WatchCommand extends Command {
         } else {
           sb.append(", ");
         }
-        sb.append(getAttributeValue(beanName, attributeName, connection));
+        sb.append(getAttributeValue(beanName, attributeName, connection, fetchedValues));
       }
       result = sb.toString();
     } else {
       Object[] values = new Object[attributes.size()];
       int i = 0;
       for (String attributeNamne : attributes) {
-        values[i++] = getAttributeValue(beanName, attributeNamne, connection);
+        values[i++] = getAttributeValue(beanName, attributeNamne, connection, fetchedValues);
       }
       result = outputFormat.formatted(values);
     }

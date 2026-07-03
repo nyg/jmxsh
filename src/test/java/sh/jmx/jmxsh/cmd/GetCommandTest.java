@@ -193,8 +193,7 @@ class GetCommandTest {
     org.mockito.Mockito.verify(con).getAttributes(name, new String[] {"x", "y"});
     org.mockito.Mockito.verify(con, org.mockito.Mockito.never())
         .getAttribute(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any());
-    assertThat(writer.toString())
-        .isEqualTo("1" + System.lineSeparator() + "2" + System.lineSeparator());
+    assertThat(writer).hasToString("1" + System.lineSeparator() + "2" + System.lineSeparator());
   }
 
   @Test
@@ -222,7 +221,7 @@ class GetCommandTest {
     command.execute();
 
     assertThat(messageWriter.toString()).contains("Could not get attribute x");
-    assertThat(writer.toString()).isEqualTo("null" + System.lineSeparator());
+    assertThat(writer).hasToString("null" + System.lineSeparator());
   }
 
   @Test

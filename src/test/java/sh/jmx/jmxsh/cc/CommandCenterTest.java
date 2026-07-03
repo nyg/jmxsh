@@ -1,6 +1,7 @@
 package sh.jmx.jmxsh.cc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static sh.jmx.jmxsh.cc.CommandCenter.ESCAPE_CHAR_REGEX;
 
 import java.io.IOException;
@@ -132,5 +133,24 @@ class CommandCenterTest {
     assertThat(s4).isEqualTo("a ");
     assertThat(s5).isEqualTo("a \\#b c ");
     assertThat(s6).isEqualTo("a ");
+  }
+
+  @Test
+  void constructorThrowsWhenOutputNull() {
+    assertThatThrownBy(
+            () -> new CommandCenter(null, null, new TypeMapCommandFactory(new HashMap<>())))
+        .isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void constructorThrowsWhenCommandFactoryNull() {
+    assertThatThrownBy(
+            () -> new CommandCenter(new WriterCommandOutput(new StringWriter()), null, null))
+        .isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void connectThrowsWhenUrlNull() {
+    assertThatThrownBy(() -> cc.connect(null, null)).isInstanceOf(NullPointerException.class);
   }
 }

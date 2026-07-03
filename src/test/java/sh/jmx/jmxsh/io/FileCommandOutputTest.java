@@ -1,6 +1,7 @@
 package sh.jmx.jmxsh.io;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -68,6 +69,12 @@ class FileCommandOutputTest {
 
     assertThat(Files.readString(testFile, StandardCharsets.UTF_8).trim())
         .isEqualTo("helloworld" + System.lineSeparator() + "helloworld2");
+  }
+
+  @Test
+  void constructorThrowsWhenFileNull() {
+    assertThatThrownBy(() -> new FileCommandOutput(null, false))
+        .isInstanceOf(NullPointerException.class);
   }
 
   private static String randomAlphabetic(int length) {

@@ -1,6 +1,7 @@
 package sh.jmx.jmxsh.cc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -73,5 +74,17 @@ class HelpCommandTest {
     command.execute();
     assertThat(writer.toString().trim())
         .isEqualTo("a           - desc" + System.lineSeparator() + "b           - desc");
+  }
+
+  @Test
+  void setArgNamesThrowsWhenNull() {
+    assertThatThrownBy(() -> command.setArgNames(null))
+        .isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void setCommandCenterThrowsWhenNull() {
+    assertThatThrownBy(() -> command.setCommandCenter(null))
+        .isInstanceOf(NullPointerException.class);
   }
 }

@@ -1,6 +1,7 @@
 package sh.jmx.jmxsh.io;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -20,5 +21,11 @@ class InputStreamCommandInputTest {
         new InputStreamCommandInput(new ByteArrayInputStream(input.getBytes()));
     assertThat(in.readLine()).isEqualTo("aaaa");
     assertThat(in.readLine()).isEqualTo("bbbb");
+  }
+
+  @Test
+  void constructorThrowsWhenStreamNull() {
+    assertThatThrownBy(() -> new InputStreamCommandInput(null))
+        .isInstanceOf(NullPointerException.class);
   }
 }

@@ -209,4 +209,10 @@ class BeanCommandTest {
     assertThatThrownBy(command::execute).isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining("isn't valid");
   }
+
+  @Test
+  void getBeanNameThrowsWhenSessionNull() {
+    assertThatThrownBy(() -> BeanCommand.getBeanName("type=x", "domain", null))
+        .isInstanceOf(NullPointerException.class);
+  }
 }

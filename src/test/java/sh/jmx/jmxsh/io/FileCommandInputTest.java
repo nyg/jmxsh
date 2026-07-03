@@ -1,6 +1,7 @@
 package sh.jmx.jmxsh.io;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -21,5 +22,11 @@ class FileCommandInputTest {
       assertThat(input.readLine()).isEqualTo("exit");
       assertThat(input.readLine()).isNull();
     }
+  }
+
+  @Test
+  void constructorThrowsWhenFileNull() {
+    assertThatThrownBy(() -> new FileCommandInput(null))
+        .isInstanceOf(NullPointerException.class);
   }
 }

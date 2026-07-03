@@ -141,4 +141,10 @@ class DomainCommandTest {
   void settingWithValidDomain() throws Exception {
     setDomainAndVerify("something", new String[] {"something"});
   }
+
+  @Test
+  void getDomainNameThrowsWhenSessionNull() {
+    assertThatThrownBy(() -> DomainCommand.getDomainName("x", null))
+        .isInstanceOf(NullPointerException.class);
+  }
 }

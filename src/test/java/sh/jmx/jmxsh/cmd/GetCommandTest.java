@@ -1,6 +1,7 @@
 package sh.jmx.jmxsh.cmd;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -248,5 +249,11 @@ class GetCommandTest {
   void suggestOptionUnknown() {
     command.setSession(session);
     assertThat(command.suggestOption("x", null)).isEmpty();
+  }
+
+  @Test
+  void setAttributesThrowsWhenNull() {
+    assertThatThrownBy(() -> command.setAttributes(null))
+        .isInstanceOf(NullPointerException.class);
   }
 }

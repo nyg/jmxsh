@@ -2,10 +2,10 @@ package sh.jmx.jmxsh;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 import javax.management.JMException;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import picocli.CommandLine.Option;
@@ -47,8 +47,7 @@ public abstract class Command implements Completable {
     this.help = help;
   }
 
-  public final void setSession(Session session) {
-    Objects.requireNonNull(session, "Session can't be NULL");
+  public final void setSession(@NonNull Session session) {
     this.session = session;
   }
 

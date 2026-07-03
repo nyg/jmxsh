@@ -1,7 +1,8 @@
 package sh.jmx.jmxsh.io;
 
 import java.io.PrintStream;
-import java.util.Objects;
+
+import lombok.NonNull;
 
 public class PrintStreamCommandOutput implements CommandOutput {
   private final PrintStream messageOutput;
@@ -16,9 +17,7 @@ public class PrintStreamCommandOutput implements CommandOutput {
     this(output, System.err);
   }
 
-  public PrintStreamCommandOutput(PrintStream resultOutput, PrintStream messageOutput) {
-    Objects.requireNonNull(resultOutput, "Result output can't be NULL");
-    Objects.requireNonNull(messageOutput, "Message output can't be NULL");
+  public PrintStreamCommandOutput(@NonNull PrintStream resultOutput, @NonNull PrintStream messageOutput) {
     this.resultOutput = resultOutput;
     this.messageOutput = messageOutput;
   }

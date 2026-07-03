@@ -2,10 +2,10 @@ package sh.jmx.jmxsh.cc;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import lombok.NonNull;
 import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.CommandFactory;
 
@@ -16,14 +16,12 @@ import sh.jmx.jmxsh.CommandFactory;
 class TypeMapCommandFactory implements CommandFactory {
   private final Map<String, Supplier<Command>> commandSuppliers;
 
-  TypeMapCommandFactory(Map<String, Supplier<Command>> commandSuppliers) {
-    Objects.requireNonNull(commandSuppliers, "Command suppliers can't be NULL");
+  TypeMapCommandFactory(@NonNull Map<String, Supplier<Command>> commandSuppliers) {
     this.commandSuppliers = Collections.unmodifiableMap(commandSuppliers);
   }
 
   @Override
-  public Command createCommand(String commandName) {
-    Objects.requireNonNull(commandName, "commandName can't be NULL");
+  public Command createCommand(@NonNull String commandName) {
     Supplier<Command> supplier = commandSuppliers.get(commandName);
     if (supplier == null) {
       throw new IllegalArgumentException(

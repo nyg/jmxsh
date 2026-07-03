@@ -3,7 +3,6 @@ package sh.jmx.jmxsh.cmd;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.management.JMException;
 import javax.management.MBeanServerConnection;
@@ -18,6 +17,7 @@ import sh.jmx.jmxsh.io.RuntimeIOException;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @CommandLine.Command(
@@ -27,9 +27,8 @@ import lombok.extern.slf4j.Slf4j;
             + "otherwise it selects the bean defined by the first parameter. eg. bean java.lang:type=Memory")
 @Slf4j
 public class BeanCommand extends Command {
-  public static String getBeanName(String bean, String domain, Session session)
+  public static String getBeanName(String bean, String domain, @NonNull Session session)
       throws JMException, IOException {
-    Objects.requireNonNull(session, "Session can't be NULL");
     if (bean == null) {
       return session.getBean();
     }

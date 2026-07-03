@@ -5,13 +5,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
+
+import lombok.NonNull;
 
 public class InputStreamCommandInput implements CommandInput {
   private final LineNumberReader reader;
 
-  public InputStreamCommandInput(InputStream in) {
-    Objects.requireNonNull(in, "Input stream can't be NULL");
+  public InputStreamCommandInput(@NonNull InputStream in) {
     reader = new LineNumberReader(new InputStreamReader(in, StandardCharsets.UTF_8));
   }
 

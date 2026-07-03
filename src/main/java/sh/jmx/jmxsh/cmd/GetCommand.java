@@ -8,7 +8,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.management.Attribute;
@@ -25,6 +24,7 @@ import sh.jmx.jmxsh.io.ValueOutputFormat;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @CommandLine.Command(
@@ -176,8 +176,7 @@ public class GetCommand extends DomainBeanAwareCommand {
   }
 
   @Parameters(paramLabel = "attr", description = "Name of attributes to select", arity = "1..*")
-  public final void setAttributes(List<String> attributes) {
-    Objects.requireNonNull(attributes, "Attributes can't be NULL");
+  public final void setAttributes(@NonNull List<String> attributes) {
     this.attributes = attributes;
   }
 

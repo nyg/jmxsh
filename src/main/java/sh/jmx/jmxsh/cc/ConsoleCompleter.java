@@ -1,7 +1,6 @@
 package sh.jmx.jmxsh.cc;
 
 import java.util.List;
-import java.util.Objects;
 
 import sh.jmx.jmxsh.Command;
 import org.jline.reader.Candidate;
@@ -11,6 +10,7 @@ import org.jline.reader.ParsedLine;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Model.OptionSpec;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -20,8 +20,7 @@ public class ConsoleCompleter implements Completer {
 
   private final List<Candidate> commandNames;
 
-  public ConsoleCompleter(CommandCenter commandCenter) {
-    Objects.requireNonNull(commandCenter, "Command center can't be NULL");
+  public ConsoleCompleter(@NonNull CommandCenter commandCenter) {
     this.commandCenter = commandCenter;
     this.commandNames = commandCenter.getCommandNames().stream()
         .sorted()

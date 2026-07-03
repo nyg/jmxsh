@@ -3,7 +3,6 @@ package sh.jmx.jmxsh.cmd;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 
 import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.Session;
@@ -11,6 +10,7 @@ import sh.jmx.jmxsh.SyntaxUtils;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Parameters;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @CommandLine.Command(
@@ -21,8 +21,7 @@ import lombok.extern.slf4j.Slf4j;
             + " eg. domain java.lang")
 @Slf4j
 public class DomainCommand extends Command {
-  static String getDomainName(String domain, Session session) {
-    Objects.requireNonNull(session, "Session can't be NULL");
+  static String getDomainName(String domain, @NonNull Session session) {
     if (session.getConnection() == null) {
       throw new IllegalArgumentException("Session isn't opened");
     }

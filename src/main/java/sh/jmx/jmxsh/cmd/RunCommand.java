@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import javax.management.JMException;
 import javax.management.MBeanInfo;
@@ -22,6 +21,7 @@ import sh.jmx.jmxsh.utils.ValueFormat;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @CommandLine.Command(
@@ -187,8 +187,7 @@ public class RunCommand extends Command {
   @Parameters(
       description = "The first parameter is operation name, which is followed by list of arguments",
       arity = "1..*")
-  public final void setParameters(List<String> parameters) {
-    Objects.requireNonNull(parameters, "Parameters can't be NULL");
+  public final void setParameters(@NonNull List<String> parameters) {
     this.parameters = parameters;
   }
 

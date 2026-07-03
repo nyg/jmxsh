@@ -6,7 +6,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -27,6 +26,7 @@ import org.jline.reader.Parser.ParseContext;
 import org.jline.reader.SyntaxError;
 import org.jline.reader.impl.DefaultParser;
 import picocli.CommandLine;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -49,9 +49,8 @@ public class CommandCenter {
   }
 
   /** This constructor is for testing purpose only. */
-  public CommandCenter(CommandOutput output, CommandInput input, CommandFactory commandFactory) {
-    Objects.requireNonNull(output, "Output can't be NULL");
-    Objects.requireNonNull(commandFactory, "Command factory can't be NULL");
+  public CommandCenter(@NonNull CommandOutput output, CommandInput input,
+      @NonNull CommandFactory commandFactory) {
     this.processManager = new JavaProcessManager();
     this.session = new Session(output, input, processManager);
     this.commandFactory = commandFactory;
@@ -61,8 +60,7 @@ public class CommandCenter {
     session.close();
   }
 
-  public void connect(JMXServiceURL url, Map<String, Object> env) throws IOException {
-    Objects.requireNonNull(url, "URL can't be NULL");
+  public void connect(@NonNull JMXServiceURL url, Map<String, Object> env) throws IOException {
     session.connect(url, env);
   }
 

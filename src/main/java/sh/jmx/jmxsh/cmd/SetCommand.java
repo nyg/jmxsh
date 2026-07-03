@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import javax.management.Attribute;
 import javax.management.JMException;
@@ -20,6 +19,7 @@ import sh.jmx.jmxsh.utils.ValueFormat;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @CommandLine.Command(name = "set", description = "Set value of an MBean attribute")
@@ -80,8 +80,7 @@ public class SetCommand extends DomainBeanAwareCommand {
   }
 
   @Parameters(description = "name, value, value2...", arity = "2..*")
-  public final void setArguments(List<String> arguments) {
-    Objects.requireNonNull(arguments, "Arguments can't be NULL");
+  public final void setArguments(@NonNull List<String> arguments) {
     this.arguments = arguments;
   }
 

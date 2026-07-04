@@ -56,6 +56,7 @@ sudo apt update && sudo apt install jmxsh
 - **Remote & local connections** — connect via host:port, JMX URL, or local PID
 - **JMXMP protocol support** — connect via `jmxmp://host:port` in addition to the default RMI protocol
 - **Full MBean support** — browse domains, read/write attributes, invoke operations
+- **Connection aliases** — name your frequent connection targets with `alias` and reuse them in `open` or `-l`
 - **Command chaining** — run multiple commands in one line with `&&`
 - **Script mode** — automate JMX operations via files or piped input
 - **Quiet mode** — suppress informational messages with `-q` for scripting-friendly output
@@ -102,6 +103,8 @@ $> quit
 | `set <attr> <value>` | Write an MBean attribute |
 | `run <op> [args]` | Invoke an MBean operation |
 | `close` | Disconnect from the JMX endpoint |
+| `alias <name> [target]` | Define, show or list connection aliases |
+| `unalias <name>` | Remove a connection alias |
 | `jvms` | List local Java processes |
 | `help` | Show all available commands |
 
@@ -115,6 +118,28 @@ $> open jmxmp://localhost:9999
 ```
 
 Full service URLs are also supported: `open service:jmx:jmxmp://localhost:9999`
+
+### Connection Aliases
+
+Define short names for connection targets you use often. A target is anything `open`
+accepts: a `host:port`, a PID, a `jmxmp://` address or a full JMX service URL.
+
+```
+$> alias my_server myserver:1234
+#Alias my_server is set to myserver:1234
+$> open my_server
+#Connection to my_server (myserver:1234) is opened
+```
+
+Aliases also work with the `-l` command line option:
+
+```bash
+jmxsh -l my_server
+```
+
+They are stored in `$XDG_CONFIG_HOME/jmxsh/aliases.properties` (default:
+`~/.config/jmxsh/aliases.properties`), which can also be edited by hand. Use `alias` to
+list all aliases and `unalias <name>` to remove one.
 
 ### Non-Interactive Mode
 

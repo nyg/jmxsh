@@ -13,8 +13,10 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import sh.jmx.jmxsh.Command;
+import sh.jmx.jmxsh.CommandFactory;
 import sh.jmx.jmxsh.SelfRecordingCommand;
 import sh.jmx.jmxsh.io.WriterCommandOutput;
+import sh.jmx.jmxsh.utils.AliasStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -145,7 +147,14 @@ class CommandCenterTest {
   @Test
   void constructorThrowsWhenCommandFactoryNull() {
     WriterCommandOutput commandOutput = new WriterCommandOutput(new StringWriter());
-    assertThatThrownBy(() -> new CommandCenter(commandOutput, null, null))
+    assertThatThrownBy(() -> new CommandCenter(commandOutput, null, (CommandFactory) null))
+        .isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void constructorThrowsWhenAliasStoreNull() {
+    WriterCommandOutput commandOutput = new WriterCommandOutput(new StringWriter());
+    assertThatThrownBy(() -> new CommandCenter(commandOutput, null, (AliasStore) null))
         .isInstanceOf(NullPointerException.class);
   }
 

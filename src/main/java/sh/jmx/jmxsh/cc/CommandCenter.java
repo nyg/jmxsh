@@ -21,6 +21,8 @@ import sh.jmx.jmxsh.io.CommandOutput;
 import sh.jmx.jmxsh.io.RuntimeIOException;
 import sh.jmx.jmxsh.io.OutputMode;
 import sh.jmx.jmxsh.attach.JavaProcessManager;
+import sh.jmx.jmxsh.utils.AliasStore;
+import sh.jmx.jmxsh.utils.XdgDirectories;
 
 import org.jline.reader.Parser.ParseContext;
 import org.jline.reader.SyntaxError;
@@ -49,10 +51,21 @@ public class CommandCenter {
   }
 
   /** This constructor is for testing purpose only. */
+  public CommandCenter(CommandOutput output, CommandInput input, @NonNull AliasStore aliasStore) {
+    this(output, input, new PredefinedCommandFactory(), aliasStore);
+  }
+
+  /** This constructor is for testing purpose only. */
   public CommandCenter(@NonNull CommandOutput output, CommandInput input,
       @NonNull CommandFactory commandFactory) {
+    this(output, input, commandFactory, AliasStore.load(XdgDirectories.INSTANCE));
+  }
+
+  /** This constructor is for testing purpose only. */
+  public CommandCenter(@NonNull CommandOutput output, CommandInput input,
+      @NonNull CommandFactory commandFactory, @NonNull AliasStore aliasStore) {
     this.processManager = new JavaProcessManager();
-    this.session = new Session(output, input, processManager);
+    this.session = new Session(output, input, processManager, aliasStore);
     this.commandFactory = commandFactory;
   }
 

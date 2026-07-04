@@ -17,6 +17,7 @@ import sh.jmx.jmxsh.io.OutputMode;
 import sh.jmx.jmxsh.io.UnimplementedCommandInput;
 import sh.jmx.jmxsh.io.VerboseCommandOutput;
 import sh.jmx.jmxsh.attach.JavaProcessManager;
+import sh.jmx.jmxsh.utils.AliasStore;
 
 /**
  * JMX communication context. This class exists for the whole lifecycle of a command execution. It
@@ -34,13 +35,15 @@ public class Session {
   private final CommandInput input;
   private final CommandOutput output;
   private final JavaProcessManager processManager;
+  private final AliasStore aliasStore;
   private OutputMode outputMode = OutputMode.BRIEF;
 
   public Session(@NonNull CommandOutput output, CommandInput input,
-      @NonNull JavaProcessManager processManager) {
+      @NonNull JavaProcessManager processManager, @NonNull AliasStore aliasStore) {
     this.output = new VerboseCommandOutput(output, () -> this.outputMode);
     this.input = input == null ? new UnimplementedCommandInput() : input;
     this.processManager = processManager;
+    this.aliasStore = aliasStore;
   }
 
   public void close() {

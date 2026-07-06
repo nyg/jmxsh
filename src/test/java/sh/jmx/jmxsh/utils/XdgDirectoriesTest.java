@@ -71,6 +71,19 @@ class XdgDirectoriesTest {
   }
 
   @Test
+  void aliasesFileResolvesUnderConfigHome() {
+    var dirs = new XdgDirectories(k -> k.equals("XDG_CONFIG_HOME") ? "/xdg/config" : null, "/ignored");
+    assertThat(dirs.getAliasesFile()).isEqualTo(Path.of("/xdg/config/jmxsh/aliases.properties"));
+  }
+
+  @Test
+  void aliasesFileUsesDefaultConfigHome() {
+    var dirs = new XdgDirectories(_ -> null, "/home/testuser");
+    assertThat(dirs.getAliasesFile())
+        .isEqualTo(Path.of("/home/testuser/.config/jmxsh/aliases.properties"));
+  }
+
+  @Test
   void logFileResolvesUnderStateHome() {
     var dirs = new XdgDirectories(k -> k.equals("XDG_STATE_HOME") ? "/xdg/state" : null, "/ignored");
     assertThat(dirs.getLogFile()).isEqualTo(Path.of("/xdg/state/jmxsh/logs/jmxsh.log"));

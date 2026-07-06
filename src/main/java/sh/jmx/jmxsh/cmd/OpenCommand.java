@@ -2,6 +2,7 @@ package sh.jmx.jmxsh.cmd;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.management.remote.JMXConnector;
@@ -23,12 +24,14 @@ import lombok.extern.slf4j.Slf4j;
     footer =
         """
         Without argument this command display current connection. \
-        URL can be a <PID>, <hostname>:<port> or full qualified JMX service URL. \
+        URL can be a <PID>, <hostname>:<port>, full qualified JMX service URL \
+        or an alias defined with the alias command. \
         For JMXMP connections, use jmxmp://<hostname>:<port>. For example
          open localhost:9991,
          open jmxmp://localhost:9991,
          open service:jmx:jmxmp://localhost:9991,
-         open jmx:service:...""")
+         open jmx:service:...,
+         open my_server""")
 @Slf4j
 public class OpenCommand extends Command {
   private String password;
@@ -67,19 +70,27 @@ public class OpenCommand extends Command {
       // Required to prevent "java.rmi.ConnectIOException: non-JRMP server at remote endpoint" error
       env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
     }
+    String target = session.getAliasStore().resolve(url);
     try {
       session.connect(
-          SyntaxUtils.getUrl(url, session.getProcessManager()), env.isEmpty() ? null : env);
-      session.getOutput().printMessage("Connection to " + url + " is opened");
+          SyntaxUtils.getUrl(target, session.getProcessManager()), env.isEmpty() ? null : env);
+      String openedTarget = target.equals(url) ? url : "%s (%s)".formatted(url, target);
+      session.getOutput().printMessage("Connection to %s is opened".formatted(openedTarget));
     } catch (IOException e) {
-      if (SyntaxUtils.isDigits(url)) {
+      if (SyntaxUtils.isDigits(target)) {
         session.getOutput().printMessage(
-            "Couldn't connect to PID "
-                + url
-                + ", it's likely that your version of JDK doesn't allow to connect to a process directly");
+            """
+            Couldn't connect to PID %s, it's likely that your version of JDK doesn't allow \
+            to connect to a process directly\
+            """.formatted(target));
       }
       throw e;
     }
+  }
+
+  @Override
+  public List<String> doSuggestArgument() {
+    return List.copyOf(getSession().getAliasStore().names());
   }
 
   @Option(
@@ -89,7 +100,7 @@ public class OpenCommand extends Command {
     this.password = password;
   }
 
-  @Parameters(paramLabel = "url", description = "URL, <host>:<port>, jmxmp://<host>:<port>, or a PID to connect to", arity = "0..1")
+  @Parameters(paramLabel = "url", description = "URL, <host>:<port>, jmxmp://<host>:<port>, a PID or an alias to connect to", arity = "0..1")
   public final void setUrl(String url) {
     this.url = url;
   }

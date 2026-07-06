@@ -59,6 +59,17 @@ class SyntaxUtilsTest {
             });
   }
 
+  @Test
+  void should_throw_with_accepted_forms_when_target_invalid() {
+    // When / Then
+    assertThatThrownBy(() -> SyntaxUtils.getUrl("myal", null))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage(
+            "Invalid connection target \"myal\". Accepted forms: a <PID>, <host>:<port>,"
+                + " jmxmp://<host>:<port>, a full service:jmx:... URL, or an alias defined with"
+                + " the alias command.");
+  }
+
   /** Verify string expression of type is correctly parsed */
   @Test
   void parseNormally() {

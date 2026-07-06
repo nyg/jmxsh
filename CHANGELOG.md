@@ -1,6 +1,31 @@
 # Changelog
 
 
+## [1.5.0](https://github.com/nyg/jmxsh/compare/v1.4.0..v1.5.0) - 2026-07-06
+
+### ⛰️  Features
+
+- [`8547dbc`](https://github.com/nyg/jmxsh/commit/8547dbc76ad440c72627e3e380bba141ddf36f0e) *(cmd)* Add connection aliases for open and -l ([#75](https://github.com/nyg/jmxsh/issues/75))
+
+### 🐛 Bug Fixes
+
+- [`268dd87`](https://github.com/nyg/jmxsh/commit/268dd87559a747b22560ac7b639335cdfc38695e) *(cmd)* Refresh connector address after starting management agent ([#72](https://github.com/nyg/jmxsh/issues/72))
+- [`3fa7a70`](https://github.com/nyg/jmxsh/commit/3fa7a7047a9c0ac0950f0d0f6afcead725eb0d26) *(deps)* Update all stable non-major dependencies ([#70](https://github.com/nyg/jmxsh/issues/70))
+
+### 🚜 Refactor
+
+- [`7ec03d6`](https://github.com/nyg/jmxsh/commit/7ec03d65d476901125080866a09634382f7d5830) Replace SyntaxUtils with object-oriented abstractions ([#76](https://github.com/nyg/jmxsh/issues/76))
+- [`8ef92f6`](https://github.com/nyg/jmxsh/commit/8ef92f6e83e457122aac3ed7c044d4758e328408) Replace Objects.requireNonNull with Lombok @NonNull ([#74](https://github.com/nyg/jmxsh/issues/74))
+
+### ⚡ Performance
+
+- [`2dc1697`](https://github.com/nyg/jmxsh/commit/2dc1697c8d1a5e240f1f2bed952c772f2fa161e2) *(cmd)* Reduce remote JMX round trips in get, watch and bean commands ([#71](https://github.com/nyg/jmxsh/issues/71))
+
+### ⚙️ Miscellaneous
+
+- [`bc5b31f`](https://github.com/nyg/jmxsh/commit/bc5b31f2eab2b81661864f5735eeb47aadf37c1a) *(build)* Ignore JLS-generated project files ([#73](https://github.com/nyg/jmxsh/issues/73))
+- [`80d934f`](https://github.com/nyg/jmxsh/commit/80d934f8e0ac24ad88e71c391d2d5b7f7a612028) *(deps)* Update actions/checkout action to v7 ([#68](https://github.com/nyg/jmxsh/issues/68))
+
 ## [1.4.0](https://github.com/nyg/jmxsh/compare/v1.3.1..v1.4.0) - 2026-06-07
 
 ### ⛰️  Features

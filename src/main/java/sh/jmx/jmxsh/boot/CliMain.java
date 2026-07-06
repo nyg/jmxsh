@@ -13,7 +13,7 @@ import javax.management.remote.JMXConnector;
 import javax.rmi.ssl.SslRMIClientSocketFactory;
 
 import sh.jmx.jmxsh.Session;
-import sh.jmx.jmxsh.SyntaxUtils;
+import sh.jmx.jmxsh.JmxUrl;
 import sh.jmx.jmxsh.cc.CommandCenter;
 import sh.jmx.jmxsh.cc.ConsoleCompleter;
 import sh.jmx.jmxsh.io.CommandInput;
@@ -158,7 +158,7 @@ public class CliMain {
             String target =
                 commandCenter.getSession().getAliasStore().resolve(options.getUrl());
             commandCenter.connect(
-                SyntaxUtils.getUrl(target, commandCenter.getProcessManager()),
+                JmxUrl.parse(target).toServiceUrl(commandCenter.getProcessManager()),
                 env.isEmpty() ? null : env);
           }
           commandCenter.setOutputMode(outputMode);

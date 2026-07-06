@@ -13,7 +13,7 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
 import sh.jmx.jmxsh.Session;
-import sh.jmx.jmxsh.SyntaxUtils;
+import sh.jmx.jmxsh.utils.MBeanValueParser;
 import sh.jmx.jmxsh.utils.ValueFormat;
 
 import picocli.CommandLine;
@@ -25,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 @CommandLine.Command(name = "set", description = "Set value of an MBean attribute")
 @Slf4j
 public class SetCommand extends DomainBeanAwareCommand {
+  private final MBeanValueParser valueParser = new MBeanValueParser();
+
   private List<String> arguments = Collections.emptyList();
 
   private String bean;
@@ -74,7 +76,7 @@ public class SetCommand extends DomainBeanAwareCommand {
     if (inputValue != null) {
       inputValue = ValueFormat.parseValue(inputValue);
     }
-    Object value = SyntaxUtils.parse(inputValue, attributeInfo.getType());
+    Object value = valueParser.parse(inputValue, attributeInfo.getType());
     con.setAttribute(name, new Attribute(attributeName, value));
     session.getOutput().printMessage("Value of attribute " + attributeName + " is set to " + inputValue);
   }

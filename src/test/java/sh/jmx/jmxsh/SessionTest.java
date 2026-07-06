@@ -41,7 +41,7 @@ class SessionTest {
 
   @Test
   void connect() throws Exception {
-    session.connect(SyntaxUtils.getUrl("localhost:9991", null), null);
+    session.connect(JmxUrl.parse("localhost:9991").toServiceUrl(null), null);
     Connection connection = session.getConnection();
     assertThat(connection.url()).hasToString("service:jmx:rmi:///jndi/rmi://localhost:9991/jmxrmi");
   }

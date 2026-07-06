@@ -10,8 +10,9 @@ import javax.rmi.ssl.SslRMIClientSocketFactory;
 
 import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.Connection;
+import sh.jmx.jmxsh.JmxUrl;
 import sh.jmx.jmxsh.Session;
-import sh.jmx.jmxsh.SyntaxUtils;
+import sh.jmx.jmxsh.utils.ValueFormat;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
@@ -52,7 +53,7 @@ public class OpenCommand extends Command {
       Connection con = session.getConnection();
       if (con == null) {
         session.getOutput().printMessage("not connected");
-        session.getOutput().println(SyntaxUtils.NULL);
+        session.getOutput().println(ValueFormat.NULL);
       } else {
         session.getOutput().println("%s,%s".formatted(con.getConnectorId(), con.url()));
       }
@@ -71,13 +72,14 @@ public class OpenCommand extends Command {
       env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
     }
     String target = session.getAliasStore().resolve(url);
+    JmxUrl jmxUrl = JmxUrl.parse(target);
     try {
       session.connect(
-          SyntaxUtils.getUrl(target, session.getProcessManager()), env.isEmpty() ? null : env);
+          jmxUrl.toServiceUrl(session.getProcessManager()), env.isEmpty() ? null : env);
       String openedTarget = target.equals(url) ? url : "%s (%s)".formatted(url, target);
       session.getOutput().printMessage("Connection to %s is opened".formatted(openedTarget));
     } catch (IOException e) {
-      if (SyntaxUtils.isDigits(target)) {
+      if (jmxUrl instanceof JmxUrl.Pid) {
         session.getOutput().printMessage(
             """
             Couldn't connect to PID %s, it's likely that your version of JDK doesn't allow \

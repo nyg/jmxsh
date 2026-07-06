@@ -11,6 +11,10 @@ public final class ValueFormat {
 
   private ValueFormat() {}
 
+  public static boolean isNullLiteral(String s) {
+    return NULL.equalsIgnoreCase(s) || "*".equals(s);
+  }
+
   public static String parseValue(String value) {
     if (value == null || value.isEmpty()) {
       return null;

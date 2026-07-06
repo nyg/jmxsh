@@ -74,14 +74,15 @@ public class OpenCommand extends Command {
     try {
       session.connect(
           SyntaxUtils.getUrl(target, session.getProcessManager()), env.isEmpty() ? null : env);
-      String openedTarget = target.equals(url) ? url : url + " (" + target + ")";
-      session.getOutput().printMessage("Connection to " + openedTarget + " is opened");
+      String openedTarget = target.equals(url) ? url : "%s (%s)".formatted(url, target);
+      session.getOutput().printMessage("Connection to %s is opened".formatted(openedTarget));
     } catch (IOException e) {
       if (SyntaxUtils.isDigits(target)) {
         session.getOutput().printMessage(
-            "Couldn't connect to PID "
-                + target
-                + ", it's likely that your version of JDK doesn't allow to connect to a process directly");
+            """
+            Couldn't connect to PID %s, it's likely that your version of JDK doesn't allow \
+            to connect to a process directly\
+            """.formatted(target));
       }
       throw e;
     }

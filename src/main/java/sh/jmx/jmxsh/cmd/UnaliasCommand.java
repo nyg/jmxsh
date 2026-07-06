@@ -27,10 +27,10 @@ public class UnaliasCommand extends Command {
   public void execute() throws IOException {
     Session session = getSession();
     if (!session.getAliasStore().remove(name)) {
-      throw new IllegalArgumentException("Alias " + name + " is not defined");
+      throw new IllegalArgumentException("Alias %s is not defined".formatted(name));
     }
     log.debug("removed alias {}", name);
-    session.getOutput().printMessage("Alias " + name + " is removed");
+    session.getOutput().printMessage("Alias %s is removed".formatted(name));
   }
 
   @Parameters(paramLabel = "name", description = "Name of the alias to remove", arity = "1")

@@ -37,36 +37,42 @@ public final class SyntaxUtils {
   public static JMXServiceURL getUrl(String url, JavaProcessManager jpm) throws IOException {
     if (url == null || url.isEmpty()) {
       throw new IllegalArgumentException("Empty URL is not allowed");
-    } else if (isDigits(url) && jpm != null) {
-      int pid = Integer.parseInt(url);
-      JavaProcess p = jpm.get(pid);
-      if (p == null) {
-        throw new NullPointerException("No such PID " + pid);
-      }
-      if (!p.isManageable()) {
-        p.startManagementAgent();
-        if (!p.isManageable()) {
-          throw new IllegalStateException("Managed agent for PID " + pid + " couldn't start. PID " + pid + " is not manageable");
-        }
-      }
-      return new JMXServiceURL(p.toUrl());
-
-    } else if (PATTERN_JMXMP_URL.matcher(url).find()) {
+    }
+    if (isDigits(url) && jpm != null) {
+      return getPidUrl(Integer.parseInt(url), jpm);
+    }
+    if (PATTERN_JMXMP_URL.matcher(url).find()) {
       return new JMXServiceURL("service:jmx:" + url);
-    } else if (PATTERN_HOST_PORT.matcher(url).find()) {
-      return new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + url + "/jmxrmi");
-    } else {
-      try {
-        return new JMXServiceURL(url);
-      } catch (MalformedURLException e) {
-        throw new IllegalArgumentException(
-            "Invalid connection target \""
-                + url
-                + "\". Accepted forms: a <PID>, <host>:<port>, jmxmp://<host>:<port>, a full"
-                + " service:jmx:... URL, or an alias defined with the alias command.",
-            e);
+    }
+    if (PATTERN_HOST_PORT.matcher(url).find()) {
+      return new JMXServiceURL("service:jmx:rmi:///jndi/rmi://%s/jmxrmi".formatted(url));
+    }
+    try {
+      return new JMXServiceURL(url);
+    } catch (MalformedURLException e) {
+      throw new IllegalArgumentException(
+          """
+          Invalid connection target "%s". Accepted forms: a <PID>, <host>:<port>, \
+          jmxmp://<host>:<port>, a full service:jmx:... URL, or an alias defined with \
+          the alias command.\
+          """.formatted(url),
+          e);
+    }
+  }
+
+  private static JMXServiceURL getPidUrl(int pid, JavaProcessManager jpm) throws IOException {
+    JavaProcess p = jpm.get(pid);
+    if (p == null) {
+      throw new NullPointerException("No such PID " + pid);
+    }
+    if (!p.isManageable()) {
+      p.startManagementAgent();
+      if (!p.isManageable()) {
+        throw new IllegalStateException(
+            "Managed agent for PID %d couldn't start. PID %d is not manageable".formatted(pid, pid));
       }
     }
+    return new JMXServiceURL(p.toUrl());
   }
 
   public static boolean isNull(String s) {

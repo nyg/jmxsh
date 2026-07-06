@@ -45,8 +45,8 @@ class AliasCommandTest {
     unit.execute();
 
     // Then
-    assertThat(writer.toString())
-        .isEqualTo(
+    assertThat(writer)
+        .hasToString(
             "apple = ahost:2" + System.lineSeparator() + "zebra = zhost:1" + System.lineSeparator());
   }
 
@@ -64,7 +64,7 @@ class AliasCommandTest {
     unit.execute();
 
     // Then
-    assertThat(writer.toString()).isEqualTo("no aliases defined");
+    assertThat(writer).hasToString("no aliases defined");
   }
 
   @Test
@@ -84,7 +84,7 @@ class AliasCommandTest {
     unit.execute();
 
     // Then
-    assertThat(writer.toString()).isEqualTo("my_server = myserver:1234" + System.lineSeparator());
+    assertThat(writer).hasToString("my_server = myserver:1234" + System.lineSeparator());
   }
 
   @Test
@@ -118,7 +118,7 @@ class AliasCommandTest {
 
     // Then
     verify(aliasStore).put("my_server", "myserver:1234");
-    assertThat(writer.toString()).isEqualTo("Alias my_server is set to myserver:1234");
+    assertThat(writer).hasToString("Alias my_server is set to myserver:1234");
   }
 
   @Test

@@ -46,21 +46,21 @@ public class AliasCommand extends Command {
         return;
       }
       for (Map.Entry<String, String> entry : aliasStore.asMap().entrySet()) {
-        session.getOutput().println(entry.getKey() + " = " + entry.getValue());
+        session.getOutput().println("%s = %s".formatted(entry.getKey(), entry.getValue()));
       }
       return;
     }
     if (target == null) {
       String value = aliasStore.asMap().get(name);
       if (value == null) {
-        throw new IllegalArgumentException("Alias " + name + " is not defined");
+        throw new IllegalArgumentException("Alias %s is not defined".formatted(name));
       }
-      session.getOutput().println(name + " = " + value);
+      session.getOutput().println("%s = %s".formatted(name, value));
       return;
     }
     aliasStore.put(name, target);
     log.debug("defined alias {} = {}", name, target);
-    session.getOutput().printMessage("Alias " + name + " is set to " + target);
+    session.getOutput().printMessage("Alias %s is set to %s".formatted(name, target));
   }
 
   @Parameters(index = "0", paramLabel = "name", description = "Name of the alias", arity = "0..1")

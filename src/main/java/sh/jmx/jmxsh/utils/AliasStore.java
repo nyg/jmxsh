@@ -69,9 +69,10 @@ public class AliasStore {
   public void put(@NonNull String name, @NonNull String value) throws IOException {
     if (!isValidName(name)) {
       throw new IllegalArgumentException(
-          "Invalid alias name \""
-              + name
-              + "\": names must start with a letter or underscore and contain only letters, digits, \"_\", \".\" or \"-\"");
+          """
+          Invalid alias name "%s": names must start with a letter or underscore and contain \
+          only letters, digits, "_", "." or "-"\
+          """.formatted(name));
     }
     aliases.put(name, value);
     save();

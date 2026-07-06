@@ -15,6 +15,8 @@ import sh.jmx.jmxsh.attach.JavaProcessManager;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -51,46 +53,24 @@ class JmxUrlTest {
     assertThat(url.getURLPath()).isEqualTo("/jndi/rmi://xyz-host.cyclopsgroup.org:12345/jmxrmi");
   }
 
-  @Test
-  void should_build_jmxmp_url_when_input_is_jmxmp_shorthand() throws IOException {
+  @ParameterizedTest
+  @CsvSource({
+      "jmxmp://localhost:9999, localhost, 9999",
+      "jmxmp://my-host.example.com:5555, my-host.example.com, 5555",
+      "service:jmx:jmxmp://localhost:9999, localhost, 9999"
+  })
+  void should_build_jmxmp_url_when_input_is_jmxmp_target(String input, String host, int port)
+      throws IOException {
     // Given
-    JmxUrl unit = JmxUrl.parse("jmxmp://localhost:9999");
+    JmxUrl unit = JmxUrl.parse(input);
 
     // When
     JMXServiceURL url = unit.toServiceUrl(null);
 
     // Then
     assertThat(url.getProtocol()).isEqualTo("jmxmp");
-    assertThat(url.getHost()).isEqualTo("localhost");
-    assertThat(url.getPort()).isEqualTo(9999);
-  }
-
-  @Test
-  void should_build_jmxmp_url_when_shorthand_host_contains_dots_and_dashes() throws IOException {
-    // Given
-    JmxUrl unit = JmxUrl.parse("jmxmp://my-host.example.com:5555");
-
-    // When
-    JMXServiceURL url = unit.toServiceUrl(null);
-
-    // Then
-    assertThat(url.getProtocol()).isEqualTo("jmxmp");
-    assertThat(url.getHost()).isEqualTo("my-host.example.com");
-    assertThat(url.getPort()).isEqualTo(5555);
-  }
-
-  @Test
-  void should_keep_url_when_input_is_full_jmxmp_service_url() throws IOException {
-    // Given
-    JmxUrl unit = JmxUrl.parse("service:jmx:jmxmp://localhost:9999");
-
-    // When
-    JMXServiceURL url = unit.toServiceUrl(null);
-
-    // Then
-    assertThat(url.getProtocol()).isEqualTo("jmxmp");
-    assertThat(url.getHost()).isEqualTo("localhost");
-    assertThat(url.getPort()).isEqualTo(9999);
+    assertThat(url.getHost()).isEqualTo(host);
+    assertThat(url.getPort()).isEqualTo(port);
   }
 
   @Test

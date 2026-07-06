@@ -86,7 +86,7 @@ public sealed interface JmxUrl
   }
 
   record HostPort(String hostPort) implements JmxUrl {
-    private static final Pattern PATTERN = Pattern.compile("^(\\w|\\.|\\-)+\\:\\d+$");
+    private static final Pattern PATTERN = Pattern.compile("^[\\w.\\-]+:\\d+$");
 
     @Override
     public JMXServiceURL toServiceUrl(JavaProcessManager processManager) throws IOException {

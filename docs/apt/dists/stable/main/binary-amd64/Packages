@@ -73,3 +73,18 @@ SHA512: ed86c0e0f96f44c563e21f7d372791d31947f5c6475a56b8ee3de4045c3de12bedd0965a
 Description: Interactive command-line JMX client
 Distribution: development
 
+Package: jmxsh
+Architecture: all
+Version: 1.5.0
+Priority: optional
+Section: misc
+Maintainer: nyg
+Filename: pool/main/jmxsh-1.5.0.deb
+Size: 3115288
+MD5sum: 5dfc2d053a2145db4805d9b62bff4ae8
+SHA1: c1cc17ac2c316cbe5f717307d1bffeec609d8792
+SHA256: d6226ee2d2fd7b25e2186eb8dd26ac9cadf111338028893f3beb0fae12e57c20
+SHA512: 5587ce0a1fc0a43301b3fd4be5a607f9d63610097a77bf4909d7a0abc59c071cf0275b5432274f6ac42eebd5d15cda2931dede3fb4fb7df0eacb17f52ed316e1
+Description: Interactive command-line JMX client
+Distribution: development
+

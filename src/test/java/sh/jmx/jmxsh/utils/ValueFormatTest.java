@@ -23,4 +23,19 @@ class ValueFormatTest {
   void parseWithInvalidUnicodeEscape() {
     assertThat(ValueFormat.parseValue("ab\\uGGGGc")).isEqualTo("ab\\uGGGGc");
   }
+
+  @Test
+  void should_return_true_when_value_is_null_literal_or_wildcard() {
+    // When / Then
+    assertThat(ValueFormat.isNullLiteral("null")).isTrue();
+    assertThat(ValueFormat.isNullLiteral("NULL")).isTrue();
+    assertThat(ValueFormat.isNullLiteral("*")).isTrue();
+  }
+
+  @Test
+  void should_return_false_when_value_is_ordinary_or_null() {
+    // When / Then
+    assertThat(ValueFormat.isNullLiteral("abc")).isFalse();
+    assertThat(ValueFormat.isNullLiteral(null)).isFalse();
+  }
 }

@@ -23,7 +23,7 @@ class ConnectionTest {
   @Test
   void construction() throws Exception {
     JMXConnector con = mock(JMXConnector.class);
-    Connection c = new Connection(con, SyntaxUtils.getUrl("localhost:9991", null));
+    Connection c = new Connection(con, JmxUrl.parse("localhost:9991").toServiceUrl(null));
     assertThat(c.connector()).isSameAs(con);
 
     when(con.getConnectionId()).thenReturn("xyz");

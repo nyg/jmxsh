@@ -11,8 +11,8 @@ import java.io.StringWriter;
 import javax.management.remote.JMXServiceURL;
 
 import sh.jmx.jmxsh.Connection;
+import sh.jmx.jmxsh.JmxUrl;
 import sh.jmx.jmxsh.Session;
-import sh.jmx.jmxsh.SyntaxUtils;
 import sh.jmx.jmxsh.io.WriterCommandOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ class OpenCommandTest {
   void executeWithoutUrl() throws Exception {
     when(session.getConnection()).thenReturn(connection);
     when(connection.getConnectorId()).thenReturn("id");
-    when(connection.url()).thenReturn(SyntaxUtils.getUrl("localhost:9991", null));
+    when(connection.url()).thenReturn(JmxUrl.parse("localhost:9991").toServiceUrl(null));
     command.setSession(session);
     command.execute();
     assertThat(writer.toString().trim())

@@ -13,7 +13,7 @@ import javax.management.remote.JMXConnector;
 import javax.rmi.ssl.SslRMIClientSocketFactory;
 
 import sh.jmx.jmxsh.Session;
-import sh.jmx.jmxsh.SyntaxUtils;
+import sh.jmx.jmxsh.JmxUrl;
 import sh.jmx.jmxsh.cc.CommandCenter;
 import sh.jmx.jmxsh.cc.ConsoleCompleter;
 import sh.jmx.jmxsh.io.CommandInput;
@@ -156,7 +156,7 @@ public class CliMain {
               env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
             }
             commandCenter.connect(
-                SyntaxUtils.getUrl(options.getUrl(), commandCenter.getProcessManager()),
+                JmxUrl.parse(options.getUrl()).toServiceUrl(commandCenter.getProcessManager()),
                 env.isEmpty() ? null : env);
           }
           commandCenter.setOutputMode(outputMode);

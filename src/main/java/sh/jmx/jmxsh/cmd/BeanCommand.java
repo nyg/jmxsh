@@ -11,7 +11,7 @@ import javax.management.ObjectName;
 
 import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.Session;
-import sh.jmx.jmxsh.SyntaxUtils;
+import sh.jmx.jmxsh.utils.ValueFormat;
 import sh.jmx.jmxsh.io.RuntimeIOException;
 
 import picocli.CommandLine;
@@ -32,7 +32,7 @@ public class BeanCommand extends Command {
     if (bean == null) {
       return session.getBean();
     }
-    if (SyntaxUtils.isNull(bean)) {
+    if (ValueFormat.isNullLiteral(bean)) {
       return null;
     }
     MBeanServerConnection con = session.getConnection().getServerConnection();
@@ -101,7 +101,7 @@ public class BeanCommand extends Command {
     Session session = getSession();
     if (bean == null) {
       if (session.getBean() == null) {
-        session.getOutput().println(SyntaxUtils.NULL);
+        session.getOutput().println(ValueFormat.NULL);
       } else {
         session.getOutput().println(session.getBean());
       }

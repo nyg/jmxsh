@@ -9,8 +9,9 @@ import javax.rmi.ssl.SslRMIClientSocketFactory;
 
 import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.Connection;
+import sh.jmx.jmxsh.JmxUrl;
 import sh.jmx.jmxsh.Session;
-import sh.jmx.jmxsh.SyntaxUtils;
+import sh.jmx.jmxsh.utils.ValueFormat;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
@@ -49,7 +50,7 @@ public class OpenCommand extends Command {
       Connection con = session.getConnection();
       if (con == null) {
         session.getOutput().printMessage("not connected");
-        session.getOutput().println(SyntaxUtils.NULL);
+        session.getOutput().println(ValueFormat.NULL);
       } else {
         session.getOutput().println("%s,%s".formatted(con.getConnectorId(), con.url()));
       }
@@ -67,12 +68,13 @@ public class OpenCommand extends Command {
       // Required to prevent "java.rmi.ConnectIOException: non-JRMP server at remote endpoint" error
       env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
     }
+    JmxUrl target = JmxUrl.parse(url);
     try {
       session.connect(
-          SyntaxUtils.getUrl(url, session.getProcessManager()), env.isEmpty() ? null : env);
+          target.toServiceUrl(session.getProcessManager()), env.isEmpty() ? null : env);
       session.getOutput().printMessage("Connection to " + url + " is opened");
     } catch (IOException e) {
-      if (SyntaxUtils.isDigits(url)) {
+      if (target instanceof JmxUrl.Pid) {
         session.getOutput().printMessage(
             "Couldn't connect to PID "
                 + url

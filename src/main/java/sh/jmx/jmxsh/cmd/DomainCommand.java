@@ -6,7 +6,7 @@ import java.util.List;
 
 import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.Session;
-import sh.jmx.jmxsh.SyntaxUtils;
+import sh.jmx.jmxsh.utils.ValueFormat;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Parameters;
@@ -28,7 +28,7 @@ public class DomainCommand extends Command {
     if (domain == null) {
       return session.getDomain();
     }
-    if (SyntaxUtils.isNull(domain)) {
+    if (ValueFormat.isNullLiteral(domain)) {
       return null;
     }
     HashSet<String> domains = new HashSet<>(DomainsCommand.getCandidateDomains(session));
@@ -52,7 +52,7 @@ public class DomainCommand extends Command {
     if (domain == null) {
       if (session.getDomain() == null) {
         session.getOutput().printMessage("domain is not set");
-        session.getOutput().println(SyntaxUtils.NULL);
+        session.getOutput().println(ValueFormat.NULL);
       } else {
         session.getOutput().printMessage("domain = " + session.getDomain());
         session.getOutput().println(session.getDomain());

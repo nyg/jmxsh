@@ -14,8 +14,8 @@ import javax.management.ObjectName;
 
 import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.Session;
-import sh.jmx.jmxsh.SyntaxUtils;
 import sh.jmx.jmxsh.io.ValueOutputFormat;
+import sh.jmx.jmxsh.utils.MBeanValueParser;
 import sh.jmx.jmxsh.utils.ValueFormat;
 
 import picocli.CommandLine;
@@ -30,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
     footer = "Syntax is \n run <operationName> [parameter1] [parameter2]")
 @Slf4j
 public class RunCommand extends Command {
+  private final MBeanValueParser valueParser = new MBeanValueParser();
+
   private String bean;
 
   private String domain;
@@ -135,7 +137,7 @@ public class RunCommand extends Command {
       if (expression != null) {
         expression = ValueFormat.parseValue(expression);
       }
-      Object paramValue = SyntaxUtils.parse(expression, paramInfo.getType());
+      Object paramValue = valueParser.parse(expression, paramInfo.getType());
       params[i] = paramValue;
       signatures[i] = paramInfo.getType();
     }

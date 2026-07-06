@@ -175,12 +175,27 @@ class JmxUrlTest {
   }
 
   @Test
-  void should_throw_malformed_url_when_pid_used_without_process_manager() {
+  void should_throw_with_accepted_forms_when_pid_used_without_process_manager() {
     // Given
     JmxUrl unit = JmxUrl.parse("123");
 
     // When / Then
     assertThatThrownBy(() -> unit.toServiceUrl(null))
-        .isInstanceOf(MalformedURLException.class);
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasCauseInstanceOf(MalformedURLException.class);
+  }
+
+  @Test
+  void should_throw_with_accepted_forms_when_target_invalid() {
+    // Given
+    JmxUrl unit = JmxUrl.parse("myal");
+
+    // When / Then
+    assertThatThrownBy(() -> unit.toServiceUrl(null))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage(
+            "Invalid connection target \"myal\". Accepted forms: a <PID>, <host>:<port>,"
+                + " jmxmp://<host>:<port>, a full service:jmx:... URL, or an alias defined with"
+                + " the alias command.");
   }
 }

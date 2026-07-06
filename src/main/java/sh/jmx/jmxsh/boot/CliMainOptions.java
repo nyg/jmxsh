@@ -95,7 +95,7 @@ public class CliMainOptions {
 
   @Option(
       names = {"-l", "--url"},
-      description = "Location of MBean service. It can be <host>:<port>, jmxmp://<host>:<port>, or full service URL.")
+      description = "Location of MBean service. It can be <host>:<port>, jmxmp://<host>:<port>, a full service URL, or an alias defined with the alias command.")
   public final void setUrl(@NonNull String url) {
     this.url = url;
   }

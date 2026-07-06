@@ -14,6 +14,7 @@ import sh.jmx.jmxsh.Connection;
 import sh.jmx.jmxsh.JmxUrl;
 import sh.jmx.jmxsh.Session;
 import sh.jmx.jmxsh.io.WriterCommandOutput;
+import sh.jmx.jmxsh.utils.AliasStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,8 @@ class OpenCommandTest {
   private Session session;
   @Mock
   private Connection connection;
+  @Mock
+  private AliasStore aliasStore;
 
   private OpenCommand command;
   private StringWriter writer;
@@ -57,9 +60,31 @@ class OpenCommandTest {
   /** @throws Exception */
   @Test
   void executeWithUrl() throws Exception {
+    when(session.getAliasStore()).thenReturn(aliasStore);
+    when(aliasStore.resolve("xyz.cyclopsgroup.org:12345")).thenReturn("xyz.cyclopsgroup.org:12345");
     command.setUrl("xyz.cyclopsgroup.org:12345");
     command.setSession(session);
     command.execute();
     verify(session).connect(any(JMXServiceURL.class), isNull());
+  }
+
+  @Test
+  void should_connect_to_resolved_target_when_url_is_alias() throws Exception {
+    // Given
+    StringWriter messageWriter = new StringWriter();
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(messageWriter));
+    when(session.getAliasStore()).thenReturn(aliasStore);
+    when(aliasStore.resolve("my_server")).thenReturn("localhost:9991");
+    command.setUrl("my_server");
+    command.setSession(session);
+
+    // When
+    command.execute();
+
+    // Then
+    verify(session)
+        .connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:9991/jmxrmi"), null);
+    assertThat(messageWriter.toString())
+        .contains("Connection to my_server (localhost:9991) is opened");
   }
 }

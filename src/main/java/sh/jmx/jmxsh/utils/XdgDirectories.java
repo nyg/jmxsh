@@ -16,6 +16,7 @@ public final class XdgDirectories {
   static final String APP_NAME = "jmxsh";
   static final String HISTORY_FILENAME = "history";
   static final String CONFIG_FILENAME = "config.properties";
+  static final String ALIASES_FILENAME = "aliases.properties";
   static final String LOG_FILENAME = "jmxsh.log";
 
   private final Function<String, String> env;
@@ -62,6 +63,11 @@ public final class XdgDirectories {
   /** Returns the path where the application config file should be stored. */
   public Path getConfigFile() {
     return getConfigHome().resolve(APP_NAME).resolve(CONFIG_FILENAME);
+  }
+
+  /** Returns the path where connection aliases should be stored. */
+  public Path getAliasesFile() {
+    return getConfigHome().resolve(APP_NAME).resolve(ALIASES_FILENAME);
   }
 
   /** Returns the path where the log file should be stored. */

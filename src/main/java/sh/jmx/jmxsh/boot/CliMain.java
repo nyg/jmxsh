@@ -155,8 +155,10 @@ public class CliMain {
               // error
               env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
             }
+            String target =
+                commandCenter.getSession().getAliasStore().resolve(options.getUrl());
             commandCenter.connect(
-                JmxUrl.parse(options.getUrl()).toServiceUrl(commandCenter.getProcessManager()),
+                JmxUrl.parse(target).toServiceUrl(commandCenter.getProcessManager()),
                 env.isEmpty() ? null : env);
           }
           commandCenter.setOutputMode(outputMode);

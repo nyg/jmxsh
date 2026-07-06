@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.CommandFactory;
+import sh.jmx.jmxsh.cmd.AliasCommand;
 import sh.jmx.jmxsh.cmd.BeanCommand;
 import sh.jmx.jmxsh.cmd.BeansCommand;
 import sh.jmx.jmxsh.cmd.CloseCommand;
@@ -20,6 +21,7 @@ import sh.jmx.jmxsh.cmd.QuitCommand;
 import sh.jmx.jmxsh.cmd.RunCommand;
 import sh.jmx.jmxsh.cmd.SetCommand;
 import sh.jmx.jmxsh.cmd.SubscribeCommand;
+import sh.jmx.jmxsh.cmd.UnaliasCommand;
 import sh.jmx.jmxsh.cmd.UnsubscribeCommand;
 import sh.jmx.jmxsh.cmd.WatchCommand;
 
@@ -33,6 +35,7 @@ class PredefinedCommandFactory implements CommandFactory {
 
   PredefinedCommandFactory() {
     Map<String, Supplier<Command>> commands = new HashMap<>();
+    commands.put("alias",       AliasCommand::new);
     commands.put("bean",        BeanCommand::new);
     commands.put("beans",       BeansCommand::new);
     commands.put("close",       CloseCommand::new);
@@ -48,6 +51,7 @@ class PredefinedCommandFactory implements CommandFactory {
     commands.put("run",         RunCommand::new);
     commands.put("set",         SetCommand::new);
     commands.put("subscribe",   SubscribeCommand::new);
+    commands.put("unalias",     UnaliasCommand::new);
     commands.put("unsubscribe", UnsubscribeCommand::new);
     commands.put("watch",       WatchCommand::new);
     commands.put("help",        HelpCommand::new);

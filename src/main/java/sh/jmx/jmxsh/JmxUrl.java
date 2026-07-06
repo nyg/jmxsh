@@ -1,6 +1,7 @@
 package sh.jmx.jmxsh;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.regex.Pattern;
 
 import javax.management.remote.JMXServiceURL;
@@ -27,6 +28,20 @@ public sealed interface JmxUrl
     return new ServiceUrl(url);
   }
 
+  private static JMXServiceURL toRawServiceUrl(String url) {
+    try {
+      return new JMXServiceURL(url);
+    } catch (MalformedURLException e) {
+      throw new IllegalArgumentException(
+          """
+          Invalid connection target "%s". Accepted forms: a <PID>, <host>:<port>, \
+          jmxmp://<host>:<port>, a full service:jmx:... URL, or an alias defined with \
+          the alias command.\
+          """.formatted(url),
+          e);
+    }
+  }
+
   private static boolean isDigits(String s) {
     for (int i = 0; i < s.length(); i++) {
       char ch = s.charAt(i);
@@ -43,7 +58,7 @@ public sealed interface JmxUrl
     @Override
     public JMXServiceURL toServiceUrl(JavaProcessManager processManager) throws IOException {
       if (processManager == null) {
-        return new JMXServiceURL(digits);
+        return toRawServiceUrl(digits);
       }
       int pid = Integer.parseInt(digits);
       JavaProcess process = processManager.get(pid);
@@ -82,7 +97,7 @@ public sealed interface JmxUrl
   record ServiceUrl(String url) implements JmxUrl {
     @Override
     public JMXServiceURL toServiceUrl(JavaProcessManager processManager) throws IOException {
-      return new JMXServiceURL(url);
+      return toRawServiceUrl(url);
     }
   }
 }

@@ -3,6 +3,7 @@ package sh.jmx.jmxsh;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Map;
@@ -55,7 +56,16 @@ public final class SyntaxUtils {
     } else if (PATTERN_HOST_PORT.matcher(url).find()) {
       return new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + url + "/jmxrmi");
     } else {
-      return new JMXServiceURL(url);
+      try {
+        return new JMXServiceURL(url);
+      } catch (MalformedURLException e) {
+        throw new IllegalArgumentException(
+            "Invalid connection target \""
+                + url
+                + "\". Accepted forms: a <PID>, <host>:<port>, jmxmp://<host>:<port>, a full"
+                + " service:jmx:... URL, or an alias defined with the alias command.",
+            e);
+      }
     }
   }
 

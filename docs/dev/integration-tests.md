@@ -104,7 +104,7 @@ void testSomething() {
 
 Key points:
 - **Fresh CommandCenter per test** — avoids state leaking between tests
-- **Two output writers** — `resultOutput` captures command values (what the user would see), `messageOutput` captures informational messages (prefixed with `#`)
+- **Two output writers** — `resultOutput` captures command values (what the user would see), `messageOutput` captures informational messages
 - **Direct MBeanServer access** — some tests call `jmxServer.getMBeanServer().invoke(...)` in `@AfterEach` to reset the test MBean's state
 
 ## What is tested
@@ -194,10 +194,34 @@ Tests how the output mode (`SILENT`, `BRIEF`) controls what the user sees.
 
 | Test | What it verifies |
 |------|-----------------|
-| `testBriefMessages` | In BRIEF mode (default), informational messages are shown with a `#` prefix |
+| `testBriefMessages` | In BRIEF mode (default), informational messages are shown |
 | `testSilentSuppressesMessages` | In SILENT mode, the output mode is set without errors |
 | `testSilentStillShowsValues` | In SILENT mode, command result values are still printed |
-| `testBriefShowsShortErrors` | In BRIEF mode, errors show a short `#`-prefixed message, not a stack trace |
+| `testBriefShowsShortErrors` | In BRIEF mode, errors show a short message, not a stack trace |
+
+### JmxmpConnectionIT (5 tests)
+
+Tests connecting over the JMXMP protocol against an `EmbeddedJmxmpServer`.
+
+| Test | What it verifies |
+|------|-----------------|
+| `testOpenWithJmxmpShorthand` | `open jmxmp://localhost:<port>` connects successfully |
+| `testOpenWithFullJmxmpServiceUrl` | `open service:jmx:jmxmp://localhost:<port>` connects successfully |
+| `testListDomainsOverJmxmp` | `domains` works over a JMXMP connection |
+| `testGetAttributeOverJmxmp` | Reads an attribute over a JMXMP connection |
+| `testCloseAndReconnectOverJmxmp` | Closing and reopening a JMXMP connection works |
+
+### AliasResolutionIT (5 tests)
+
+Tests the `alias`/`unalias` commands and alias resolution in `open`.
+
+| Test | What it verifies |
+|------|-----------------|
+| `testOpenResolvesAlias` | `open <alias>` resolves the alias and connects to its target |
+| `testAliasPersistsToFile` | Defined aliases are persisted to the aliases properties file |
+| `testAliasListAndRemove` | `alias` lists all aliases; `unalias <name>` removes one |
+| `testUnaliasFailsForUnknownName` | Removing an unknown alias fails |
+| `testAliasRejectsInvalidName` | Defining an alias with an invalid name fails |
 
 ## Domains available in tests
 

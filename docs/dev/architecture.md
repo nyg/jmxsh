@@ -35,7 +35,7 @@ sequenceDiagram
         S->>S: JMXConnectorFactory.connect()
         S-->>CC: connected (Connection record stored)
         CC-->>CLI: true (success)
-        CLI-->>User: #35;Connection to localhost:9999 is opened
+        CLI-->>User: Connection to localhost:9999 is opened
 
         User->>CLI: bean test:type=TestMBean
         CLI->>CC: execute("bean test:type=TestMBean")
@@ -46,7 +46,7 @@ sequenceDiagram
         MBS-->>CC: MBeanInfo (validates bean exists)
         CC->>S: setBean(objectName)
         CC-->>CLI: true
-        CLI-->>User: #35;bean is set to test:type=TestMBean
+        CLI-->>User: bean is set to test:type=TestMBean
 
         User->>CLI: run echo hello
         CLI->>CC: execute("run echo hello")
@@ -68,7 +68,7 @@ sequenceDiagram
         CC->>S: disconnect()
         S->>S: close JMXConnector (via Connection record)
         CC-->>CLI: true
-        CLI-->>User: #35;Connection to localhost:9999 is closed
+        CLI-->>User: disconnected
     end
 ```
 
@@ -77,8 +77,11 @@ sequenceDiagram
 ### CliMain
 
 The application entry point (`sh.jmx.jmxsh.boot.CliMain`). Parses CLI arguments (e.g.
-`-l` for URL, `-n` for non-interactive mode, `-q` for quiet/silent output mode), initializes the I/O layer and
-`CommandCenter`, then enters the REPL loop that reads and dispatches user commands.
+`-l` for URL, `-n` for non-interactive mode, `-q` for quiet/silent output mode), loads the
+`AppConfig` from `$XDG_CONFIG_HOME/jmxsh/config.properties` (file logging, prompt template),
+initializes the I/O layer and `CommandCenter`, then enters the REPL loop that reads and dispatches
+user commands. In interactive mode the prompt is rendered by `PromptTemplate`, which resolves the
+`{server}`, `{domain}` and `{bean}` variables against the current session state.
 
 ### CommandCenter
 
@@ -93,9 +96,9 @@ The central orchestrator (`sh.jmx.jmxsh.cc.CommandCenter`). Responsible for:
 ### CommandFactory
 
 A factory interface (`sh.jmx.jmxsh.CommandFactory`) implemented by
-`PredefinedCommandFactory`. Discovers command name → class mappings from a static `COMMAND_CLASSES`
-list at startup, reading the `@CommandLine.Command` annotation's `name` and `aliases` fields to
-build the lookup map. Creates a fresh command instance for each execution.
+`sh.jmx.jmxsh.cc.PredefinedCommandFactory`. Registers each command name (and its aliases, e.g.
+`quit`/`exit`/`bye`) against a constructor reference in a `Map<String, Supplier<Command>>`, so no
+reflection is needed at instantiation time. Creates a fresh command instance for each execution.
 
 ### Command
 
@@ -115,6 +118,9 @@ A concrete class (`sh.jmx.jmxsh.Session`) that holds the current JMX state:
 - The currently selected domain and bean
 - The output mode (`OutputMode`)
 - References to `CommandOutput` for writing results and messages
+- The `AliasStore` that persists connection aliases to
+  `$XDG_CONFIG_HOME/jmxsh/aliases.properties` for the `alias`/`unalias` commands and alias
+  resolution in `open` and `-l`
 
 `Session` owns the connect/disconnect lifecycle, calling `JMXConnectorFactory.connect()` directly.
 It wraps the `CommandOutput` in a `VerboseCommandOutput` decorator that filters output based on

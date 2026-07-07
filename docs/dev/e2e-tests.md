@@ -76,7 +76,7 @@ The MBean interface and implementation are **nested inside TestTargetApp** to av
         -Dcom.sun.management.jmxremote.authenticate=false
         -Dcom.sun.management.jmxremote.ssl=false
         -Dcom.sun.management.jmxremote.local.only=true
-        org.cyclopsgroup.jmxterm.e2e.TestTargetApp
+        sh.jmx.jmxsh.e2e.TestTargetApp
    ```
 3. Waits for the `"READY"` line on stdout before returning
 
@@ -147,7 +147,7 @@ Tests CLI flags that control jmxsh's startup behavior.
 | Test | What it verifies |
 |------|-----------------|
 | `testAutoConnect` | `-l localhost:<port>` auto-connects on startup; `domains` works immediately |
-| `testSilentMode` | `-q` (quiet mode) suppresses all `#`-prefixed messages but still shows result values |
+| `testSilentMode` | `-q` (quiet mode) suppresses all informational messages but still shows result values |
 | `testExitOnFailure` | `-e` causes jmxsh to exit with non-zero code on first command failure |
 | `testHelpFlag` | `-h` prints usage information and exits with code 0 |
 
@@ -163,12 +163,12 @@ Tests the process exit code under different scenarios.
 
 ### StartupErrorsE2EIT (2 tests)
 
-Tests that startup failures (before the REPL begins) produce a clean `#`-prefixed error message and a non-zero exit code instead of a raw JVM stack trace.
+Tests that startup failures (before the REPL begins) produce a clean error message and a non-zero exit code instead of a raw JVM stack trace.
 
 | Test | What it verifies |
 |------|-----------------|
-| `invalidOutputFileProducesCleanError` | `-o /nonexistent/dir/output.txt` fails cleanly with a `#`-prefixed message and non-zero exit |
-| `failedAutoConnectProducesCleanError` | `-l localhost:1` (always refused) fails cleanly with a `#`-prefixed message and non-zero exit |
+| `invalidOutputFileProducesCleanError` | `-o /nonexistent/dir/output.txt` fails cleanly with a short message and non-zero exit |
+| `failedAutoConnectProducesCleanError` | `-l localhost:1` (always refused) fails cleanly with a short message and non-zero exit |
 
 ### JmxmpConnectionE2EIT (4 tests)
 

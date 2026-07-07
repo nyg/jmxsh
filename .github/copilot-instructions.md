@@ -44,7 +44,7 @@ Surefire excludes `sh.jmx.jmxsh.jdk*` tests (platform-specific JVM attach tests)
 
 Commands extend the abstract `Command` class and implement `execute()`. They are **transient** — a new instance is created per execution.
 
-Commands are registered in `PredefinedCommandFactory` via a static `COMMAND_CLASSES` list. Each command class must carry a `@CommandLine.Command` annotation (picocli); the annotation's `name` and `aliases` fields are read at startup to build the name → class map. `HelpCommand` is added separately in the same factory.
+Commands are registered in `PredefinedCommandFactory` (`cc/` package) in a `Map<String, Supplier<Command>>` that pairs each command name (and alias, e.g. `quit`/`exit`/`bye`) with a constructor reference — no reflection is used. Each command class carries a `@CommandLine.Command` annotation (picocli) for argument parsing and help text.
 
 Arguments and options use picocli annotations:
 - `@CommandLine.Command(name="...", aliases={"..."}, description="...")` on the class
@@ -67,11 +67,11 @@ Both RMI and JMXMP protocols are supported. URL formats:
 
 ### IO Abstraction
 
-`CommandInput` and `CommandOutput` are abstract base classes with implementations for interactive console (JLine), files, streams, and writers. `VerboseCommandOutput` is a decorator that filters output based on `OutputMode` (SILENT or BRIEF).
+`CommandInput` and `CommandOutput` are interfaces with implementations for interactive console (JLine), files, streams, and writers. `VerboseCommandOutput` is a decorator that filters output based on `OutputMode` (SILENT or BRIEF).
 
 ### JVM Process Discovery
 
-`jdk9/` provides JVM discovery using the `com.sun.tools.attach` API (`VirtualMachine`/`VirtualMachineDescriptor`). `JavaProcessManager` is instantiated directly in `CommandCenter`. Used by the `jvms` and `open` commands.
+`attach/` provides JVM discovery using the `com.sun.tools.attach` API (`VirtualMachine`/`VirtualMachineDescriptor`). `JavaProcessManager` is instantiated directly in `CommandCenter`. Used by the `jvms` and `open` commands.
 
 ## Conventions
 
@@ -134,7 +134,7 @@ class DomainsCommandTest {
 
 1. Create a class in `cmd/` extending `Command` with `@CommandLine.Command(name="mycommand")`
 2. Implement `execute()`, define options/arguments via picocli annotations
-3. Add the class to the `COMMAND_CLASSES` list in `PredefinedCommandFactory`
+3. Register it in the commands map in `PredefinedCommandFactory` (`commands.put("mycommand", MyCommand::new)`)
 4. Add a test in `src/test/java/.../cmd/` following the Mockito pattern above
 
 ### Error Handling
@@ -142,4 +142,4 @@ class DomainsCommandTest {
 - Commands throw `IllegalArgumentException` for invalid user input
 - Commands throw `IllegalStateException` for invalid session state (e.g., not connected)
 - `RuntimeIOException` wraps checked `IOException` as unchecked
-- Error display respects `OutputMode`: BRIEF shows messages prefixed with `#`, SILENT suppresses output
+- Error display respects `OutputMode`: BRIEF shows a short error message, SILENT suppresses output

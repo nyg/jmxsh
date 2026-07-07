@@ -5,10 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>jmxsh — Interactive JMX Client for the Terminal</title>
   <meta name="description" content="jmxsh is an interactive command-line JMX client for monitoring and managing Java applications. Connect, browse MBeans, read/write attributes, and invoke operations.">
+  <meta property="og:title" content="jmx.sh — Interactive JMX Client for the Terminal">
+  <meta property="og:description" content="Connect to any JMX-enabled JVM, browse MBeans, read and write attributes, and invoke operations — all from the comfort of your terminal.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jmx.sh">
+  <meta property="og:image" content="https://jmx.sh/favicon.png">
+  <meta name="twitter:card" content="summary">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.png" type="image/png">
 </head>
 <body>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="#" class="nav-brand">jmx<span class="accent">.sh</span></a>
+      <div class="nav-links">
+        <a href="#quickstart">Install</a>
+        <a href="#usage">Usage</a>
+        <a href="#commands">Commands</a>
+        <a href="#features">Features</a>
+        <a href="https://github.com/nyg/jmxsh" class="nav-github">GitHub</a>
+      </div>
+    </div>
+  </nav>
 
   <!-- Hero -->
   <header class="hero">
@@ -73,26 +93,27 @@ sudo apt update &amp;&amp; sudo apt install jmxsh</code></pre>
           <span class="terminal-title">jmxsh</span>
         </div>
         <div class="terminal-body">
-<pre><span class="prompt">$</span> java -jar jmxsh-&lt;version&gt;.jar
+<pre><span class="prompt">$</span> jmxsh
 Welcome to jmx.sh, type "help" for available commands.
-<span class="prompt">$&gt;</span> open localhost:9999
-<span class="comment">#Connection to localhost:9999 is opened</span>
-<span class="prompt">$&gt;</span> domains
-<span class="comment">#following domains are available</span>
+<span class="prompt">&gt;</span> open localhost:9999
+<span class="comment">Connection to localhost:9999 is opened</span>
+<span class="prompt">&gt;</span> domains
+<span class="comment">following domains are available</span>
 JMImplementation
 java.lang
 com.example
-<span class="prompt">$&gt;</span> bean com.example:type=AppStats
-<span class="comment">#bean is set to com.example:type=AppStats</span>
-<span class="prompt">$&gt;</span> get RequestCount
-<span class="comment">#mbean = com.example:type=AppStats:</span>
+<span class="prompt">&gt;</span> bean com.example:type=AppStats
+<span class="comment">bean is set to com.example:type=AppStats</span>
+<span class="prompt">&gt;</span> get RequestCount
+<span class="comment">mbean = com.example:type=AppStats:</span>
 RequestCount = 42;
-<span class="prompt">$&gt;</span> run resetStats
-<span class="comment">#calling operation resetStats of mbean com.example:type=AppStats</span>
-<span class="comment">#operation returns:</span>
+<span class="prompt">&gt;</span> run resetStats
+<span class="comment">calling operation resetStats of mbean com.example:type=AppStats with params []</span>
+<span class="comment">operation returns:</span>
 null
-<span class="prompt">$&gt;</span> close
-<span class="prompt">$&gt;</span> quit</pre>
+<span class="prompt">&gt;</span> close
+<span class="comment">disconnected</span>
+<span class="prompt">&gt;</span> quit</pre>
         </div>
       </div>
     </div>
@@ -135,15 +156,22 @@ null
             <tr><td><code>open jmxmp://&lt;host:port&gt;</code></td><td>Connect to a remote JMX endpoint (JMXMP)</td></tr>
             <tr><td><code>open &lt;pid&gt;</code></td><td>Attach to a local JVM by process ID</td></tr>
             <tr><td><code>domains</code></td><td>List all MBean domains</td></tr>
+            <tr><td><code>domain [name]</code></td><td>Show or set the current domain</td></tr>
             <tr><td><code>beans</code></td><td>List all MBeans (filter by domain with <code>-d</code>)</td></tr>
             <tr><td><code>bean &lt;name&gt;</code></td><td>Select an MBean for subsequent operations</td></tr>
             <tr><td><code>info</code></td><td>Show attributes and operations of the selected MBean</td></tr>
             <tr><td><code>get &lt;attr&gt;</code></td><td>Read an MBean attribute</td></tr>
             <tr><td><code>set &lt;attr&gt; &lt;value&gt;</code></td><td>Write an MBean attribute</td></tr>
             <tr><td><code>run &lt;op&gt; [args]</code></td><td>Invoke an MBean operation</td></tr>
+            <tr><td><code>watch &lt;attr&gt;</code></td><td>Poll an MBean attribute and print its value continuously</td></tr>
+            <tr><td><code>subscribe</code></td><td>Subscribe to the notifications of an MBean</td></tr>
+            <tr><td><code>unsubscribe</code></td><td>Unsubscribe from the notifications of an MBean</td></tr>
             <tr><td><code>close</code></td><td>Disconnect from the JMX endpoint</td></tr>
+            <tr><td><code>alias &lt;name&gt; [target]</code></td><td>Define, show or list connection aliases</td></tr>
+            <tr><td><code>unalias &lt;name&gt;</code></td><td>Remove a connection alias</td></tr>
             <tr><td><code>jvms</code></td><td>List local Java processes</td></tr>
             <tr><td><code>help</code></td><td>Show all available commands</td></tr>
+            <tr><td><code>quit</code></td><td>Exit jmxsh (also <code>exit</code> or <code>bye</code>)</td></tr>
           </tbody>
         </table>
       </div>
@@ -171,19 +199,29 @@ null
           <p>Browse domains, read/write attributes, invoke operations.</p>
         </div>
         <div class="feature">
+          <div class="feature-icon">📈</div>
+          <h3>Live Monitoring</h3>
+          <p>Watch attribute values with <code>watch</code>, receive MBean notifications with <code>subscribe</code>.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🔖</div>
+          <h3>Connection Aliases</h3>
+          <p>Name your frequent connection targets and reuse them in <code>open</code> or <code>-l</code>.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">💬</div>
+          <h3>Configurable Prompt</h3>
+          <p>Show the connected server, domain and bean in the prompt via a simple template.</p>
+        </div>
+        <div class="feature">
           <div class="feature-icon">⛓️</div>
           <h3>Command Chaining</h3>
           <p>Run multiple commands in one line with <code>&amp;&amp;</code>.</p>
         </div>
         <div class="feature">
           <div class="feature-icon">📜</div>
-          <h3>Script Mode</h3>
-          <p>Automate JMX operations via files or piped input.</p>
-        </div>
-        <div class="feature">
-          <div class="feature-icon">🔊</div>
-          <h3>Verbose Control</h3>
-          <p>Silent, brief, or verbose output modes.</p>
+          <h3>Scripting-Friendly</h3>
+          <p>Automate via files or piped input; quiet mode (<code>-q</code>) keeps output clean.</p>
         </div>
         <div class="feature">
           <div class="feature-icon">📂</div>
@@ -197,6 +235,13 @@ null
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
+      <div class="footer-links">
+        <a href="https://github.com/nyg/jmxsh">GitHub</a>
+        <a href="https://github.com/nyg/jmxsh/releases">Releases</a>
+        <a href="https://github.com/nyg/jmxsh/blob/master/CHANGELOG.md">Changelog</a>
+        <a href="https://github.com/nyg/homebrew-jmxsh">Homebrew Tap</a>
+        <a href="https://github.com/nyg/jmxsh/issues">Issues</a>
+      </div>
       <p>
         jmxsh is an actively maintained fork of
         <a href="https://github.com/jiaqi/jmxterm">jiaqi/jmxterm</a>.

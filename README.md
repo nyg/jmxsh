@@ -56,36 +56,39 @@ sudo apt update && sudo apt install jmxsh
 - **Remote & local connections** — connect via host:port, JMX URL, or local PID
 - **JMXMP protocol support** — connect via `jmxmp://host:port` in addition to the default RMI protocol
 - **Full MBean support** — browse domains, read/write attributes, invoke operations
+- **Live monitoring** — watch attribute values with `watch`, subscribe to MBean notifications with `subscribe`
 - **Connection aliases** — name your frequent connection targets with `alias` and reuse them in `open` or `-l`
+- **Configurable prompt** — show the connected server, selected domain and bean in the prompt via a simple template
 - **Command chaining** — run multiple commands in one line with `&&`
 - **Script mode** — automate JMX operations via files or piped input
 - **Quiet mode** — suppress informational messages with `-q` for scripting-friendly output
 - **Cross-platform** — runs anywhere Java runs (JAR, DEB, RPM)
-- **XDG Base Directory compliance** — command history stored in `$XDG_STATE_HOME/jmxsh/` (defaults to `~/.local/state/jmxsh/`), keeping your home directory clean
+- **XDG Base Directory compliance** — configuration in `$XDG_CONFIG_HOME/jmxsh/`, command history in `$XDG_STATE_HOME/jmxsh/`, keeping your home directory clean
 
 ## Usage
 
 ```
 $ java -jar jmxsh-<version>.jar
 Welcome to jmx.sh, type "help" for available commands.
-$> open localhost:9999
-#Connection to localhost:9999 is opened
-$> domains
-#following domains are available
+> open localhost:9999
+Connection to localhost:9999 is opened
+> domains
+following domains are available
 JMImplementation
 java.lang
 com.example
-$> bean com.example:type=AppStats
-#bean is set to com.example:type=AppStats
-$> get RequestCount
-#mbean = com.example:type=AppStats:
+> bean com.example:type=AppStats
+bean is set to com.example:type=AppStats
+> get RequestCount
+mbean = com.example:type=AppStats:
 RequestCount = 42;
-$> run resetStats
-#calling operation resetStats of mbean com.example:type=AppStats
-#operation returns:
+> run resetStats
+calling operation resetStats of mbean com.example:type=AppStats with params []
+operation returns:
 null
-$> close
-$> quit
+> close
+disconnected
+> quit
 ```
 
 ### Key Commands
@@ -96,17 +99,22 @@ $> quit
 | `open jmxmp://<host:port>` | Connect to a remote JMX endpoint (JMXMP) |
 | `open <pid>` | Attach to a local JVM by process ID |
 | `domains` | List all MBean domains |
+| `domain [name]` | Show or set the current domain |
 | `beans` | List all MBeans (optionally filter by domain with `-d`) |
 | `bean <name>` | Select an MBean for subsequent operations |
 | `info` | Show attributes and operations of the selected MBean |
 | `get <attr>` | Read an MBean attribute |
 | `set <attr> <value>` | Write an MBean attribute |
 | `run <op> [args]` | Invoke an MBean operation |
+| `watch <attr>` | Poll an MBean attribute and print its value continuously |
+| `subscribe` | Subscribe to the notifications of an MBean |
+| `unsubscribe` | Unsubscribe from the notifications of an MBean |
 | `close` | Disconnect from the JMX endpoint |
 | `alias <name> [target]` | Define, show or list connection aliases |
 | `unalias <name>` | Remove a connection alias |
 | `jvms` | List local Java processes |
 | `help` | Show all available commands |
+| `quit` | Exit jmxsh (also `exit` or `bye`) |
 
 ### JMXMP Connections
 
@@ -140,6 +148,42 @@ jmxsh -l my_server
 They are stored in `$XDG_CONFIG_HOME/jmxsh/aliases.properties` (default:
 `~/.config/jmxsh/aliases.properties`), which can also be edited by hand. Use `alias` to
 list all aliases and `unalias <name>` to remove one.
+
+### Watching Attributes
+
+Poll one or more attributes of the selected MBean at a regular interval, with an optional
+printf-style format, poll interval (`-i`, in seconds) and duration (`-s`, stop after N seconds):
+
+```
+> bean java.lang:type=Memory
+bean is set to java.lang:type=Memory
+> watch -i 5 HeapMemoryUsage
+```
+
+Use `subscribe` and `unsubscribe` to receive JMX notifications emitted by an MBean instead of
+polling it.
+
+### Configuration
+
+jmxsh reads its configuration from `$XDG_CONFIG_HOME/jmxsh/config.properties` (default:
+`~/.config/jmxsh/config.properties`). The file is created with commented-out defaults on first
+run. Available settings:
+
+| Setting | Default | Description |
+|---|---|---|
+| `prompt` | `> ` | REPL prompt template |
+| `logging.file.enabled` | `false` | Write logs to a rotating file in `$XDG_STATE_HOME/jmxsh/logs/` |
+
+The prompt template supports the variables `{server}` (connected server), `{domain}` (selected
+domain) and `{bean}` (selected bean). Wrap sections in `{?...}` to hide them when the variables
+inside are empty:
+
+```properties
+prompt={?[{server}] }{?{domain}}{?/{bean}}> 
+```
+
+renders as `> ` when disconnected, and as `[localhost:9999] java.lang/type=Memory> ` once a
+server, domain and bean are selected.
 
 ### Non-Interactive Mode
 

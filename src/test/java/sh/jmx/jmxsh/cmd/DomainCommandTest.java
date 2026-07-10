@@ -143,6 +143,24 @@ class DomainCommandTest {
   }
 
   @Test
+  void should_unset_domain_when_null_literal_is_given() throws Exception {
+    // Given
+    DomainCommand unit = new DomainCommand();
+    StringWriter messageWriter = new StringWriter();
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(messageWriter));
+    when(session.getConnection()).thenReturn(connection);
+    unit.setDomain("null");
+    unit.setSession(session);
+
+    // When
+    unit.execute();
+
+    // Then
+    verify(session).unsetDomain();
+    assertThat(messageWriter.toString()).contains("Domain is unset.");
+  }
+
+  @Test
   void getDomainNameThrowsWhenSessionNull() {
     assertThatThrownBy(() -> DomainCommand.getDomainName("x", null))
         .isInstanceOf(NullPointerException.class);

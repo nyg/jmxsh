@@ -51,7 +51,7 @@ public class InfoCommand extends Command {
     Session session = getSession();
     MBeanAttributeInfo[] attrInfos = info.getAttributes();
     if (attrInfos.length == 0) {
-      session.getOutput().printMessage("there is no attribute");
+      session.getOutput().printMessage("There are no attributes.");
       return;
     }
     int index = 0;
@@ -73,7 +73,7 @@ public class InfoCommand extends Command {
     Session session = getSession();
     MBeanNotificationInfo[] notificationInfos = info.getNotifications();
     if (notificationInfos.length == 0) {
-      session.getOutput().printMessage("there's no notifications");
+      session.getOutput().printMessage("There are no notifications.");
       return;
     }
     int index = 0;
@@ -92,7 +92,7 @@ public class InfoCommand extends Command {
     Session session = getSession();
     MBeanOperationInfo[] operationInfos = info.getOperations();
     if (operationInfos.length == 0) {
-      session.getOutput().printMessage("there's no operations");
+      session.getOutput().printMessage("There are no operations.");
       return;
     }
     List<MBeanOperationInfo> operations = Stream.of(operationInfos).sorted(INFO_COMPARATOR).toList();
@@ -124,7 +124,7 @@ public class InfoCommand extends Command {
     Session session = getSession();
     MBeanOperationInfo[] operationInfos = info.getOperations();
     if (operationInfos.length == 0) {
-      session.getOutput().printMessage("there's no operations");
+      session.getOutput().printMessage("There are no operations.");
       return;
     }
     session.getOutput().println(TEXT_OPERATIONS);
@@ -173,10 +173,10 @@ public class InfoCommand extends Command {
     ObjectName name = new ObjectName(beanName);
     MBeanServerConnection con = session.getConnection().getServerConnection();
     MBeanInfo info = con.getMBeanInfo(name);
-    session.getOutput().printMessage("mbean = " + beanName);
-    session.getOutput().printMessage("class name = " + info.getClassName());
+    session.getOutput().printMessage("MBean = " + beanName);
+    session.getOutput().printMessage("Class name = " + info.getClassName());
     if (this.showDescription) {
-      session.getOutput().printMessage("description: " + info.getDescription());
+      session.getOutput().printMessage("Description: " + info.getDescription());
     }
     if (operation == null) {
       for (char t : type.toCharArray()) {
@@ -189,7 +189,7 @@ public class InfoCommand extends Command {
         }
       }
     } else {
-      session.getOutput().printMessage("operation = " + operation);
+      session.getOutput().printMessage("Operation = " + operation);
       displaySingleOperation(info);
     }
   }

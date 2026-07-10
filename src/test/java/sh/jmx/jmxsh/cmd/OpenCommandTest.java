@@ -69,6 +69,22 @@ class OpenCommandTest {
   }
 
   @Test
+  void should_print_not_connected_when_session_has_no_connection() throws Exception {
+    // Given
+    OpenCommand unit = new OpenCommand();
+    StringWriter messageWriter = new StringWriter();
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(messageWriter));
+    when(session.getConnection()).thenReturn(null);
+    unit.setSession(session);
+
+    // When
+    unit.execute();
+
+    // Then
+    assertThat(messageWriter.toString()).contains("Not connected.");
+  }
+
+  @Test
   void should_connect_to_resolved_target_when_url_is_alias() throws Exception {
     // Given
     StringWriter messageWriter = new StringWriter();

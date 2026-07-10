@@ -13,6 +13,6 @@ public class QuitCommand extends Command {
     Session session = getSession();
     session.disconnect();
     session.close();
-    session.getOutput().printMessage("bye");
+    session.getOutput().printMessage("Bye.");
   }
 }

@@ -42,7 +42,7 @@ public class AliasCommand extends Command {
     AliasStore aliasStore = session.getAliasStore();
     if (name == null) {
       if (aliasStore.asMap().isEmpty()) {
-        session.getOutput().printMessage("no aliases defined");
+        session.getOutput().printMessage("No aliases defined.");
         return;
       }
       for (Map.Entry<String, String> entry : aliasStore.asMap().entrySet()) {
@@ -60,7 +60,7 @@ public class AliasCommand extends Command {
     }
     aliasStore.put(name, target);
     log.debug("defined alias {} = {}", name, target);
-    session.getOutput().printMessage("Alias %s is set to %s".formatted(name, target));
+    session.getOutput().printMessage("Alias %s is set to %s.".formatted(name, target));
   }
 
   @Parameters(index = "0", paramLabel = "name", description = "Name of the alias", arity = "0..1")

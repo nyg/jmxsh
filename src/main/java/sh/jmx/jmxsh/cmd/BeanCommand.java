@@ -110,12 +110,12 @@ public class BeanCommand extends Command {
     String beanName = getBeanName(bean, domain, session);
     if (beanName == null) {
       session.setBean(null);
-      session.getOutput().printMessage("bean is unset");
+      session.getOutput().printMessage("Bean is unset.");
       return;
     }
     session.setBean(beanName);
     log.debug("selected bean: {}", beanName);
-    session.getOutput().printMessage("bean is set to " + beanName);
+    session.getOutput().printMessage("Bean is set to %s.".formatted(beanName));
     int colonIdx = beanName.indexOf(':');
     if (colonIdx > 0) {
       session.setDomain(beanName.substring(0, colonIdx));

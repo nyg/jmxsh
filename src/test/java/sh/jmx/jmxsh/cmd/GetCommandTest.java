@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -82,8 +83,8 @@ class GetCommandTest {
 
     String[] attributePath = attribute.split("\\.");
 
-    MBeanInfo beanInfo = org.mockito.Mockito.mock(MBeanInfo.class);
-    MBeanAttributeInfo attributeInfo = org.mockito.Mockito.mock(MBeanAttributeInfo.class);
+    MBeanInfo beanInfo = mock(MBeanInfo.class);
+    MBeanAttributeInfo attributeInfo = mock(MBeanAttributeInfo.class);
     try {
       when(con.getDomains())
           .thenReturn(new String[] {domain, randomAlphabetic(5)});
@@ -115,6 +116,32 @@ class GetCommandTest {
     }
   }
 
+  @Test
+  void should_print_message_when_attribute_is_not_readable() throws Exception {
+    // Given
+    GetCommand unit = new GetCommand();
+    StringWriter messageWriter = new StringWriter();
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(messageWriter));
+    unit.setDomain("a");
+    unit.setBean("type=x");
+    unit.setAttributes(List.of("a"));
+    MBeanInfo beanInfo = mock(MBeanInfo.class);
+    MBeanAttributeInfo attributeInfo = mock(MBeanAttributeInfo.class);
+    when(con.getDomains()).thenReturn(new String[] {"a"});
+    when(con.isRegistered(new ObjectName("a:type=x"))).thenReturn(true);
+    when(con.getMBeanInfo(new ObjectName("a:type=x"))).thenReturn(beanInfo);
+    when(beanInfo.getAttributes()).thenReturn(new MBeanAttributeInfo[] {attributeInfo});
+    when(attributeInfo.getName()).thenReturn("a");
+    when(attributeInfo.isReadable()).thenReturn(false);
+    unit.setSession(session);
+
+    // When
+    unit.execute();
+
+    // Then
+    assertThat(messageWriter.toString()).contains("Attribute a is not readable.");
+  }
+
   /** Test normal execution */
   @Test
   void executeNormally() {
@@ -141,7 +168,7 @@ class GetCommandTest {
   void executeWithStrangeAttributeName() throws Exception {
     Map<String, Object> entries = new HashMap<>();
     entries.put("d", "bingo");
-    CompositeType compositeType = org.mockito.Mockito.mock(CompositeType.class);
+    CompositeType compositeType = mock(CompositeType.class);
     when(compositeType.keySet()).thenReturn(entries.keySet());
     doReturn(SimpleType.STRING).when(compositeType).getType("d");
     Object expectedValue = new CompositeDataSupport(compositeType, entries);
@@ -169,9 +196,9 @@ class GetCommandTest {
   @Test
   void fetchesMultipleAttributesInSingleBulkCall() throws Exception {
     ObjectName name = new ObjectName("a:type=x");
-    MBeanInfo beanInfo = org.mockito.Mockito.mock(MBeanInfo.class);
-    MBeanAttributeInfo attr1 = org.mockito.Mockito.mock(MBeanAttributeInfo.class);
-    MBeanAttributeInfo attr2 = org.mockito.Mockito.mock(MBeanAttributeInfo.class);
+    MBeanInfo beanInfo = mock(MBeanInfo.class);
+    MBeanAttributeInfo attr1 = mock(MBeanAttributeInfo.class);
+    MBeanAttributeInfo attr2 = mock(MBeanAttributeInfo.class);
     when(con.getDomains()).thenReturn(new String[] {"a"});
     when(con.isRegistered(name)).thenReturn(true);
     when(con.getMBeanInfo(name)).thenReturn(beanInfo);
@@ -202,8 +229,8 @@ class GetCommandTest {
     StringWriter messageWriter = new StringWriter();
     when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, messageWriter));
     ObjectName name = new ObjectName("a:type=x");
-    MBeanInfo beanInfo = org.mockito.Mockito.mock(MBeanInfo.class);
-    MBeanAttributeInfo attributeInfo = org.mockito.Mockito.mock(MBeanAttributeInfo.class);
+    MBeanInfo beanInfo = mock(MBeanInfo.class);
+    MBeanAttributeInfo attributeInfo = mock(MBeanAttributeInfo.class);
     when(con.getDomains()).thenReturn(new String[] {"a"});
     when(con.isRegistered(name)).thenReturn(true);
     when(con.getMBeanInfo(name)).thenReturn(beanInfo);

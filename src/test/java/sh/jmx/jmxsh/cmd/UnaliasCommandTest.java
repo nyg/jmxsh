@@ -40,7 +40,7 @@ class UnaliasCommandTest {
     unit.execute();
 
     // Then
-    assertThat(writer).hasToString("Alias my_server is removed");
+    assertThat(writer).hasToString("Alias my_server is removed.");
   }
 
   @Test

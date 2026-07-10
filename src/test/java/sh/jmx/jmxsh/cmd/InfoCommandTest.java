@@ -157,6 +157,92 @@ class InfoCommandTest {
     assertThat(writer.toString().trim()).isEqualTo("# operations");
   }
 
+  @Test
+  void should_print_message_when_bean_has_no_attributes() throws Exception {
+    // Given
+    InfoCommand unit = new InfoCommand();
+    StringWriter messageWriter = new StringWriter();
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(messageWriter));
+    unit.setBean("a:type=x");
+    unit.setType("a");
+    MBeanInfo beanInfo = mock(MBeanInfo.class);
+    when(con.getMBeanInfo(new ObjectName("a:type=x"))).thenReturn(beanInfo);
+    when(beanInfo.getClassName()).thenReturn("bogus class");
+    when(beanInfo.getAttributes()).thenReturn(new MBeanAttributeInfo[0]);
+    unit.setSession(session);
+
+    // When
+    unit.execute();
+
+    // Then
+    assertThat(messageWriter.toString()).contains("There are no attributes.");
+  }
+
+  @Test
+  void should_print_message_when_bean_has_no_operations() throws Exception {
+    // Given
+    InfoCommand unit = new InfoCommand();
+    StringWriter messageWriter = new StringWriter();
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(messageWriter));
+    unit.setBean("a:type=x");
+    unit.setType("o");
+    MBeanInfo beanInfo = mock(MBeanInfo.class);
+    when(con.getMBeanInfo(new ObjectName("a:type=x"))).thenReturn(beanInfo);
+    when(beanInfo.getClassName()).thenReturn("bogus class");
+    when(beanInfo.getOperations()).thenReturn(new MBeanOperationInfo[0]);
+    unit.setSession(session);
+
+    // When
+    unit.execute();
+
+    // Then
+    assertThat(messageWriter.toString()).contains("There are no operations.");
+  }
+
+  @Test
+  void should_print_message_when_requested_operation_has_no_candidates() throws Exception {
+    // Given
+    InfoCommand unit = new InfoCommand();
+    StringWriter messageWriter = new StringWriter();
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(messageWriter));
+    unit.setBean("a:type=x");
+    unit.setOperation("x");
+    MBeanInfo beanInfo = mock(MBeanInfo.class);
+    when(con.getMBeanInfo(new ObjectName("a:type=x"))).thenReturn(beanInfo);
+    when(beanInfo.getClassName()).thenReturn("bogus class");
+    when(beanInfo.getOperations()).thenReturn(new MBeanOperationInfo[0]);
+    unit.setSession(session);
+
+    // When
+    unit.execute();
+
+    // Then
+    assertThat(messageWriter.toString()).contains("There are no operations.");
+  }
+
+  @Test
+  void should_print_bean_description_when_detail_option_is_set() throws Exception {
+    // Given
+    InfoCommand unit = new InfoCommand();
+    StringWriter messageWriter = new StringWriter();
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(messageWriter));
+    unit.setBean("a:type=x");
+    unit.setType("a");
+    unit.setShowDescription(true);
+    MBeanInfo beanInfo = mock(MBeanInfo.class);
+    when(con.getMBeanInfo(new ObjectName("a:type=x"))).thenReturn(beanInfo);
+    when(beanInfo.getClassName()).thenReturn("bogus class");
+    when(beanInfo.getDescription()).thenReturn("My bean description");
+    when(beanInfo.getAttributes()).thenReturn(new MBeanAttributeInfo[0]);
+    unit.setSession(session);
+
+    // When
+    unit.execute();
+
+    // Then
+    assertThat(messageWriter.toString()).contains("Description: My bean description");
+  }
+
   /**
    * Test execution and show available options
    *

@@ -13,6 +13,6 @@ public class CloseCommand extends Command {
   public void execute() throws IOException {
     log.info("closing JMX connection");
     getSession().disconnect();
-    getSession().getOutput().printMessage("disconnected");
+    getSession().getOutput().printMessage("Disconnected.");
   }
 }

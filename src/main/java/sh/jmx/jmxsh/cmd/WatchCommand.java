@@ -75,7 +75,7 @@ public class WatchCommand extends Command {
   public void execute() throws IOException, JMException {
     if (report && stopAfter == 0) {
       throw new IllegalArgumentException(
-          "When --report is sepcified, --stopafter(-s) must be specificed");
+          "When --report is specified, --stopafter(-s) must be specified.");
     }
     Session session = getSession();
     String domain = DomainCommand.getDomainName(null, session);
@@ -105,7 +105,7 @@ public class WatchCommand extends Command {
         console.getTerminal().writer().print(line);
         console.flush();
       };
-      getSession().getOutput().printMessage("press any key to stop. DO NOT press Ctrl+C !!!");
+      getSession().getOutput().printMessage("Press any key to stop. DO NOT press Ctrl+C.");
     }
 
     final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();

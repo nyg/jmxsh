@@ -55,7 +55,7 @@ public class GetCommand extends DomainBeanAwareCommand {
     Session session = getSession();
     String beanName = BeanCommand.getBeanName(bean, domain, session);
     ObjectName name = new ObjectName(beanName);
-    session.getOutput().printMessage("mbean = " + beanName + ":");
+    session.getOutput().printMessage("MBean = %s:".formatted(beanName));
     MBeanServerConnection con = session.getConnection().getServerConnection();
     MBeanAttributeInfo[] ais = con.getMBeanInfo(name).getAttributes();
     Map<String, MBeanAttributeInfo> attributeNames = resolveAttributeNames(ais);
@@ -66,7 +66,7 @@ public class GetCommand extends DomainBeanAwareCommand {
       if (i.isReadable()) {
         displayAttribute(con, name, beanName, entry.getKey(), i, fetchedValues, format);
       } else {
-        session.getOutput().printMessage(i.getName() + " is not readable");
+        session.getOutput().printMessage("Attribute %s is not readable.".formatted(i.getName()));
       }
     }
   }

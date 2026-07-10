@@ -96,24 +96,25 @@ sudo apt update &amp;&amp; sudo apt install jmxsh</code></pre>
 <pre><span class="prompt">$</span> jmxsh
 Welcome to jmx.sh, type "help" for available commands.
 <span class="prompt">&gt;</span> open localhost:9999
-<span class="comment">Connection to localhost:9999 is opened</span>
+<span class="comment">Connection to localhost:9999 is opened.</span>
 <span class="prompt">&gt;</span> domains
-<span class="comment">following domains are available</span>
+<span class="comment">The following domains are available:</span>
 JMImplementation
 java.lang
 com.example
 <span class="prompt">&gt;</span> bean com.example:type=AppStats
-<span class="comment">bean is set to com.example:type=AppStats</span>
+<span class="comment">Bean is set to com.example:type=AppStats.</span>
 <span class="prompt">&gt;</span> get RequestCount
-<span class="comment">mbean = com.example:type=AppStats:</span>
+<span class="comment">MBean = com.example:type=AppStats:</span>
 RequestCount = 42;
 <span class="prompt">&gt;</span> run resetStats
-<span class="comment">calling operation resetStats of mbean com.example:type=AppStats with params []</span>
-<span class="comment">operation returns:</span>
+<span class="comment">Calling operation resetStats of mbean com.example:type=AppStats with params [].</span>
+<span class="comment">Operation returns:</span>
 null
 <span class="prompt">&gt;</span> close
-<span class="comment">disconnected</span>
-<span class="prompt">&gt;</span> quit</pre>
+<span class="comment">Disconnected.</span>
+<span class="prompt">&gt;</span> quit
+<span class="comment">Bye.</span></pre>
         </div>
       </div>
     </div>

@@ -52,7 +52,7 @@ public class OpenCommand extends Command {
     if (url == null) {
       Connection con = session.getConnection();
       if (con == null) {
-        session.getOutput().printMessage("not connected");
+        session.getOutput().printMessage("Not connected.");
         session.getOutput().println(ValueFormat.NULL);
       } else {
         session.getOutput().println("%s,%s".formatted(con.getConnectorId(), con.url()));
@@ -77,13 +77,13 @@ public class OpenCommand extends Command {
       session.connect(
           jmxUrl.toServiceUrl(session.getProcessManager()), env.isEmpty() ? null : env);
       String openedTarget = target.equals(url) ? url : "%s (%s)".formatted(url, target);
-      session.getOutput().printMessage("Connection to %s is opened".formatted(openedTarget));
+      session.getOutput().printMessage("Connection to %s is opened.".formatted(openedTarget));
     } catch (IOException e) {
       if (jmxUrl instanceof JmxUrl.Pid) {
         session.getOutput().printMessage(
             """
             Couldn't connect to PID %s, it's likely that your version of JDK doesn't allow \
-            to connect to a process directly\
+            to connect to a process directly.\
             """.formatted(target));
       }
       throw e;

@@ -21,9 +21,6 @@ class PromptTemplateTest {
   @Mock
   private Session session;
 
-  @Mock
-  private Connection connection;
-
   @Test
   void optionalBlockHiddenWhenAllVarsEmpty() {
     when(session.isConnected()).thenReturn(false);
@@ -33,16 +30,16 @@ class PromptTemplateTest {
   @Test
   void optionalBlockShownWhenVarNonEmpty() throws Exception {
     when(session.isConnected()).thenReturn(true);
-    when(session.getConnection()).thenReturn(connection);
-    when(connection.url()).thenReturn(new JMXServiceURL("service:jmx:jmxmp://srv:9010"));
+    when(session.getConnection())
+        .thenReturn(new Connection(null, new JMXServiceURL("service:jmx:jmxmp://srv:9010")));
     assertThat(PromptTemplate.resolve("{?[{server}] }> ", session)).isEqualTo("[srv:9010] > ");
   }
 
   @Test
   void optionalBlocksComposed() throws Exception {
     when(session.isConnected()).thenReturn(true);
-    when(session.getConnection()).thenReturn(connection);
-    when(connection.url()).thenReturn(new JMXServiceURL("service:jmx:jmxmp://srv:9010"));
+    when(session.getConnection())
+        .thenReturn(new Connection(null, new JMXServiceURL("service:jmx:jmxmp://srv:9010")));
     when(session.getDomain()).thenReturn("java.lang");
     when(session.getBean()).thenReturn("java.lang:type=Memory");
     assertThat(PromptTemplate.resolve("{?[{server}] }{?{domain}}{?/{bean}}> ", session))
@@ -87,17 +84,16 @@ class PromptTemplateTest {
   @Test
   void serverVariableHostPort() throws Exception {
     when(session.isConnected()).thenReturn(true);
-    when(session.getConnection()).thenReturn(connection);
-    when(connection.url()).thenReturn(new JMXServiceURL("service:jmx:jmxmp://myhost:1234"));
+    when(session.getConnection())
+        .thenReturn(new Connection(null, new JMXServiceURL("service:jmx:jmxmp://myhost:1234")));
     assertThat(PromptTemplate.resolve("[{server}]> ", session)).isEqualTo("[myhost:1234]> ");
   }
 
   @Test
   void serverVariableFallsBackToFullUrlWhenNoHost() throws Exception {
     when(session.isConnected()).thenReturn(true);
-    when(session.getConnection()).thenReturn(connection);
     JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:9010/jmxrmi");
-    when(connection.url()).thenReturn(url);
+    when(session.getConnection()).thenReturn(new Connection(null, url));
     assertThat(PromptTemplate.resolve("[{server}]> ", session))
         .isEqualTo("[" + url.toString() + "]> ");
   }
@@ -129,8 +125,8 @@ class PromptTemplateTest {
   @Test
   void allVariablesResolved() throws Exception {
     when(session.isConnected()).thenReturn(true);
-    when(session.getConnection()).thenReturn(connection);
-    when(connection.url()).thenReturn(new JMXServiceURL("service:jmx:jmxmp://srv:5000"));
+    when(session.getConnection())
+        .thenReturn(new Connection(null, new JMXServiceURL("service:jmx:jmxmp://srv:5000")));
     when(session.getDomain()).thenReturn("java.lang");
     when(session.getBean()).thenReturn("type=Memory");
     assertThat(PromptTemplate.resolve("[{server} {domain}/{bean}]> ", session))

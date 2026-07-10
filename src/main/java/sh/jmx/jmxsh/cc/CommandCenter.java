@@ -150,9 +150,38 @@ public class CommandCenter {
       doExecute(command);
       return true;
     } catch (JMException | RuntimeException e) {
+      if (isConnectionLost(e)) {
+        log.error("connection to JMX server lost", e);
+        session.getOutput().printMessage(
+            "Connection to %s was lost. Disconnected."
+                .formatted(session.getConnection().getDisplayName()));
+        session.disconnect();
+        return false;
+      }
       session.getOutput().printError(e);
       return false;
     }
+  }
+
+  private boolean isConnectionLost(Throwable e) {
+    if (!session.isConnected() || !hasIOExceptionCause(e)) {
+      return false;
+    }
+    try {
+      session.getConnection().getServerConnection().getDefaultDomain();
+      return false;
+    } catch (IOException probeFailure) {
+      return true;
+    }
+  }
+
+  private static boolean hasIOExceptionCause(Throwable e) {
+    for (Throwable cause = e; cause != null; cause = cause.getCause()) {
+      if (cause instanceof IOException) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public Set<String> getCommandNames() {

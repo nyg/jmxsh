@@ -1,7 +1,6 @@
 package sh.jmx.jmxsh;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Map;
 
 import javax.management.remote.JMXConnector;
@@ -50,11 +49,7 @@ public class Session {
     if (closed) {
       return;
     }
-    try {
-      disconnect();
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
+    disconnect();
     closed = true;
   }
 
@@ -68,15 +63,18 @@ public class Session {
     log.info("connected to {}", url);
   }
 
-  public void disconnect() throws IOException {
+  public void disconnect() {
     if (connection == null) {
       return;
     }
     log.info("disconnecting from JMX server");
     try {
       connection.close();
+    } catch (IOException e) {
+      log.warn("failed to close JMX connection", e);
     } finally {
       connection = null;
+      unsetDomain();
     }
   }
 

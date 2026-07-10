@@ -1,8 +1,12 @@
 package sh.jmx.jmxsh;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
@@ -72,6 +76,54 @@ class SessionTest {
   void connectThrowsWhenUrlNull() {
     assertThatThrownBy(() -> session.connect(null, null))
         .isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void should_clear_connection_domain_and_bean_when_disconnected() throws Exception {
+    // Given
+    session.connect(JmxUrl.parse("localhost:9991").toServiceUrl(null), null);
+    session.setDomain("java.lang");
+    session.setBean("java.lang:type=Memory");
+
+    // When
+    session.disconnect();
+
+    // Then
+    assertThat(session.isConnected()).isFalse();
+    assertThat(session.getDomain()).isNull();
+    assertThat(session.getBean()).isNull();
+    verify(con).close();
+  }
+
+  @Test
+  void should_clear_state_and_not_throw_when_connector_close_fails() throws Exception {
+    // Given
+    session.connect(JmxUrl.parse("localhost:9991").toServiceUrl(null), null);
+    session.setDomain("java.lang");
+    session.setBean("java.lang:type=Memory");
+    doThrow(new IOException("Connection refused")).when(con).close();
+
+    // When
+    assertThatCode(session::disconnect).doesNotThrowAnyException();
+
+    // Then
+    assertThat(session.isConnected()).isFalse();
+    assertThat(session.getDomain()).isNull();
+    assertThat(session.getBean()).isNull();
+  }
+
+  @Test
+  void should_close_without_throwing_when_connector_close_fails() throws Exception {
+    // Given
+    session.connect(JmxUrl.parse("localhost:9991").toServiceUrl(null), null);
+    doThrow(new IOException("Connection refused")).when(con).close();
+
+    // When
+    assertThatCode(session::close).doesNotThrowAnyException();
+
+    // Then
+    assertThat(session.isClosed()).isTrue();
+    assertThat(session.isConnected()).isFalse();
   }
 
   @Test

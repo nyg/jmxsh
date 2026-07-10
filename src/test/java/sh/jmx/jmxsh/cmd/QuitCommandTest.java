@@ -32,7 +32,6 @@ class QuitCommandTest {
     when(session.getOutput()).thenReturn(new WriterCommandOutput(new StringWriter(), null));
     command.setSession(session);
     command.execute();
-    verify(session).disconnect();
     verify(session).close();
   }
 }

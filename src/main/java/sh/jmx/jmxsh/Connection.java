@@ -19,6 +19,14 @@ public record Connection(JMXConnector connector, JMXServiceURL url) {
     return connector.getConnectionId();
   }
 
+  public String getDisplayName() {
+    String host = url.getHost();
+    if (host != null && !host.isBlank()) {
+      return "%s:%d".formatted(host, url.getPort());
+    }
+    return url.toString();
+  }
+
   public MBeanServerConnection getServerConnection() throws IOException {
     return connector.getMBeanServerConnection();
   }

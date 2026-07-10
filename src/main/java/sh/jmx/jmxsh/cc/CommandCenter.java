@@ -170,7 +170,7 @@ public class CommandCenter {
     try {
       session.getConnection().getServerConnection().getDefaultDomain();
       return false;
-    } catch (IOException probeFailure) {
+    } catch (IOException _) {
       return true;
     }
   }

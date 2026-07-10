@@ -26,9 +26,8 @@ class QuitCommandTest {
     command = new QuitCommand();
   }
 
-  /** @throws Exception */
   @Test
-  void execute() throws Exception {
+  void execute() {
     when(session.getOutput()).thenReturn(new WriterCommandOutput(new StringWriter(), null));
     command.setSession(session);
     command.execute();

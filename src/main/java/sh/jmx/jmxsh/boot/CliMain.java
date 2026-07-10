@@ -27,6 +27,7 @@ import sh.jmx.jmxsh.io.OutputMode;
 import sh.jmx.jmxsh.utils.AppConfig;
 import sh.jmx.jmxsh.utils.PromptTemplate;
 import sh.jmx.jmxsh.utils.XdgDirectories;
+import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.UserInterruptException;
 import org.jline.reader.LineReaderBuilder;
@@ -162,7 +163,8 @@ public class CliMain {
                 env.isEmpty() ? null : env);
           }
           commandCenter.setOutputMode(outputMode);
-          if (!options.isQuiet() && !options.isNonInteractive()) {
+          boolean interactive = !options.isQuiet() && !options.isNonInteractive();
+          if (interactive) {
             output.printMessage("Welcome to jmx.sh, type \"help\" for available commands.");
           }
           String line;
@@ -171,8 +173,10 @@ public class CliMain {
           while (true) {
             try {
               line = input.readLine();
-            } catch (UserInterruptException _) {
-              output.printMessage("Interrupted.");
+            } catch (UserInterruptException | EndOfFileException _) {
+              if (interactive) {
+                output.printMessage("Bye.");
+              }
               break;
             }
             if (line == null) {

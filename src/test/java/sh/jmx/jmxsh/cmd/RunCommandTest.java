@@ -106,6 +106,32 @@ class RunCommandTest {
   }
 
   @Test
+  void should_print_invocation_latency_when_measure_is_enabled() throws Exception {
+    // Given
+    RunCommand unit = new RunCommand();
+    StringWriter messageWriter = new StringWriter();
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(messageWriter));
+    unit.setBean("a:type=x");
+    unit.setMeasure(true);
+    unit.setParameters(List.of("exe"));
+    MBeanInfo beanInfo = mock(MBeanInfo.class);
+    MBeanOperationInfo opInfo = mock(MBeanOperationInfo.class);
+    when(con.getMBeanInfo(new ObjectName("a:type=x"))).thenReturn(beanInfo);
+    when(beanInfo.getOperations()).thenReturn(new MBeanOperationInfo[] {opInfo});
+    when(opInfo.getName()).thenReturn("exe");
+    when(opInfo.getSignature()).thenReturn(new MBeanParameterInfo[0]);
+    when(con.invoke(new ObjectName("a:type=x"), "exe", new Object[0], new String[0]))
+        .thenReturn("bingo");
+    unit.setSession(session);
+
+    // When
+    unit.execute();
+
+    // Then
+    assertThat(messageWriter.toString()).contains("Invocation took").contains("ms.");
+  }
+
+  @Test
   void suggestArgumentWithNoBean() {
     command.setSession(session);
     assertThat(command.suggestArgument(null)).isEmpty();

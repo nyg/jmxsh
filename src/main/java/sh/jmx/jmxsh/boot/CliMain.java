@@ -163,35 +163,7 @@ public class CliMain {
                 env.isEmpty() ? null : env);
           }
           commandCenter.setOutputMode(outputMode);
-          boolean interactive = !options.isQuiet() && !options.isNonInteractive();
-          if (interactive) {
-            output.printMessage("Welcome to jmx.sh, type \"help\" for available commands.");
-          }
-          String line;
-          int exitCode = 0;
-          int lineNumber = 0;
-          while (true) {
-            try {
-              line = input.readLine();
-            } catch (UserInterruptException | EndOfFileException _) {
-              if (interactive) {
-                output.printMessage("Bye.");
-              }
-              break;
-            }
-            if (line == null) {
-              break;
-            }
-            lineNumber++;
-            if (!commandCenter.execute(line) && options.isExitOnFailure()) {
-              exitCode = -lineNumber;
-              break;
-            }
-            if (commandCenter.isClosed()) {
-              break;
-            }
-          }
-          return exitCode;
+          return runCommandLoop(input, output, commandCenter, options);
         } finally {
           commandCenter.close();
         }
@@ -203,6 +175,45 @@ public class CliMain {
       output.printError(e);
       return 1;
     }
+  }
+
+  /**
+   * Reads and executes commands until the input is exhausted, the user quits or a command fails
+   * with {@code --exitonfailure} enabled. In an interactive session the same "Bye." message is
+   * printed whether the user leaves with Ctrl+C, Ctrl+D or the quit command.
+   */
+  static int runCommandLoop(
+      CommandInput input, CommandOutput output, CommandCenter commandCenter, CliMainOptions options)
+      throws IOException {
+    boolean interactive = !options.isQuiet() && !options.isNonInteractive();
+    if (interactive) {
+      output.printMessage("Welcome to jmx.sh, type \"help\" for available commands.");
+    }
+    String line;
+    int exitCode = 0;
+    int lineNumber = 0;
+    while (true) {
+      try {
+        line = input.readLine();
+      } catch (UserInterruptException | EndOfFileException _) {
+        if (interactive) {
+          output.printMessage("Bye.");
+        }
+        break;
+      }
+      if (line == null) {
+        break;
+      }
+      lineNumber++;
+      if (!commandCenter.execute(line) && options.isExitOnFailure()) {
+        exitCode = -lineNumber;
+        break;
+      }
+      if (commandCenter.isClosed()) {
+        break;
+      }
+    }
+    return exitCode;
   }
 
   /**

@@ -115,6 +115,32 @@ class GetCommandTest {
     }
   }
 
+  @Test
+  void should_print_message_when_attribute_is_not_readable() throws Exception {
+    // Given
+    GetCommand unit = new GetCommand();
+    StringWriter messageWriter = new StringWriter();
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(messageWriter));
+    unit.setDomain("a");
+    unit.setBean("type=x");
+    unit.setAttributes(List.of("a"));
+    MBeanInfo beanInfo = org.mockito.Mockito.mock(MBeanInfo.class);
+    MBeanAttributeInfo attributeInfo = org.mockito.Mockito.mock(MBeanAttributeInfo.class);
+    when(con.getDomains()).thenReturn(new String[] {"a"});
+    when(con.isRegistered(new ObjectName("a:type=x"))).thenReturn(true);
+    when(con.getMBeanInfo(new ObjectName("a:type=x"))).thenReturn(beanInfo);
+    when(beanInfo.getAttributes()).thenReturn(new MBeanAttributeInfo[] {attributeInfo});
+    when(attributeInfo.getName()).thenReturn("a");
+    when(attributeInfo.isReadable()).thenReturn(false);
+    unit.setSession(session);
+
+    // When
+    unit.execute();
+
+    // Then
+    assertThat(messageWriter.toString()).contains("Attribute a is not readable.");
+  }
+
   /** Test normal execution */
   @Test
   void executeNormally() {

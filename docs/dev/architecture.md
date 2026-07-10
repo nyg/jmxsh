@@ -35,7 +35,7 @@ sequenceDiagram
         S->>S: JMXConnectorFactory.connect()
         S-->>CC: connected (Connection record stored)
         CC-->>CLI: true (success)
-        CLI-->>User: Connection to localhost:9999 is opened
+        CLI-->>User: Connection to localhost:9999 is opened.
 
         User->>CLI: bean test:type=TestMBean
         CLI->>CC: execute("bean test:type=TestMBean")
@@ -46,7 +46,7 @@ sequenceDiagram
         MBS-->>CC: MBeanInfo (validates bean exists)
         CC->>S: setBean(objectName)
         CC-->>CLI: true
-        CLI-->>User: bean is set to test:type=TestMBean
+        CLI-->>User: Bean is set to test:type=TestMBean.
 
         User->>CLI: run echo hello
         CLI->>CC: execute("run echo hello")
@@ -68,7 +68,7 @@ sequenceDiagram
         CC->>S: disconnect()
         S->>S: close JMXConnector (via Connection record)
         CC-->>CLI: true
-        CLI-->>User: disconnected
+        CLI-->>User: Disconnected.
     end
 ```
 

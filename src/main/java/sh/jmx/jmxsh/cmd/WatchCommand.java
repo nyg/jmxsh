@@ -105,7 +105,7 @@ public class WatchCommand extends Command {
         console.getTerminal().writer().print(line);
         console.flush();
       };
-      getSession().getOutput().printMessage("press any key to stop. DO NOT press Ctrl+C !!!");
+      getSession().getOutput().printMessage("Press any key to stop. DO NOT press Ctrl+C.");
     }
 
     final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();

@@ -26,7 +26,7 @@ public class DomainsCommand extends Command {
   public void execute() throws IOException {
     Session session = getSession();
 
-    session.getOutput().printMessage("following domains are available");
+    session.getOutput().printMessage("The following domains are available:");
     for (String domain : getCandidateDomains(session)) {
       session.getOutput().println(domain);
     }

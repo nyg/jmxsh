@@ -142,7 +142,7 @@ public class RunCommand extends Command {
       signatures[i] = paramInfo.getType();
     }
     session.getOutput().printMessage(
-        "calling operation %s of mbean %s with params %s".formatted(
+        "Calling operation %s of mbean %s with params %s.".formatted(
             operationName, beanName, Arrays.toString(params)));
 
     Object result;
@@ -152,12 +152,12 @@ public class RunCommand extends Command {
         result = con.invoke(name, operationName, params, signatures);
       } finally {
         long latency = (System.nanoTime() - start) / 1_000_000;
-        session.getOutput().printMessage(latency + "ms is taken by invocation");
+        session.getOutput().printMessage("Invocation took %sms.".formatted(latency));
       }
     } else {
       result = con.invoke(name, operationName, params, signatures);
     }
-    session.getOutput().printMessage("operation returns: ");
+    session.getOutput().printMessage("Operation returns: ");
     new ValueOutputFormat(2, false, showQuotationMarks).printValue(session.getOutput(), result);
     session.getOutput().println("");
   }

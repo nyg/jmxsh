@@ -77,7 +77,7 @@ public class SubscribeCommand extends Command {
       con.addNotificationListener(name, listener, null, null);
       listeners.put(name, listener);
 
-      session.getOutput().printMessage("Subscribed to " + name);
+      session.getOutput().printMessage("Subscribed to %s.".formatted(name));
     }
   }
 

@@ -51,10 +51,10 @@ public class DomainCommand extends Command {
     Session session = getSession();
     if (domain == null) {
       if (session.getDomain() == null) {
-        session.getOutput().printMessage("domain is not set");
+        session.getOutput().printMessage("Domain is not set.");
         session.getOutput().println(ValueFormat.NULL);
       } else {
-        session.getOutput().printMessage("domain = " + session.getDomain());
+        session.getOutput().printMessage("Domain = " + session.getDomain());
         session.getOutput().println(session.getDomain());
       }
       return;
@@ -62,7 +62,7 @@ public class DomainCommand extends Command {
     String domainName = getDomainName(domain, session);
     if (domainName == null) {
       session.unsetDomain();
-      session.getOutput().printMessage("domain is unset");
+      session.getOutput().printMessage("Domain is unset.");
     } else {
       String currentBean = session.getBean();
       if (currentBean != null) {
@@ -70,12 +70,12 @@ public class DomainCommand extends Command {
         String beanDomain = colonIdx > 0 ? currentBean.substring(0, colonIdx) : null;
         if (!domainName.equals(beanDomain)) {
           session.setBean(null);
-          session.getOutput().printMessage("bean was unset (not part of domain " + domainName + ")");
+          session.getOutput().printMessage("Bean was unset (not part of domain %s).".formatted(domainName));
         }
       }
       session.setDomain(domainName);
       log.debug("selected domain: {}", domainName);
-      session.getOutput().printMessage("domain is set to " + session.getDomain());
+      session.getOutput().printMessage("Domain is set to %s.".formatted(session.getDomain()));
     }
   }
 

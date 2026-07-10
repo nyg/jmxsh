@@ -71,24 +71,25 @@ sudo apt update && sudo apt install jmxsh
 $ java -jar jmxsh-<version>.jar
 Welcome to jmx.sh, type "help" for available commands.
 > open localhost:9999
-Connection to localhost:9999 is opened
+Connection to localhost:9999 is opened.
 > domains
-following domains are available
+The following domains are available:
 JMImplementation
 java.lang
 com.example
 > bean com.example:type=AppStats
-bean is set to com.example:type=AppStats
+Bean is set to com.example:type=AppStats.
 > get RequestCount
-mbean = com.example:type=AppStats:
+MBean = com.example:type=AppStats:
 RequestCount = 42;
 > run resetStats
-calling operation resetStats of mbean com.example:type=AppStats with params []
-operation returns:
+Calling operation resetStats of mbean com.example:type=AppStats with params [].
+Operation returns:
 null
 > close
-disconnected
+Disconnected.
 > quit
+Bye.
 ```
 
 ### Key Commands
@@ -122,7 +123,7 @@ To connect using the JMXMP protocol instead of the default RMI:
 
 ```
 $> open jmxmp://localhost:9999
-#Connection to jmxmp://localhost:9999 is opened
+#Connection to jmxmp://localhost:9999 is opened.
 ```
 
 Full service URLs are also supported: `open service:jmx:jmxmp://localhost:9999`
@@ -134,9 +135,9 @@ accepts: a `host:port`, a PID, a `jmxmp://` address or a full JMX service URL.
 
 ```
 $> alias my_server myserver:1234
-#Alias my_server is set to myserver:1234
+#Alias my_server is set to myserver:1234.
 $> open my_server
-#Connection to my_server (myserver:1234) is opened
+#Connection to my_server (myserver:1234) is opened.
 ```
 
 Aliases also work with the `-l` command line option:
@@ -156,7 +157,7 @@ printf-style format, poll interval (`-i`, in seconds) and duration (`-s`, stop a
 
 ```
 > bean java.lang:type=Memory
-bean is set to java.lang:type=Memory
+Bean is set to java.lang:type=Memory.
 > watch -i 5 HeapMemoryUsage
 ```
 

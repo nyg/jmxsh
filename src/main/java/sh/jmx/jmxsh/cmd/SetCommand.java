@@ -78,7 +78,7 @@ public class SetCommand extends DomainBeanAwareCommand {
     }
     Object value = valueParser.parse(inputValue, attributeInfo.getType());
     con.setAttribute(name, new Attribute(attributeName, value));
-    session.getOutput().printMessage("Value of attribute " + attributeName + " is set to " + inputValue);
+    session.getOutput().printMessage("Value of attribute %s is set to %s.".formatted(attributeName, inputValue));
   }
 
   @Parameters(description = "name, value, value2...", arity = "2..*")

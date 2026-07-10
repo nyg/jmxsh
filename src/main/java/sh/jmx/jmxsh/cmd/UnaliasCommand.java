@@ -30,7 +30,7 @@ public class UnaliasCommand extends Command {
       throw new IllegalArgumentException("Alias %s is not defined".formatted(name));
     }
     log.debug("removed alias {}", name);
-    session.getOutput().printMessage("Alias %s is removed".formatted(name));
+    session.getOutput().printMessage("Alias %s is removed.".formatted(name));
   }
 
   @Parameters(paramLabel = "name", description = "Name of the alias to remove", arity = "1")

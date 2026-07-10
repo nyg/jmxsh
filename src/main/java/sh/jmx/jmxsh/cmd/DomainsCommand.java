@@ -17,7 +17,7 @@ public class DomainsCommand extends Command {
     try {
       domains = session.getConnection().getServerConnection().getDomains();
     } catch (IOException e) {
-      throw new RuntimeIOException("Couldn't get candate domains", e);
+      throw new RuntimeIOException("Couldn't get candidate domains.", e);
     }
     return Stream.of(domains).sorted().toList();
   }

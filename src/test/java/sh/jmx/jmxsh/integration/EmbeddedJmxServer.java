@@ -39,6 +39,10 @@ public class EmbeddedJmxServer implements BeforeAllCallback, AfterAllCallback {
 
   @Override
   public void beforeAll(ExtensionContext context) throws Exception {
+    start();
+  }
+
+  public void start() throws Exception {
     // Create RMI registry with retry to avoid TOCTOU race on port selection
     registry = createRegistryOnRandomPort();
 
@@ -75,14 +79,21 @@ public class EmbeddedJmxServer implements BeforeAllCallback, AfterAllCallback {
 
   @Override
   public void afterAll(ExtensionContext context) throws Exception {
+    stop();
+  }
+
+  public void stop() throws Exception {
     if (connectorServer != null) {
       connectorServer.stop();
+      connectorServer = null;
     }
     if (registry != null) {
       UnicastRemoteObject.unexportObject(registry, true);
+      registry = null;
     }
     if (mBeanServer != null) {
       MBeanServerFactory.releaseMBeanServer(mBeanServer);
+      mBeanServer = null;
     }
   }
 

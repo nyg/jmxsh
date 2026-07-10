@@ -1,7 +1,5 @@
 package sh.jmx.jmxsh.utils;
 
-import javax.management.remote.JMXServiceURL;
-
 import sh.jmx.jmxsh.Session;
 
 /**
@@ -121,11 +119,6 @@ public final class PromptTemplate {
     if (!session.isConnected()) {
       return "";
     }
-    JMXServiceURL url = session.getConnection().url();
-    String host = url.getHost();
-    if (host != null && !host.isBlank()) {
-      return host + ":" + url.getPort();
-    }
-    return url.toString();
+    return session.getConnection().getDisplayName();
   }
 }

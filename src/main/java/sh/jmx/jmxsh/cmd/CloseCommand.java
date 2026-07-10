@@ -11,6 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 public class CloseCommand extends Command {
   @Override
   public void execute() throws IOException {
+    if (!getSession().isConnected()) {
+      getSession().getOutput().printMessage("Not connected.");
+      return;
+    }
     log.info("closing JMX connection");
     getSession().disconnect();
     getSession().getOutput().printMessage("Disconnected.");

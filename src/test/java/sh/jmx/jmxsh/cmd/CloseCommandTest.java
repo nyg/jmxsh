@@ -1,16 +1,20 @@
 package sh.jmx.jmxsh.cmd;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.io.StringWriter;
 
-import sh.jmx.jmxsh.Session;
-import sh.jmx.jmxsh.io.WriterCommandOutput;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import sh.jmx.jmxsh.Session;
+import sh.jmx.jmxsh.io.WriterCommandOutput;
 
 /**
  * Test of {@link CloseCommand}
@@ -18,28 +22,41 @@ import org.mockito.junit.jupiter.MockitoExtension;
  */
 @ExtendWith(MockitoExtension.class)
 class CloseCommandTest {
+
   @Mock
   private Session session;
 
-  private CloseCommand command;
+  @Test
+  void should_disconnect_and_report_when_connected() throws IOException {
+    // Given
+    StringWriter writer = new StringWriter();
+    when(session.isConnected()).thenReturn(true);
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(writer));
+    CloseCommand unit = new CloseCommand();
+    unit.setSession(session);
 
-  /** Set up classes to test */
-  @BeforeEach
-  void setUp() {
-    command = new CloseCommand();
+    // When
+    unit.execute();
+
+    // Then
+    verify(session).disconnect();
+    assertThat(writer).hasToString("Disconnected.");
   }
 
-  /**
-   * Test execution
-   *
-   * @throws Exception
-   */
   @Test
-  void execute() throws Exception {
+  void should_report_not_connected_and_skip_disconnect_when_not_connected() throws IOException {
+    // Given
     StringWriter writer = new StringWriter();
-    org.mockito.Mockito.when(session.getOutput()).thenReturn(new WriterCommandOutput(writer, null));
-    command.setSession(session);
-    command.execute();
-    verify(session).disconnect();
+    when(session.isConnected()).thenReturn(false);
+    when(session.getOutput()).thenReturn(new WriterCommandOutput(writer));
+    CloseCommand unit = new CloseCommand();
+    unit.setSession(session);
+
+    // When
+    unit.execute();
+
+    // Then
+    verify(session, never()).disconnect();
+    assertThat(writer).hasToString("Not connected.");
   }
 }

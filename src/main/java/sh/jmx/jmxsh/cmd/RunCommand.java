@@ -104,7 +104,7 @@ public class RunCommand extends Command {
 
   private String[] parseParamTypes() {
     if (types == null) {
-      return null;
+      return new String[0];
     }
     String[] paramTypes = types.split(",");
     if (paramTypes.length != parameters.size() - 1) {
@@ -117,7 +117,7 @@ public class RunCommand extends Command {
     for (MBeanOperationInfo info : beanInfo.getOperations()) {
       boolean nameAndArityMatch = operationName.equals(info.getName())
           && info.getSignature().length == parameters.size() - 1;
-      if (nameAndArityMatch && (paramTypes == null || parameterTypesMatch(info.getSignature(), paramTypes))) {
+      if (nameAndArityMatch && parameterTypesMatch(info.getSignature(), paramTypes)) {
         return info;
       }
     }

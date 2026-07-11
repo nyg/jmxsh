@@ -41,8 +41,8 @@ class ConsoleCompleterTest {
   @Test
   void constructorSucceedsWithCommandCenter() {
     when(commandCenter.getCommandNames()).thenReturn(new HashSet<>(List.of("a", "b")));
-    ConsoleCompleter completer = new ConsoleCompleter(commandCenter);
-    assertThat(completer).isNotNull();
+    ConsoleCompleter constructed = new ConsoleCompleter(commandCenter);
+    assertThat(constructed).isNotNull();
   }
 
   @CommandLine.Command(name = "test", description = "desc")

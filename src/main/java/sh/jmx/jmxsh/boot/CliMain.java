@@ -211,15 +211,7 @@ public class CliMain {
     int lineNumber = 0;
     boolean running = true;
     while (running) {
-      String line;
-      try {
-        line = input.readLine();
-      } catch (UserInterruptException | EndOfFileException _) {
-        if (interactive) {
-          output.printMessage("Bye.");
-        }
-        line = null;
-      }
+      String line = readNextLine(input, output, interactive);
       if (line == null) {
         running = false;
       } else {
@@ -233,6 +225,23 @@ public class CliMain {
       }
     }
     return exitCode;
+  }
+
+  /**
+   * Reads the next command line, returning {@code null} when the input is exhausted or the user
+   * interrupts the session (Ctrl+C / Ctrl+D). The "Bye." farewell is printed on interruption of an
+   * interactive session.
+   */
+  private static String readNextLine(CommandInput input, CommandOutput output, boolean interactive)
+      throws IOException {
+    try {
+      return input.readLine();
+    } catch (UserInterruptException | EndOfFileException _) {
+      if (interactive) {
+        output.printMessage("Bye.");
+      }
+      return null;
+    }
   }
 
   /**

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 /**
  * Launches the jmxsh uber JAR as a subprocess in non-interactive mode and provides methods to
@@ -132,7 +133,7 @@ public class JmxshProcessHelper implements AutoCloseable {
 
   private static Path findUberJar() throws IOException {
     Path targetDir = Path.of("target");
-    try (var files = Files.list(targetDir)) {
+    try (Stream<Path> files = Files.list(targetDir)) {
       return files
           .filter(p -> p.getFileName().toString().matches("jmxsh-.*-uber\\.jar"))
           .findFirst()

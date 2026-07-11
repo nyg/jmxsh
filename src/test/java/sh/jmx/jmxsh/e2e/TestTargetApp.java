@@ -65,7 +65,7 @@ public class TestTargetApp {
     }
   }
 
-  public static void main(String[] args) throws Exception {
+  public static void main() throws Exception {
     MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
     mbs.registerMBean(
         new StandardMBean(new TestMBeanImpl(), TestMBean.class),

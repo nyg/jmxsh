@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.nio.file.Path;
+import java.util.Iterator;
 
 import sh.jmx.jmxsh.utils.AppConfig;
 import sh.jmx.jmxsh.utils.XdgDirectories;
@@ -18,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
 
 @ExtendWith(MockitoExtension.class)
 class LoggingConfiguratorTest {
@@ -76,7 +79,7 @@ class LoggingConfiguratorTest {
 
     // iteratorForAppenders() returns a single element; we verify no duplicate by
     // checking that exactly one appender named FILE exists.
-    var appenders = root.iteratorForAppenders();
+    Iterator<Appender<ILoggingEvent>> appenders = root.iteratorForAppenders();
     int count = 0;
     while (appenders.hasNext()) {
       if ("FILE".equals(appenders.next().getName())) {

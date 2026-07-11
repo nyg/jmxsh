@@ -181,7 +181,7 @@ public class WatchCommand extends Command {
     Map<String, Object> fetchedValues = fetchValues(beanName, connection);
     String result;
     if (outputFormat == null) {
-      var sb = new StringBuilder();
+      StringBuilder sb = new StringBuilder();
       boolean first = true;
       for (String attributeName : attributes) {
         if (first) {

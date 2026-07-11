@@ -40,7 +40,7 @@ public final class ValueFormat {
     if (!input.contains("\\u")) {
       return input;
     }
-    var sb = new StringBuilder(input.length());
+    StringBuilder sb = new StringBuilder(input.length());
     int i = 0;
     while (i < input.length()) {
       char ch = input.charAt(i);

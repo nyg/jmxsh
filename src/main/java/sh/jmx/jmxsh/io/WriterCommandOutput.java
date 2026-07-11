@@ -6,8 +6,8 @@ import java.io.Writer;
 import lombok.NonNull;
 
 public class WriterCommandOutput implements CommandOutput {
-  private final Writer messageOutput;
 
+  private final Writer messageOutput;
   private final Writer resultOutput;
 
   public WriterCommandOutput(Writer output) {

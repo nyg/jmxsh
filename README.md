@@ -15,6 +15,20 @@ invoke operations — all from the comfort of your terminal.
 > [LeMyst/jmxterm](https://github.com/LeMyst/jmxterm). The goal is to keep the project alive with
 > regular updates and releases, dependency maintenance, and new features.
 
+## Table of Contents
+
+- [Installation](#installation)
+- [Features](#features)
+- [Usage](#usage)
+  - [Key Commands](#key-commands)
+  - [JMXMP Connections](#jmxmp-connections)
+  - [Connection Aliases](#connection-aliases)
+  - [Watching Attributes](#watching-attributes)
+  - [Configuration](#configuration)
+  - [Non-Interactive Mode](#non-interactive-mode)
+- [Documentation](#documentation)
+- [License](#license)
+
 ## Installation
 
 ### JAR (all platforms)
@@ -123,7 +137,7 @@ To connect using the JMXMP protocol instead of the default RMI:
 
 ```
 $> open jmxmp://localhost:9999
-#Connection to jmxmp://localhost:9999 is opened.
+Connection to jmxmp://localhost:9999 is opened.
 ```
 
 Full service URLs are also supported: `open service:jmx:jmxmp://localhost:9999`
@@ -135,9 +149,9 @@ accepts: a `host:port`, a PID, a `jmxmp://` address or a full JMX service URL.
 
 ```
 $> alias my_server myserver:1234
-#Alias my_server is set to myserver:1234.
+Alias my_server is set to myserver:1234.
 $> open my_server
-#Connection to my_server (myserver:1234) is opened.
+Connection to my_server (myserver:1234) is opened.
 ```
 
 Aliases also work with the `-l` command line option:

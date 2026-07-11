@@ -142,4 +142,16 @@ class RunCommandTest {
     assertThatThrownBy(() -> command.setParameters(null))
         .isInstanceOf(NullPointerException.class);
   }
+
+  @Test
+  void executeThrowsWhenTypeCountDoesNotMatchParameters() {
+    command.setBean("a:type=x");
+    command.setParameters(List.of("exe", "33"));
+    command.setTypes("int,long");
+    command.setSession(session);
+
+    assertThatThrownBy(command::execute)
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("Signature does not match parameter count");
+  }
 }

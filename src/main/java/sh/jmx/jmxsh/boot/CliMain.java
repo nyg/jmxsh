@@ -128,7 +128,7 @@ public class CliMain {
    * Builds the {@link CommandInput} for the session: a file reader, a plain stdin reader in
    * non-interactive mode, or a JLine console with history and prompt rendering otherwise.
    */
-  private static CommandInput createInput(CliMainOptions options, AppConfig appConfig, Session[] sessionRef)
+  static CommandInput createInput(CliMainOptions options, AppConfig appConfig, Session[] sessionRef)
       throws IOException {
     if (!CliMainOptions.STDIN.equals(options.getInput())) {
       Path inputPath = Path.of(options.getInput());
@@ -172,7 +172,7 @@ public class CliMain {
    * Opens the JMX connection requested via {@code --url}, assembling the credential and secure-RMI
    * environment. Does nothing when no URL was supplied.
    */
-  private static void connectIfRequested(CommandCenter commandCenter, CliMainOptions options, CommandInput input)
+  static void connectIfRequested(CommandCenter commandCenter, CliMainOptions options, CommandInput input)
       throws IOException {
     if (options.getUrl() == null) {
       return;

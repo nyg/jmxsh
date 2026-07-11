@@ -121,6 +121,16 @@ class PromptTemplateTest {
   }
 
   @Test
+  void unknownVariableLeftAsLiteral() {
+    assertThat(PromptTemplate.resolve("{unknown}> ", session)).isEqualTo("{unknown}> ");
+  }
+
+  @Test
+  void unclosedVariableLeftAsLiteral() {
+    assertThat(PromptTemplate.resolve("{server", session)).isEqualTo("{server");
+  }
+
+  @Test
   void allVariablesResolved() throws Exception {
     when(session.isConnected()).thenReturn(true);
     when(session.getConnection())

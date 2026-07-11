@@ -53,49 +53,63 @@ public class ValueOutputFormat {
     if (value == null) {
       output.print("null");
     } else if (value.getClass().isArray()) {
-      int length = Array.getLength(value);
-      output.print("[ ");
-      for (int i = 0; i < length; i++) {
-        if (i != 0) {
-          output.print(", ");
-        }
-        printValue(output, Array.get(value, i), indent);
-      }
-      output.print(" ]");
-    } else if (Collection.class.isAssignableFrom(value.getClass())) {
-      boolean start = true;
-      output.print("( ");
-      for (Object obj : ((Collection<?>) value)) {
-        if (!start) {
-          output.print(", ");
-        }
-        start = false;
-        printValue(output, obj, indent);
-      }
-      output.print(" )");
-    } else if (Map.class.isAssignableFrom(value.getClass())) {
-      output.println("{ ");
-      for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
-        printExpression(output, entry.getKey(), entry.getValue(), null, indent + indentSize);
-      }
-      output.print(" ".repeat(indent) + " }");
-    } else if (CompositeData.class.isAssignableFrom(value.getClass())) {
-      output.println("{ ");
-      CompositeData data = (CompositeData) value;
-      for (String key : data.getCompositeType().keySet()) {
-        Object v = data.get(key);
-        printExpression(
-            output,
-            key,
-            v,
-            data.getCompositeType().getDescription(key),
-            indent + indentSize);
-      }
-      output.print(" ".repeat(indent) + " }");
+      printArray(output, value, indent);
+    } else if (value instanceof Collection<?> collection) {
+      printCollection(output, collection, indent);
+    } else if (value instanceof Map<?, ?> map) {
+      printMap(output, map, indent);
+    } else if (value instanceof CompositeData data) {
+      printCompositeData(output, data, indent);
     } else if (value instanceof String && showQuotationMarks) {
       output.print("\"" + value + "\"");
     } else {
       output.print(value.toString());
     }
+  }
+
+  private void printArray(CommandOutput output, Object value, int indent) {
+    int length = Array.getLength(value);
+    output.print("[ ");
+    for (int i = 0; i < length; i++) {
+      if (i != 0) {
+        output.print(", ");
+      }
+      printValue(output, Array.get(value, i), indent);
+    }
+    output.print(" ]");
+  }
+
+  private void printCollection(CommandOutput output, Collection<?> collection, int indent) {
+    boolean start = true;
+    output.print("( ");
+    for (Object obj : collection) {
+      if (!start) {
+        output.print(", ");
+      }
+      start = false;
+      printValue(output, obj, indent);
+    }
+    output.print(" )");
+  }
+
+  private void printMap(CommandOutput output, Map<?, ?> map, int indent) {
+    output.println("{ ");
+    for (Map.Entry<?, ?> entry : map.entrySet()) {
+      printExpression(output, entry.getKey(), entry.getValue(), null, indent + indentSize);
+    }
+    output.print(" ".repeat(indent) + " }");
+  }
+
+  private void printCompositeData(CommandOutput output, CompositeData data, int indent) {
+    output.println("{ ");
+    for (String key : data.getCompositeType().keySet()) {
+      printExpression(
+          output,
+          key,
+          data.get(key),
+          data.getCompositeType().getDescription(key),
+          indent + indentSize);
+    }
+    output.print(" ".repeat(indent) + " }");
   }
 }

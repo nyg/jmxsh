@@ -98,40 +98,7 @@ public class CliMain {
     }
     try (output) {
       Session[] sessionRef = {null};
-      CommandInput input;
-      if (CliMainOptions.STDIN.equals(options.getInput())) {
-        if (options.isNonInteractive()) {
-          input = new InputStreamCommandInput(System.in);
-        } else {
-          DeduplicatingHistory history = new DeduplicatingHistory();
-          Terminal terminal = TerminalBuilder.builder().graphemeCluster(false).build();
-          LineReaderImpl consoleReader = (LineReaderImpl) LineReaderBuilder.builder().terminal(terminal).history(history).build();
-          Path historyPath = XdgDirectories.INSTANCE.getHistoryFile();
-          migrateHistory(XdgDirectories.INSTANCE.getLegacyHistoryFile(), historyPath);
-          Files.createDirectories(historyPath.getParent());
-          consoleReader.setVariable(LineReader.HISTORY_FILE, historyPath);
-          history.attach(consoleReader);
-          Runtime.getRuntime()
-              .addShutdownHook(
-                  new Thread(
-                      () -> {
-                        try {
-                          history.save();
-                        } catch (IOException e) {
-                          log.warn("failed to flush command history", e);
-                        }
-                      }));
-          String promptTemplate = appConfig.getPrompt();
-          input = new JlineCommandInput(consoleReader,
-              () -> PromptTemplate.resolve(promptTemplate, sessionRef[0]));
-        }
-      } else {
-        Path inputPath = Path.of(options.getInput());
-        if (!Files.isRegularFile(inputPath)) {
-          throw new FileNotFoundException("File " + inputPath + " is not a valid file");
-        }
-        input = new FileCommandInput(inputPath);
-      }
+      CommandInput input = createInput(options, appConfig, sessionRef);
       try {
         CommandCenter commandCenter = new CommandCenter(output, input);
         try {
@@ -141,27 +108,7 @@ public class CliMain {
                 .getConsole()
                 .setCompleter(new ConsoleCompleter(commandCenter));
           }
-          if (options.getUrl() != null) {
-            Map<String, Object> env = new HashMap<>();
-            if (options.getUser() != null) {
-              String password = options.getPassword();
-              if (password == null) {
-                password = input.readMaskedString("Authentication password: ");
-              }
-              String[] credentials = {options.getUser(), password};
-              env.put(JMXConnector.CREDENTIALS, credentials);
-            }
-            if (options.isSecureRmiRegistry()) {
-              // Required to prevent "java.rmi.ConnectIOException: non-JRMP server at remote endpoint"
-              // error
-              env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
-            }
-            String target =
-                commandCenter.getSession().getAliasStore().resolve(options.getUrl());
-            commandCenter.connect(
-                JmxUrl.parse(target).toServiceUrl(commandCenter.getProcessManager()),
-                env.isEmpty() ? null : env);
-          }
+          connectIfRequested(commandCenter, options, input);
           commandCenter.setOutputMode(outputMode);
           return runCommandLoop(input, output, commandCenter, options);
         } finally {
@@ -178,6 +125,77 @@ public class CliMain {
   }
 
   /**
+   * Builds the {@link CommandInput} for the session: a file reader, a plain stdin reader in
+   * non-interactive mode, or a JLine console with history and prompt rendering otherwise.
+   */
+  static CommandInput createInput(CliMainOptions options, AppConfig appConfig, Session[] sessionRef)
+      throws IOException {
+    if (!CliMainOptions.STDIN.equals(options.getInput())) {
+      Path inputPath = Path.of(options.getInput());
+      if (!Files.isRegularFile(inputPath)) {
+        throw new FileNotFoundException("File " + inputPath + " is not a valid file");
+      }
+      return new FileCommandInput(inputPath);
+    }
+    if (options.isNonInteractive()) {
+      return new InputStreamCommandInput(System.in);
+    }
+    return createInteractiveInput(appConfig, sessionRef);
+  }
+
+  private static CommandInput createInteractiveInput(AppConfig appConfig, Session[] sessionRef)
+      throws IOException {
+    DeduplicatingHistory history = new DeduplicatingHistory();
+    Terminal terminal = TerminalBuilder.builder().graphemeCluster(false).build();
+    LineReaderImpl consoleReader = (LineReaderImpl) LineReaderBuilder.builder().terminal(terminal).history(history).build();
+    Path historyPath = XdgDirectories.INSTANCE.getHistoryFile();
+    migrateHistory(XdgDirectories.INSTANCE.getLegacyHistoryFile(), historyPath);
+    Files.createDirectories(historyPath.getParent());
+    consoleReader.setVariable(LineReader.HISTORY_FILE, historyPath);
+    history.attach(consoleReader);
+    Runtime.getRuntime()
+        .addShutdownHook(
+            new Thread(
+                () -> {
+                  try {
+                    history.save();
+                  } catch (IOException e) {
+                    log.warn("failed to flush command history", e);
+                  }
+                }));
+    String promptTemplate = appConfig.getPrompt();
+    return new JlineCommandInput(consoleReader,
+        () -> PromptTemplate.resolve(promptTemplate, sessionRef[0]));
+  }
+
+  /**
+   * Opens the JMX connection requested via {@code --url}, assembling the credential and secure-RMI
+   * environment. Does nothing when no URL was supplied.
+   */
+  static void connectIfRequested(CommandCenter commandCenter, CliMainOptions options, CommandInput input)
+      throws IOException {
+    if (options.getUrl() == null) {
+      return;
+    }
+    Map<String, Object> env = new HashMap<>();
+    if (options.getUser() != null) {
+      String password = options.getPassword();
+      if (password == null) {
+        password = input.readMaskedString("Authentication password: ");
+      }
+      env.put(JMXConnector.CREDENTIALS, new String[] {options.getUser(), password});
+    }
+    if (options.isSecureRmiRegistry()) {
+      // Required to prevent "java.rmi.ConnectIOException: non-JRMP server at remote endpoint" error
+      env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
+    }
+    String target = commandCenter.getSession().getAliasStore().resolve(options.getUrl());
+    commandCenter.connect(
+        JmxUrl.parse(target).toServiceUrl(commandCenter.getProcessManager()),
+        env.isEmpty() ? null : env);
+  }
+
+  /**
    * Reads and executes commands until the input is exhausted, the user quits or a command fails
    * with {@code --exitonfailure} enabled. In an interactive session the same "Bye." message is
    * printed whether the user leaves with Ctrl+C, Ctrl+D or the quit command.
@@ -189,31 +207,41 @@ public class CliMain {
     if (interactive) {
       output.printMessage("Welcome to jmx.sh, type \"help\" for available commands.");
     }
-    String line;
     int exitCode = 0;
     int lineNumber = 0;
-    while (true) {
-      try {
-        line = input.readLine();
-      } catch (UserInterruptException | EndOfFileException _) {
-        if (interactive) {
-          output.printMessage("Bye.");
-        }
-        break;
-      }
+    boolean running = true;
+    while (running) {
+      String line = readNextLine(input, output, interactive);
       if (line == null) {
-        break;
-      }
-      lineNumber++;
-      if (!commandCenter.execute(line) && options.isExitOnFailure()) {
-        exitCode = -lineNumber;
-        break;
-      }
-      if (commandCenter.isClosed()) {
-        break;
+        running = false;
+      } else {
+        lineNumber++;
+        if (!commandCenter.execute(line) && options.isExitOnFailure()) {
+          exitCode = -lineNumber;
+          running = false;
+        } else if (commandCenter.isClosed()) {
+          running = false;
+        }
       }
     }
     return exitCode;
+  }
+
+  /**
+   * Reads the next command line, returning {@code null} when the input is exhausted or the user
+   * interrupts the session (Ctrl+C / Ctrl+D). The "Bye." farewell is printed on interruption of an
+   * interactive session.
+   */
+  private static String readNextLine(CommandInput input, CommandOutput output, boolean interactive)
+      throws IOException {
+    try {
+      return input.readLine();
+    } catch (UserInterruptException | EndOfFileException _) {
+      if (interactive) {
+        output.printMessage("Bye.");
+      }
+      return null;
+    }
   }
 
   /**

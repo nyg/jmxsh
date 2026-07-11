@@ -3,6 +3,7 @@ package sh.jmx.jmxsh.cmd;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -98,14 +99,14 @@ class DomainCommandTest {
     when(session.getBean()).thenReturn("something:type=Thing");
     setDomainAndVerify("something", new String[] {"something"});
     // bean already belongs to "something" → should NOT be unset
-    verify(session, org.mockito.Mockito.never()).setBean(null);
+    verify(session, never()).setBean(null);
   }
 
   @Test
   void settingDomainWithNoBeanDoesNothing() throws Exception {
     when(session.getBean()).thenReturn(null);
     setDomainAndVerify("something", new String[] {"something"});
-    verify(session, org.mockito.Mockito.never()).setBean(null);
+    verify(session, never()).setBean(null);
   }
 
   /**

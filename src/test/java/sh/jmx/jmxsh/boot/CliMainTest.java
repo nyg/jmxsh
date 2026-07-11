@@ -1,7 +1,9 @@
 package sh.jmx.jmxsh.boot;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -10,9 +12,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import sh.jmx.jmxsh.Session;
 import sh.jmx.jmxsh.cc.CommandCenter;
 import sh.jmx.jmxsh.io.CommandInput;
 import sh.jmx.jmxsh.io.CommandOutput;
+import sh.jmx.jmxsh.io.FileCommandInput;
+import sh.jmx.jmxsh.utils.AppConfig;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
 import org.junit.jupiter.api.Test;
@@ -186,5 +191,26 @@ class CliMainTest {
     CliMain.migrateHistory(legacy, target);
 
     assertThat(target).doesNotExist();
+  }
+
+  @Test
+  void createInputReturnsFileReaderForFileInput(@TempDir Path tmp) throws IOException {
+    Path script = tmp.resolve("script.jmx");
+    Files.writeString(script, "help\n");
+    CliMainOptions options = new CliMainOptions();
+    options.setInput(script.toString());
+
+    try (CommandInput result = CliMain.createInput(options, mock(AppConfig.class), new Session[] {null})) {
+      assertThat(result).isInstanceOf(FileCommandInput.class);
+    }
+  }
+
+  @Test
+  void connectIfRequestedDoesNothingWithoutUrl() throws IOException {
+    CliMainOptions options = new CliMainOptions();
+
+    CliMain.connectIfRequested(commandCenter, options, input);
+
+    verify(commandCenter, never()).connect(any(), any());
   }
 }

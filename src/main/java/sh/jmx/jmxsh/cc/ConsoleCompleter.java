@@ -49,27 +49,14 @@ public class ConsoleCompleter implements Completer {
       String previousWord = wordIndex > 1 ? words.get(wordIndex - 1) : "";
 
       if (currentWord.startsWith("-")) {
-        for (OptionSpec option : spec.options()) {
-          for (String name : option.names()) {
-            if (name.startsWith(currentWord)) {
-              candidates.add(new Candidate(name));
-            }
-          }
-        }
+        completeOptionNames(spec, currentWord, candidates);
         return;
       }
 
       // Complete option values (previous word was a non-boolean option)
-      if (previousWord.startsWith("-")) {
-        OptionSpec matchedOption = findOption(spec, previousWord);
-        if (matchedOption != null && !matchedOption.type().equals(boolean.class) && !matchedOption.type().equals(Boolean.class)) {
-          String shortName = extractShortName(matchedOption);
-          if (shortName != null) {
-            List<String> suggestions = cmd.suggestOption(shortName, null);
-            addFilteredSuggestions(suggestions, currentWord, candidates);
-          }
-          return;
-        }
+      if (previousWord.startsWith("-")
+          && completeOptionValue(cmd, spec, previousWord, currentWord, candidates)) {
+        return;
       }
 
       List<String> suggestions = cmd.suggestArgument(null);
@@ -79,6 +66,33 @@ public class ConsoleCompleter implements Completer {
         log.debug("Couldn't complete input", e);
       }
     }
+  }
+
+  private void completeOptionNames(CommandLine.Model.CommandSpec spec, String currentWord,
+      List<Candidate> candidates) {
+    for (OptionSpec option : spec.options()) {
+      for (String name : option.names()) {
+        if (name.startsWith(currentWord)) {
+          candidates.add(new Candidate(name));
+        }
+      }
+    }
+  }
+
+  private boolean completeOptionValue(Command cmd, CommandLine.Model.CommandSpec spec,
+      String previousWord, String currentWord, List<Candidate> candidates) {
+    OptionSpec matchedOption = findOption(spec, previousWord);
+    if (matchedOption == null
+        || matchedOption.type().equals(boolean.class)
+        || matchedOption.type().equals(Boolean.class)) {
+      return false;
+    }
+    String shortName = extractShortName(matchedOption);
+    if (shortName != null) {
+      List<String> suggestions = cmd.suggestOption(shortName, null);
+      addFilteredSuggestions(suggestions, currentWord, candidates);
+    }
+    return true;
   }
 
   private OptionSpec findOption(CommandLine.Model.CommandSpec spec, String name) {

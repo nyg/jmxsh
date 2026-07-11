@@ -45,6 +45,11 @@ class VerboseLevelIT {
   @Test
   void testSilentSuppressesMessages() {
     cc.setOutputMode(OutputMode.SILENT);
+    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
+    String messages = messageWriter.toString();
+    assertThat(messages)
+        .as("Expected no connection message in SILENT mode, got: " + messages)
+        .doesNotContain("Connection to");
   }
 
   @Test

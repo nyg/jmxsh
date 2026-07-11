@@ -45,41 +45,51 @@ public final class PromptTemplate {
     int i = 0;
     while (i < template.length()) {
       char c = template.charAt(i);
-      if (c == '{' && i + 1 < template.length()) {
-        char next = template.charAt(i + 1);
-        if (next == '?') {
-          int blockEnd = findBlockEnd(template, i + 2);
-          if (blockEnd >= 0) {
-            String blockContent = template.substring(i + 2, blockEnd);
-            if (hasAnyNonEmptyVar(blockContent, server, domain, bean)) {
-              result.append(substituteVars(blockContent, server, domain, bean));
-            }
-            i = blockEnd + 1;
-            continue;
-          }
-        } else {
-          int end = template.indexOf('}', i + 1);
-          if (end >= 0) {
-            String varName = template.substring(i + 1, end);
-            switch (varName) {
-              case "server" -> result.append(server);
-              case "domain" -> result.append(domain);
-              case "bean"   -> result.append(bean);
-              default -> {
-                result.append('{');
-                result.append(varName);
-                result.append('}');
-              }
-            }
-            i = end + 1;
-            continue;
-          }
-        }
+      int next = c == '{' && i + 1 < template.length()
+          ? handleBrace(template, i, result, server, domain, bean)
+          : -1;
+      if (next >= 0) {
+        i = next;
+      } else {
+        result.append(c);
+        i++;
       }
-      result.append(c);
-      i++;
     }
     return result.toString();
+  }
+
+  /**
+   * Handles a {@code {}-construct starting at {@code i}. Appends the resolved content to
+   * {@code result} and returns the index just past the construct, or {@code -1} when the text at
+   * {@code i} is not a recognized construct and should be emitted literally.
+   */
+  private static int handleBrace(String template, int i, StringBuilder result, String server, String domain, String bean) {
+    if (template.charAt(i + 1) == '?') {
+      int blockEnd = findBlockEnd(template, i + 2);
+      if (blockEnd < 0) {
+        return -1;
+      }
+      String blockContent = template.substring(i + 2, blockEnd);
+      if (hasAnyNonEmptyVar(blockContent, server, domain, bean)) {
+        result.append(substituteVars(blockContent, server, domain, bean));
+      }
+      return blockEnd + 1;
+    }
+    int end = template.indexOf('}', i + 1);
+    if (end < 0) {
+      return -1;
+    }
+    appendVariable(template.substring(i + 1, end), result, server, domain, bean);
+    return end + 1;
+  }
+
+  private static void appendVariable(String varName, StringBuilder result, String server, String domain, String bean) {
+    switch (varName) {
+      case "server" -> result.append(server);
+      case "domain" -> result.append(domain);
+      case "bean"   -> result.append(bean);
+      default -> result.append('{').append(varName).append('}');
+    }
   }
 
   /**
@@ -105,10 +115,9 @@ public final class PromptTemplate {
   }
 
   private static boolean hasAnyNonEmptyVar(String content, String server, String domain, String bean) {
-    if (content.contains("{server}") && !server.isEmpty()) return true;
-    if (content.contains("{domain}") && !domain.isEmpty()) return true;
-    if (content.contains("{bean}") && !bean.isEmpty()) return true;
-    return false;
+    return (content.contains("{server}") && !server.isEmpty())
+        || (content.contains("{domain}") && !domain.isEmpty())
+        || (content.contains("{bean}") && !bean.isEmpty());
   }
 
   private static String substituteVars(String template, String server, String domain, String bean) {

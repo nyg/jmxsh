@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -218,8 +220,8 @@ class GetCommandTest {
     command.setSession(session);
     command.execute();
 
-    org.mockito.Mockito.verify(con).getAttributes(name, new String[] {"x", "y"});
-    org.mockito.Mockito.verify(con, org.mockito.Mockito.never())
+    verify(con).getAttributes(name, new String[] {"x", "y"});
+    verify(con, never())
         .getAttribute(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any());
     assertThat(writer).hasToString("1" + System.lineSeparator() + "2" + System.lineSeparator());
   }

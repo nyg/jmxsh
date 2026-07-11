@@ -41,33 +41,43 @@ public final class ValueFormat {
       return input;
     }
     var sb = new StringBuilder(input.length());
-    for (int i = 0; i < input.length(); i++) {
+    int i = 0;
+    while (i < input.length()) {
       char ch = input.charAt(i);
       if (ch == '\\' && i + 1 < input.length()) {
-        char next = input.charAt(i + 1);
-        if (next == '\\') {
-          sb.append("\\\\");
-          i++;
-        } else if (next == 'u') {
-          if (i + 6 <= input.length()) {
-            try {
-              sb.append((char) Integer.parseInt(input.substring(i + 2, i + 6), 16));
-              i += 5;
-            } catch (NumberFormatException _) {
-              sb.append("\\\\u");
-              i++;
-            }
-          } else {
-            sb.append("\\\\u");
-            i++;
-          }
-        } else {
-          sb.append(ch);
-        }
+        i = appendEscape(input, i, sb);
       } else {
         sb.append(ch);
+        i++;
       }
     }
     return sb.toString();
+  }
+
+  private static int appendEscape(String input, int i, StringBuilder sb) {
+    char next = input.charAt(i + 1);
+    if (next == '\\') {
+      sb.append("\\\\");
+      return i + 2;
+    }
+    if (next == 'u') {
+      return appendUnicodeEscape(input, i, sb);
+    }
+    sb.append(input.charAt(i));
+    return i + 1;
+  }
+
+  private static int appendUnicodeEscape(String input, int i, StringBuilder sb) {
+    if (i + 6 <= input.length()) {
+      try {
+        sb.append((char) Integer.parseInt(input.substring(i + 2, i + 6), 16));
+        return i + 6;
+      } catch (NumberFormatException _) {
+        sb.append("\\\\u");
+        return i + 2;
+      }
+    }
+    sb.append("\\\\u");
+    return i + 2;
   }
 }

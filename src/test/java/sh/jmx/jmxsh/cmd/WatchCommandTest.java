@@ -40,12 +40,12 @@ class WatchCommandTest {
   private MBeanServerConnection con;
 
   private WatchCommand command;
-  private StringWriter writer;
+  private SignalingWriter writer;
 
   @BeforeEach
   void setUp() {
     command = new WatchCommand();
-    writer = new StringWriter();
+    writer = new SignalingWriter();
   }
 
   private void mockConnectedSession() throws Exception {
@@ -57,10 +57,31 @@ class WatchCommandTest {
   }
 
   private void awaitOutputContains(String expected) throws InterruptedException {
-    for (int i = 0; i < 100 && !writer.toString().contains(expected); i++) {
-      Thread.sleep(50);
-    }
+    writer.awaitContains(expected, 5000);
     assertThat(writer.toString()).contains(expected);
+  }
+
+  /**
+   * A {@link StringWriter} that lets a test block until the text written from a background thread
+   * contains an expected substring, using {@link Object#wait(long)} instead of polling with sleeps.
+   */
+  private static final class SignalingWriter extends StringWriter {
+    @Override
+    public synchronized void write(String str) {
+      super.write(str);
+      notifyAll();
+    }
+
+    synchronized void awaitContains(String expected, long timeoutMillis) throws InterruptedException {
+      long deadline = System.currentTimeMillis() + timeoutMillis;
+      while (!toString().contains(expected)) {
+        long remaining = deadline - System.currentTimeMillis();
+        if (remaining <= 0) {
+          return;
+        }
+        wait(remaining);
+      }
+    }
   }
 
   @Test

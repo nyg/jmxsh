@@ -3,8 +3,6 @@ package sh.jmx.jmxsh.utils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-
 import javax.management.remote.JMXServiceURL;
 
 import org.junit.jupiter.api.Test;
@@ -47,7 +45,7 @@ class PromptTemplateTest {
   }
 
   @Test
-  void optionalBlockPartiallyEmptyStillShown() throws Exception {
+  void optionalBlockPartiallyEmptyStillShown() {
     when(session.isConnected()).thenReturn(false);
     when(session.getDomain()).thenReturn("java.lang");
     when(session.getBean()).thenReturn(null);

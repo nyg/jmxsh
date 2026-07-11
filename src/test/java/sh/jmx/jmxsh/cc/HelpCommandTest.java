@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.beans.IntrospectionException;
@@ -56,6 +57,9 @@ class HelpCommandTest {
     doReturn(new SelfRecordingCommand(new ArrayList<>())).when(cc).createCommand("b");
     command.setSession(session);
     command.execute();
+
+    verify(cc).createCommand("a");
+    verify(cc).createCommand("b");
   }
 
   /**

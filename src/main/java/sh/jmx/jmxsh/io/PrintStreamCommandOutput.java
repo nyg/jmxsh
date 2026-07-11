@@ -5,17 +5,9 @@ import java.io.PrintStream;
 import lombok.NonNull;
 
 public class PrintStreamCommandOutput implements CommandOutput {
+
   private final PrintStream messageOutput;
-
   private final PrintStream resultOutput;
-
-  public PrintStreamCommandOutput() {
-    this(System.out);
-  }
-
-  public PrintStreamCommandOutput(PrintStream output) {
-    this(output, System.err);
-  }
 
   public PrintStreamCommandOutput(@NonNull PrintStream resultOutput, @NonNull PrintStream messageOutput) {
     this.resultOutput = resultOutput;

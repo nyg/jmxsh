@@ -10,15 +10,15 @@ import java.nio.file.StandardOpenOption;
 import lombok.NonNull;
 
 public class FileCommandOutput implements CommandOutput {
-  private final PrintWriter fileWriter;
 
+  private final PrintWriter fileWriter;
   private final WriterCommandOutput output;
 
   public FileCommandOutput(@NonNull Path file, boolean appendToOutput) throws IOException {
     Path af = file.toAbsolutePath();
     Files.createDirectories(af.getParent());
 
-    var openOptions = appendToOutput
+    StandardOpenOption[] openOptions = appendToOutput
         ? new StandardOpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.APPEND}
         : new StandardOpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING};
     fileWriter = new PrintWriter(

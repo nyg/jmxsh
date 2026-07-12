@@ -5,7 +5,7 @@
 
   <groupId>sh.jmx</groupId>
   <artifactId>jmxsh</artifactId>
-  <version>1.5.1</version>
+  <version>1.5.2-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>jmxsh</name>
   <description>Interactive command-line JMX client</description>
@@ -24,7 +24,7 @@
     <connection>scm:git:https://github.com/nyg/jmxsh.git</connection>
     <developerConnection>scm:git:git@github.com:nyg/jmxsh.git</developerConnection>
     <url>https://github.com/nyg/jmxsh</url>
-    <tag>v1.5.1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <issueManagement>

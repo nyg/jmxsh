@@ -24,4 +24,14 @@ class WriterCommandOutputTest {
     output.print("hello world");
     assertThat(writer).hasToString("hello world");
   }
+
+  @Test
+  void printMessageAppendsNewlineToMessageOutput() {
+    StringWriter result = new StringWriter();
+    StringWriter message = new StringWriter();
+    WriterCommandOutput output = new WriterCommandOutput(result, message);
+    output.printMessage("status");
+    assertThat(message).hasToString("status" + System.lineSeparator());
+    assertThat(result).hasToString("");
+  }
 }

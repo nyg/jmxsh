@@ -24,29 +24,19 @@ public class WriterCommandOutput implements CommandOutput {
     if (output == null) {
       return;
     }
-    try {
-      resultOutput.write(output);
-    } catch (IOException e) {
-      throw new RuntimeIOException("Can't print out result", e);
-    }
-  }
-
-  @Override
-  public void printError(Throwable e) {
-    try {
-      String message = e.getMessage() != null ? e.getMessage() : e.toString();
-      messageOutput.write(message);
-    } catch (IOException ex) {
-      throw new RuntimeIOException("Can't print error message", ex);
-    }
+    write(resultOutput, output, "Can't print out result");
   }
 
   @Override
   public void printMessage(String message) {
+    write(messageOutput, String.format("%s%n", message), "Can't print out message");
+  }
+
+  private void write(Writer target, String text, String errorMessage) {
     try {
-      messageOutput.write(message);
+      target.write(text);
     } catch (IOException e) {
-      throw new RuntimeIOException("Can't print out message", e);
+      throw new RuntimeIOException(errorMessage, e);
     }
   }
 }

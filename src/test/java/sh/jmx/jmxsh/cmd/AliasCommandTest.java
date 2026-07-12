@@ -64,7 +64,7 @@ class AliasCommandTest {
     unit.execute();
 
     // Then
-    assertThat(writer).hasToString("No aliases defined.");
+    assertThat(writer).hasToString("No aliases defined." + System.lineSeparator());
   }
 
   @Test
@@ -118,7 +118,7 @@ class AliasCommandTest {
 
     // Then
     verify(aliasStore).put("my_server", "myserver:1234");
-    assertThat(writer).hasToString("Alias my_server is set to myserver:1234.");
+    assertThat(writer).hasToString("Alias my_server is set to myserver:1234." + System.lineSeparator());
   }
 
   @Test

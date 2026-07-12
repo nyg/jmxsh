@@ -40,7 +40,7 @@ class CloseCommandTest {
 
     // Then
     verify(session).disconnect();
-    assertThat(writer).hasToString("Disconnected.");
+    assertThat(writer).hasToString("Disconnected." + System.lineSeparator());
   }
 
   @Test
@@ -57,6 +57,6 @@ class CloseCommandTest {
 
     // Then
     verify(session, never()).disconnect();
-    assertThat(writer).hasToString("Not connected.");
+    assertThat(writer).hasToString("Not connected." + System.lineSeparator());
   }
 }

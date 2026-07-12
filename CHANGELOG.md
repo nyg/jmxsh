@@ -1,6 +1,25 @@
 # Changelog
 
 
+## [1.5.1](https://github.com/nyg/jmxsh/compare/v1.5.0..v1.5.1) - 2026-07-12
+
+### 🐛 Bug Fixes
+
+- [`c6dac93`](https://github.com/nyg/jmxsh/commit/c6dac93fddf6e038017830f1ea02c649715e1eb3) Distinct message when closing with no open connection ([#80](https://github.com/nyg/jmxsh/issues/80))
+- [`bb93a35`](https://github.com/nyg/jmxsh/commit/bb93a3591dd548e05b0f679d64894ed8858c7810) Handle lost JMX connections with a user-friendly message ([#79](https://github.com/nyg/jmxsh/issues/79))
+- [`2cb96f6`](https://github.com/nyg/jmxsh/commit/2cb96f601225e35082a3cb088f8b70f9616fc9d1) Consistent sentence-style console messages on all quit paths and commands ([#78](https://github.com/nyg/jmxsh/issues/78))
+
+### 🚜 Refactor
+
+- [`a847c21`](https://github.com/nyg/jmxsh/commit/a847c21e46d0b39d8bb7a8eb612922259d3a60bd) Simplify CommandOutput and fix printMessage newline contract ([#84](https://github.com/nyg/jmxsh/issues/84))
+- [`460c7ac`](https://github.com/nyg/jmxsh/commit/460c7acf9f3c5d98d27e03dcf3735dd2767eaab3) Replace var with explicit types ([#83](https://github.com/nyg/jmxsh/issues/83))
+- [`400ae6d`](https://github.com/nyg/jmxsh/commit/400ae6d083e93c88b57d7e60756f568e22b00d5c) Resolve SonarCloud code smells (29 issues) ([#82](https://github.com/nyg/jmxsh/issues/82))
+
+### 📚 Documentation
+
+- [`94ca107`](https://github.com/nyg/jmxsh/commit/94ca107ab8a8df65fc011fbf9a005ea2d5696d25) Add README table of contents ([#81](https://github.com/nyg/jmxsh/issues/81))
+- [`c31b266`](https://github.com/nyg/jmxsh/commit/c31b266c38c280bf6347108f306b9fa68f07c97f) Refresh documentation and improve website ([#77](https://github.com/nyg/jmxsh/issues/77))
+
 ## [1.5.0](https://github.com/nyg/jmxsh/compare/v1.4.0..v1.5.0) - 2026-07-06
 
 ### ⛰️  Features

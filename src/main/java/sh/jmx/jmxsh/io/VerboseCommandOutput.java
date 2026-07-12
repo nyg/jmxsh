@@ -34,10 +34,7 @@ public class VerboseCommandOutput implements CommandOutput {
   @Override
   public void printError(Throwable e) {
     log.error("command execution error: {}", e.getMessage(), e);
-    if (modeSupplier.get() != OutputMode.SILENT) {
-      String message = e.getMessage() != null ? e.getMessage() : e.toString();
-      output.printMessage(message);
-    }
+    CommandOutput.super.printError(e);
   }
 
   @Override

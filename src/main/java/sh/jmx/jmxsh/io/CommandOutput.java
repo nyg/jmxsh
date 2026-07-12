@@ -16,7 +16,9 @@ public interface CommandOutput extends AutoCloseable {
   void print(String output);
 
   /** @param e Error to print out */
-  void printError(Throwable e);
+  default void printError(Throwable e) {
+    printMessage(e.getMessage() != null ? e.getMessage() : e.toString());
+  }
 
   /**
    * Print out value to output as standalone line

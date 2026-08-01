@@ -26,7 +26,7 @@ jobs:
           distribution: temurin
           cache: maven
 
-      - run: mvn --no-transfer-progress verify sonar:sonar
+      - run: mvn --no-transfer-progress verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

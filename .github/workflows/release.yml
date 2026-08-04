@@ -196,16 +196,39 @@ jobs:
           git push origin v${{ env.RELEASE_VERSION }}
 
       - name: Create GitHub release
-        run: >
-          gh release create v${{ env.RELEASE_VERSION }}
-          target/jmxsh-${{ env.RELEASE_VERSION }}.jar
-          target/jmxsh-${{ env.RELEASE_VERSION }}.deb
-          target/jmxsh-*.rpm
-          -F git-cliff/CHANGELOG.md
-          --title "Release v${{ env.RELEASE_VERSION }}"
-          --verify-tag
+        run: |
+          set -uo pipefail
+          assets=(
+            "target/jmxsh-${VERSION}.jar"
+            "target/jmxsh-${VERSION}.deb"
+            target/jmxsh-*.rpm
+          )
+
+          for attempt in 1 2 3 4 5; do
+            if gh release view "v${VERSION}" >/dev/null 2>&1; then
+              echo "Release v${VERSION} already exists; uploading assets to it."
+              if gh release upload "v${VERSION}" "${assets[@]}" --clobber; then
+                exit 0
+              fi
+            elif gh release create "v${VERSION}" "${assets[@]}" \
+                   --title "Release v${VERSION}" \
+                   --verify-tag \
+                   -F git-cliff/CHANGELOG.md; then
+              exit 0
+            fi
+
+            if (( attempt < 5 )); then
+              delay=$(( attempt * 15 ))
+              echo "::warning::Release publication attempt ${attempt} failed, retrying in ${delay}s"
+              sleep "$delay"
+            fi
+          done
+
+          echo "::error::Could not publish release v${VERSION} after 5 attempts"
+          exit 1
         env:
           GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ env.RELEASE_VERSION }}
 
       - name: Update apt repository
         if: env.APT_GPG_PRIVATE_KEY != ''

@@ -67,6 +67,7 @@ public class CliMain {
    * @return Exit code
    * @throws Exception Allow any exceptions
    */
+  @SuppressWarnings("java:S106")
   int execute(String[] args) throws Exception {
     AppConfig appConfig = AppConfig.load(XdgDirectories.INSTANCE);
     AppConfig.createDefaultIfMissing(XdgDirectories.INSTANCE.getConfigFile());
@@ -94,7 +95,7 @@ public class CliMain {
 
     CommandOutput output;
     if (CliMainOptions.STDOUT.equals(options.getOutput())) {
-      output = createStandardStreamOutput();
+      output = new PrintStreamCommandOutput(System.out, System.err);
     } else {
       output = new FileCommandOutput(Path.of(options.getOutput()), options.isAppendToOutput());
     }
@@ -124,11 +125,6 @@ public class CliMain {
       output.printError(e);
       return 1;
     }
-  }
-
-  @SuppressWarnings("java:S106")
-  private static CommandOutput createStandardStreamOutput() {
-    return new PrintStreamCommandOutput(System.out, System.err);
   }
 
   /**

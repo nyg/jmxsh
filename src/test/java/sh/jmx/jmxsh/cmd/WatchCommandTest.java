@@ -222,7 +222,8 @@ class WatchCommandTest {
     when(session.getDomain()).thenReturn("a");
     when(session.getBean()).thenReturn(BEAN_NAME);
     when(connection.getServerConnection()).thenReturn(con);
-    when(session.getInput()).thenReturn(mock(CommandInput.class));
+    CommandInput mockedCommandInput = mock(CommandInput.class);
+    when(session.getInput()).thenReturn(mockedCommandInput);
     command.setSession(session);
 
     assertThatThrownBy(command::execute).isInstanceOf(IllegalStateException.class);

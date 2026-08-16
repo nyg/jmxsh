@@ -45,8 +45,10 @@ import picocli.CommandLine;
  */
 @Slf4j
 public class CliMain {
+  @SuppressWarnings("java:S106")
   private static final PrintWriter STDOUT_WRITER = new PrintWriter(System.out, true);
 
+  @SuppressWarnings("java:S106")
   static void main(String[] args) {
     try {
       System.exit(new CliMain().execute(args));
@@ -65,6 +67,7 @@ public class CliMain {
    * @return Exit code
    * @throws Exception Allow any exceptions
    */
+  @SuppressWarnings("java:S106")
   int execute(String[] args) throws Exception {
     AppConfig appConfig = AppConfig.load(XdgDirectories.INSTANCE);
     AppConfig.createDefaultIfMissing(XdgDirectories.INSTANCE.getConfigFile());

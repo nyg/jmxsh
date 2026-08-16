@@ -60,6 +60,7 @@ class HelpCommandTest {
 
     verify(cc).createCommand("a");
     verify(cc).createCommand("b");
+    assertThat(writer.toString()).contains("Usage:");
   }
 
   /**

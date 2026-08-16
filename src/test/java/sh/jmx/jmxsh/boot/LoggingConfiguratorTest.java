@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 
@@ -65,6 +66,34 @@ class LoggingConfiguratorTest {
     LoggingConfigurator.configure(config, xdg);
 
     assertThat(root.getAppender("FILE")).isNotNull();
+  }
+
+  @Test
+  void fileAppenderNotAddedWhenLogDirectoryCannotBeCreated() throws Exception {
+    Path regularFile = tempDir.resolve("not-a-directory");
+    Files.createFile(regularFile);
+    AppConfig config = mock(AppConfig.class);
+    when(config.isLoggingFileEnabled()).thenReturn(true);
+    XdgDirectories xdg = mock(XdgDirectories.class);
+    when(xdg.getLogFile()).thenReturn(regularFile.resolve("jmxsh.log"));
+
+    LoggingConfigurator.configure(config, xdg);
+
+    assertThat(root.getAppender("FILE")).isNull();
+  }
+
+  @Test
+  void fileAppenderNotAddedWhenLogFileCannotBeOpened() throws Exception {
+    Path logFile = tempDir.resolve("logs/jmxsh.log");
+    Files.createDirectories(logFile);
+    AppConfig config = mock(AppConfig.class);
+    when(config.isLoggingFileEnabled()).thenReturn(true);
+    XdgDirectories xdg = mock(XdgDirectories.class);
+    when(xdg.getLogFile()).thenReturn(logFile);
+
+    LoggingConfigurator.configure(config, xdg);
+
+    assertThat(root.getAppender("FILE")).isNull();
   }
 
   @Test

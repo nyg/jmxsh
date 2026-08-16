@@ -1,6 +1,5 @@
 package sh.jmx.jmxsh.cc;
 
-import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +40,7 @@ public class HelpCommand extends sh.jmx.jmxsh.Command {
         }
         sh.jmx.jmxsh.Command cmd =
             commandCenter.createCommand(argName);
-        new CommandLine(cmd).usage(new PrintWriter(System.out, true));
+        getSession().getOutput().print(new CommandLine(cmd).getUsageMessage());
       }
     }
   }

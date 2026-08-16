@@ -6,6 +6,11 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 
@@ -20,7 +25,10 @@ import javax.management.ObjectName;
 import sh.jmx.jmxsh.Connection;
 import sh.jmx.jmxsh.Session;
 import sh.jmx.jmxsh.io.CommandInput;
+import sh.jmx.jmxsh.io.JlineCommandInput;
 import sh.jmx.jmxsh.io.WriterCommandOutput;
+import org.jline.reader.impl.LineReaderImpl;
+import org.jline.terminal.Terminal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -146,6 +154,35 @@ class WatchCommandTest {
     command.execute();
 
     awaitOutputContains("Z");
+  }
+
+  @Test
+  void executeInteractiveModeWritesTrailingNewlineToTerminalNotStdout() throws Exception {
+    mockConnectedSession();
+    StringWriter terminalOutput = new StringWriter();
+    Terminal terminal = mock(Terminal.class);
+    LineReaderImpl console = mock(LineReaderImpl.class);
+    when(console.getTerminal()).thenReturn(terminal);
+    when(terminal.writer()).thenReturn(new PrintWriter(terminalOutput, true));
+    when(session.getInput()).thenReturn(new JlineCommandInput(console, () -> "> "));
+
+    InputStream originalIn = System.in;
+    PrintStream originalOut = System.out;
+    ByteArrayOutputStream capturedStdout = new ByteArrayOutputStream();
+    System.setIn(new ByteArrayInputStream(new byte[] {'\n'}));
+    System.setOut(new PrintStream(capturedStdout, true));
+    try {
+      command.setAttributes(List.of("%now"));
+      command.setRefreshInterval(60);
+      command.setSession(session);
+      command.execute();
+    } finally {
+      System.setIn(originalIn);
+      System.setOut(originalOut);
+    }
+
+    assertThat(capturedStdout.toString()).isEmpty();
+    assertThat(terminalOutput.toString()).contains(System.lineSeparator());
   }
 
   @Test

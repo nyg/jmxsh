@@ -92,14 +92,16 @@ public class WatchCommand extends Command {
     final ObjectName name = new ObjectName(beanName);
     final MBeanServerConnection con = session.getConnection().getServerConnection();
     final LineOutput output;
+    final LineReaderImpl console;
     if (report) {
       CommandOutput out = session.getOutput();
       output = out::println;
+      console = null;
     } else {
       if (!(session.getInput() instanceof JlineCommandInput jlineInput)) {
         throw new IllegalStateException("Under current context, watch command can't execute.");
       }
-      LineReaderImpl console = jlineInput.getConsole();
+      console = jlineInput.getConsole();
       output = line -> {
         console.redrawLine();
         console.getTerminal().writer().print(line);
@@ -128,7 +130,8 @@ public class WatchCommand extends Command {
     }
     if (!report) {
       System.in.read();
-      System.out.println();
+      console.getTerminal().writer().println();
+      console.flush();
       executor.shutdownNow();
       log.debug("watch stopped");
     }

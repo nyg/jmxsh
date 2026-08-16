@@ -45,8 +45,10 @@ import picocli.CommandLine;
  */
 @Slf4j
 public class CliMain {
+  @SuppressWarnings("java:S106")
   private static final PrintWriter STDOUT_WRITER = new PrintWriter(System.out, true);
 
+  @SuppressWarnings("java:S106")
   static void main(String[] args) {
     try {
       System.exit(new CliMain().execute(args));
@@ -92,7 +94,7 @@ public class CliMain {
 
     CommandOutput output;
     if (CliMainOptions.STDOUT.equals(options.getOutput())) {
-      output = new PrintStreamCommandOutput(System.out, System.err);
+      output = createStandardStreamOutput();
     } else {
       output = new FileCommandOutput(Path.of(options.getOutput()), options.isAppendToOutput());
     }
@@ -122,6 +124,11 @@ public class CliMain {
       output.printError(e);
       return 1;
     }
+  }
+
+  @SuppressWarnings("java:S106")
+  private static CommandOutput createStandardStreamOutput() {
+    return new PrintStreamCommandOutput(System.out, System.err);
   }
 
   /**

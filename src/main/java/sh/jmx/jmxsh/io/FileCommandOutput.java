@@ -14,6 +14,7 @@ public class FileCommandOutput implements CommandOutput {
   private final PrintWriter fileWriter;
   private final WriterCommandOutput output;
 
+  @SuppressWarnings("java:S106")
   public FileCommandOutput(@NonNull Path file, boolean appendToOutput) throws IOException {
     Path af = file.toAbsolutePath();
     Files.createDirectories(af.getParent());

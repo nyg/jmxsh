@@ -57,7 +57,7 @@ public final class LoggingConfigurator {
     try {
       Files.createDirectories(logFile.getParent());
     } catch (IOException e) {
-      System.err.println(
+      printLoggingSetupFailure(
           "jmxsh: cannot create log directory " + logFile.getParent() + ": " + e.getMessage());
       return;
     }
@@ -86,7 +86,7 @@ public final class LoggingConfigurator {
 
     if (!policy.isStarted()) {
       encoder.stop();
-      System.err.println("jmxsh: failed to configure log rotation — file logging is disabled");
+      printLoggingSetupFailure("jmxsh: failed to configure log rotation — file logging is disabled");
       return;
     }
 
@@ -96,10 +96,16 @@ public final class LoggingConfigurator {
     if (!appender.isStarted()) {
       policy.stop();
       encoder.stop();
-      System.err.println("jmxsh: failed to open log file " + logFile + " — file logging is disabled");
+      printLoggingSetupFailure(
+          "jmxsh: failed to open log file " + logFile + " — file logging is disabled");
       return;
     }
 
     root.addAppender(appender);
+  }
+
+  @SuppressWarnings("java:S106")
+  private static void printLoggingSetupFailure(String message) {
+    System.err.println(message);
   }
 }

@@ -1,6 +1,22 @@
 # Changelog
 
 
+## [1.5.2](https://github.com/nyg/jmxsh/compare/v1.5.1..v1.5.2) - 2026-08-16
+
+### 🐛 Bug Fixes
+
+- [`3678bd9`](https://github.com/nyg/jmxsh/commit/3678bd9e163ff90068247282706ab8a61af95529) Honour --output redirection in help and watch commands ([#92](https://github.com/nyg/jmxsh/issues/92))
+- [`4026b63`](https://github.com/nyg/jmxsh/commit/4026b633ec92f9cf1d172ca25a6ec6d74abfe917) *(deps)* Update all stable non-major dependencies ([#85](https://github.com/nyg/jmxsh/issues/85))
+
+### 🧪 Testing
+
+- [`176ef67`](https://github.com/nyg/jmxsh/commit/176ef67c4b2e461e0b6efe2adfae6236c1be343f) Fix Sonar issue in unit test ([#93](https://github.com/nyg/jmxsh/issues/93))
+
+### ⚙️ Miscellaneous
+
+- [`b28e80b`](https://github.com/nyg/jmxsh/commit/b28e80bf5a5ccb05464312c6df6a208a7bd52555) Remove .metals and .vscode directories ([#87](https://github.com/nyg/jmxsh/issues/87))
+- [`7f96439`](https://github.com/nyg/jmxsh/commit/7f964396a290fa6de75d410903bfb101bb2ad232) Retry GitHub release creation on transient API failures ([#86](https://github.com/nyg/jmxsh/issues/86))
+
 ## [1.5.1](https://github.com/nyg/jmxsh/compare/v1.5.0..v1.5.1) - 2026-07-12
 
 ### 🐛 Bug Fixes

@@ -147,6 +147,22 @@ The standard JMX interface (`javax.management.MBeanServerConnection`) obtained f
 - Invoke operations (`invoke`)
 - List domains and beans (`getDomains`, `queryNames`)
 
+### Value Conversion
+
+`sh.jmx.jmxsh.utils.MBeanValueParser` turns user input into the Java types an MBean declares, and is
+shared by the `run` and `set` commands. Primitives, their wrappers, `String`, `BigInteger` and
+`BigDecimal` are converted directly; every other type is handed to Jackson, which reads values
+starting with `[` or `{` as JSON documents and everything else as a JSON string. That covers
+`java.time` types, `UUID`, enums, arrays, collections and maps. It also exposes a `parseNode`
+entry point that converts an already-parsed `JsonNode`.
+
+`sh.jmx.jmxsh.utils.OperationArguments` is a sealed interface modelling the three ways `run` can
+receive an operation's parameters — positional strings, a JSON array or a JSON object. Each variant
+reports its argument count, decides whether a candidate `MBeanOperationInfo` signature fits (the
+JSON object variant additionally requires every `MBeanParameterInfo` name to be present as a key),
+and binds its values to that signature. `RunCommand` therefore performs overload resolution and
+parameter building once, regardless of where the values came from.
+
 ### I/O Layer
 
 Abstractions for input and output (`sh.jmx.jmxsh.io`):

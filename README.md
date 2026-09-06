@@ -21,6 +21,7 @@ invoke operations — all from the comfort of your terminal.
 - [Features](#features)
 - [Usage](#usage)
   - [Key Commands](#key-commands)
+  - [Operation Parameters](#operation-parameters)
   - [JMXMP Connections](#jmxmp-connections)
   - [Connection Aliases](#connection-aliases)
   - [Watching Attributes](#watching-attributes)
@@ -70,6 +71,7 @@ sudo apt update && sudo apt install jmxsh
 - **Remote & local connections** — connect via host:port, JMX URL, or local PID
 - **JMXMP protocol support** — connect via `jmxmp://host:port` in addition to the default RMI protocol
 - **Full MBean support** — browse domains, read/write attributes, invoke operations
+- **Typed parameters** — pass operation parameters and attribute values as JSON, and let types like `Instant`, `UUID`, enums, arrays and maps be parsed for you
 - **Live monitoring** — watch attribute values with `watch`, subscribe to MBean notifications with `subscribe`
 - **Connection aliases** — name your frequent connection targets with `alias` and reuse them in `open` or `-l`
 - **Configurable prompt** — show the connected server, selected domain and bean in the prompt via a simple template
@@ -121,6 +123,7 @@ Bye.
 | `get <attr>` | Read an MBean attribute |
 | `set <attr> <value>` | Write an MBean attribute |
 | `run <op> [args]` | Invoke an MBean operation |
+| `run -j <json> <op>` | Invoke an MBean operation with JSON parameters |
 | `watch <attr>` | Poll an MBean attribute and print its value continuously |
 | `subscribe` | Subscribe to the notifications of an MBean |
 | `unsubscribe` | Unsubscribe from the notifications of an MBean |
@@ -130,6 +133,58 @@ Bye.
 | `jvms` | List local Java processes |
 | `help` | Show all available commands |
 | `quit` | Exit jmxsh (also `exit` or `bye`) |
+
+### Operation Parameters
+
+Parameters are converted to the types the operation declares, which `info -o <op>` prints. Beyond primitives and strings, values are parsed with Jackson, so types such as `Instant`, `LocalDate`, `Duration`, `UUID`, `java.util.Date`, `URI` and enum constants are accepted as plain text:
+
+```
+> bean com.example:type=Scheduler
+> info -o schedule
+  %0   - void schedule(java.time.Instant p1), Operation exposed for management
+> run schedule 2026-01-01T00:00:00Z
+```
+
+A value starting with `[` or `{` is read as a JSON document, which is how arrays, collections and maps are passed:
+
+```
+> run sum [1,2,3]
+> run configure '{"retries": 3, "verbose": true}'
+```
+
+The same conversion applies to `set`, so `set Deadline 2026-01-01T00:00:00Z` and `set Tags '["a", "b"]'` work on attributes of those types.
+
+#### JSON parameters with `-j`
+
+`-j` (or `--json`) takes all of an operation's parameters as a single JSON value, and cannot be combined with positional parameters. A JSON array binds by position:
+
+```
+> run -j '[3, 5]' add
+Calling operation add of mbean com.example:type=Calculator with params [3, 5].
+Operation returns:
+8
+```
+
+A JSON object binds by parameter name, which also picks the right overload:
+
+```
+> run -j '{"p1": 3, "p2": 5}' add
+```
+
+For a plain standard MBean the JVM does not retain the declared parameter names and synthesises `p1`, `p2`, … instead (`p0`, `p1`, … for MXBeans). Real names appear only when the MBean supplies them, as Model MBeans and Spring's `@ManagedOperationParameter` do. Either way `info -o <op>` prints the names that `-j` expects, and a mismatch reports the known signatures:
+
+```
+> run -j '{"a": 3, "b": 5}' add
+Operation add with 2 parameters doesn't exist in bean com.example:type=Calculator, known signatures are add(int p1, int p2)
+```
+
+#### Quoting
+
+The prompt tokenises a line before the command sees it, so JSON containing spaces must be quoted: `run sum [1,2,3]` works, `run sum [1, 2, 3]` is split into three arguments. One level of backslash escaping is consumed by the tokeniser too, so write `\\n` where JSON needs `\n`. A `#` starts a comment unless escaped as `\#`, and `&&` separates chained commands; neither can appear unescaped inside a JSON string. Because positional values are also unescaped before conversion, JSON documents containing escape sequences must be passed with `-j`.
+
+#### Serial filters
+
+A JVM started with `-Dcom.sun.management.jmxremote` applies a deserialisation filter to invocation arguments that allows little beyond `java.lang.*` and `java.util.*`, so passing a `java.time` value or an enum to such a target fails with `filter status: REJECTED`. This is a policy of the target JVM, not of jmxsh; widen it there with `-Dcom.sun.management.jmxremote.serial.filter.pattern`.
 
 ### JMXMP Connections
 

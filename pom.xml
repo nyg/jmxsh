@@ -44,6 +44,7 @@
     <picocli.version>4.7.7</picocli.version>
     <jline.version>4.4.0</jline.version>
     <jmxremote-optional.version>5.0</jmxremote-optional.version>
+    <jackson.version>3.0.2</jackson.version>
 
     <!-- Test dependencies -->
     <mockito.version>5.23.0</mockito.version>
@@ -100,6 +101,11 @@
       <groupId>org.glassfish.main.external</groupId>
       <artifactId>jmxremote_optional-repackaged</artifactId>
       <version>${jmxremote-optional.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>tools.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
 
     <!-- Test dependencies -->

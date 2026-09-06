@@ -1,8 +1,10 @@
 package sh.jmx.jmxsh.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.io.StringWriter;
+import java.util.stream.Stream;
 
 import sh.jmx.jmxsh.cc.CommandCenter;
 import sh.jmx.jmxsh.io.WriterCommandOutput;
@@ -10,6 +12,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /** Integration tests for invoking MBean operations via a real JMX connection. */
 class OperationInvocationIT {
@@ -44,24 +50,48 @@ class OperationInvocationIT {
             null);
   }
 
-  @Test
-  void testRunEchoOperation() {
+  static Stream<Arguments> testRunOperation() {
+    return Stream.of(
+        arguments("run echo hello", "echo:hello"),
+        arguments("run add 3 5", "8"),
+        arguments("run -j [3,5] add", "8"),
+        arguments("run -j '{\"p1\":3,\"p2\":5}' add", "8"),
+        arguments("run at 2026-01-01T00:00:00Z", "at:2026-01-01T00:00:00Z"),
+        arguments("run -j '[\"2026-01-01T00:00:00Z\"]' at", "at:2026-01-01T00:00:00Z"),
+        arguments("run sum [1,2,3]", "6"),
+        arguments("run -j [[1,2,3]] sum", "6"));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void testRunOperation(String command, String expectedResult) {
     assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
     assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
-    assertThat(cc.execute("run echo hello")).isTrue();
+    assertThat(cc.execute(command)).isTrue();
     assertThat(resultWriter.toString())
-        .as("Expected 'echo:hello' in output, got: " + resultWriter)
-        .contains("echo:hello");
+        .as("Expected '%s' in the output of '%s', got: %s", expectedResult, command, resultWriter)
+        .contains(expectedResult);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "run nonExistent",
+      "run echo too many params",
+      "run -j [3,5] add 7",
+      "run -j nope add"})
+  void testRunInvalidInvocation(String command) {
+    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
+    assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
+    assertThat(cc.execute(command)).as("Expected '%s' to fail", command).isFalse();
   }
 
   @Test
-  void testRunAddOperation() {
+  void testRunWithBeanOption() {
     assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
-    assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
-    assertThat(cc.execute("run add 3 5")).isTrue();
+    assertThat(cc.execute("run -b test:type=TestMBean echo world")).isTrue();
     assertThat(resultWriter.toString())
-        .as("Expected '8' in output, got: " + resultWriter)
-        .contains("8");
+        .as("Expected 'echo:world' in output, got: " + resultWriter)
+        .contains("echo:world");
   }
 
   @Test
@@ -82,30 +112,5 @@ class OperationInvocationIT {
     assertThat(resultWriter.toString())
         .as("Expected 'default' after reset, got: " + resultWriter)
         .contains("default");
-  }
-
-  @Test
-  void testRunWithBeanOption() {
-    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
-    assertThat(cc.execute("run -b test:type=TestMBean echo world")).isTrue();
-    assertThat(resultWriter.toString())
-        .as("Expected 'echo:world' in output, got: " + resultWriter)
-        .contains("echo:world");
-  }
-
-  @Test
-  void testRunNonExistentOperation() {
-    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
-    assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
-    assertThat(cc.execute("run nonExistent")).isFalse();
-  }
-
-  @Test
-  void testRunWithWrongParamCount() {
-    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
-    assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
-    assertThat(cc.execute("run echo too many params"))
-        .as("Expected failure when invoking echo with wrong number of parameters")
-        .isFalse();
   }
 }

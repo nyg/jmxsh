@@ -1,5 +1,8 @@
 package sh.jmx.jmxsh.integration;
 
+import java.time.Instant;
+import java.util.Arrays;
+
 /** Implementation of {@link TestMBean} for integration testing. */
 public class TestMBeanImpl implements TestMBean {
   private String name = "default";
@@ -29,6 +32,16 @@ public class TestMBeanImpl implements TestMBean {
   @Override
   public int add(int a, int b) {
     return a + b;
+  }
+
+  @Override
+  public String at(Instant when) {
+    return "at:" + when;
+  }
+
+  @Override
+  public int sum(int[] values) {
+    return Arrays.stream(values).sum();
   }
 
   @Override

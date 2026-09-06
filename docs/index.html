@@ -23,6 +23,7 @@
       <div class="nav-links">
         <a href="#quickstart">Install</a>
         <a href="#usage">Usage</a>
+        <a href="#parameters">Parameters</a>
         <a href="#commands">Commands</a>
         <a href="#features">Features</a>
         <a href="https://github.com/nyg/jmxsh" class="nav-github">GitHub</a>
@@ -120,8 +121,40 @@ null
     </div>
   </section>
 
+  <!-- Operation Parameters -->
+  <section class="section" id="parameters">
+    <div class="container">
+      <h2>Operation Parameters</h2>
+      <p class="section-subtitle">Values are converted to the types the operation declares. Beyond primitives and strings, <code>Instant</code>, <code>UUID</code>, enums, arrays, collections and maps are parsed for you, and <code>-j</code> passes every parameter as one JSON value.</p>
+      <div class="terminal">
+        <div class="terminal-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="terminal-title">jmxsh</span>
+        </div>
+        <div class="terminal-body">
+<pre><span class="prompt">&gt;</span> info -o schedule
+  %0   - void schedule(java.time.Instant p1), Operation exposed for management
+<span class="prompt">&gt;</span> run schedule 2026-01-01T00:00:00Z
+<span class="prompt">&gt;</span> run sum [1,2,3]
+<span class="comment">Operation returns:</span>
+6
+<span class="prompt">&gt;</span> run -j '[3, 5]' add
+<span class="comment">Calling operation add of mbean com.example:type=Calculator with params [3, 5].</span>
+<span class="comment">Operation returns:</span>
+8
+<span class="prompt">&gt;</span> run -j '{"p1": 3, "p2": 5}' add
+<span class="comment">Operation returns:</span>
+8</pre>
+        </div>
+      </div>
+      <p>JSON containing spaces must be quoted, since the prompt splits a line into arguments before the command sees it. A JSON array binds by position, a JSON object binds by parameter name. For a plain standard MBean the JVM synthesises the names <code>p1</code>, <code>p2</code>, &hellip; (<code>p0</code>, <code>p1</code>, &hellip; for MXBeans); <code>info -o &lt;op&gt;</code> prints the names <code>-j</code> expects. The same conversion applies to <code>set</code>, so <code>set Deadline 2026-01-01T00:00:00Z</code> works on an <code>Instant</code> attribute.</p>
+    </div>
+  </section>
+
   <!-- Non-Interactive Usage -->
-  <section class="section" id="scripting">
+  <section class="section section-alt" id="scripting">
     <div class="container">
       <h2>Non-Interactive Mode</h2>
       <p class="section-subtitle">Automate JMX operations with scripts and pipes — perfect for monitoring, alerting, and CI/CD pipelines.</p>
@@ -141,7 +174,7 @@ null
   </section>
 
   <!-- Commands -->
-  <section class="section section-alt" id="commands">
+  <section class="section" id="commands">
     <div class="container">
       <h2>Commands</h2>
       <div class="table-wrapper">
@@ -164,6 +197,7 @@ null
             <tr><td><code>get &lt;attr&gt;</code></td><td>Read an MBean attribute</td></tr>
             <tr><td><code>set &lt;attr&gt; &lt;value&gt;</code></td><td>Write an MBean attribute</td></tr>
             <tr><td><code>run &lt;op&gt; [args]</code></td><td>Invoke an MBean operation</td></tr>
+            <tr><td><code>run -j &lt;json&gt; &lt;op&gt;</code></td><td>Invoke an MBean operation with JSON parameters</td></tr>
             <tr><td><code>watch &lt;attr&gt;</code></td><td>Poll an MBean attribute and print its value continuously</td></tr>
             <tr><td><code>subscribe</code></td><td>Subscribe to the notifications of an MBean</td></tr>
             <tr><td><code>unsubscribe</code></td><td>Unsubscribe from the notifications of an MBean</td></tr>
@@ -180,7 +214,7 @@ null
   </section>
 
   <!-- Features -->
-  <section class="section" id="features">
+  <section class="section section-alt" id="features">
     <div class="container">
       <h2>Features</h2>
       <div class="grid">
@@ -198,6 +232,11 @@ null
           <div class="feature-icon">📦</div>
           <h3>Full MBean Support</h3>
           <p>Browse domains, read/write attributes, invoke operations.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🧩</div>
+          <h3>Typed Parameters</h3>
+          <p>Pass parameters as JSON with <code>-j</code>, and let types like <code>Instant</code>, enums and arrays be parsed for you.</p>
         </div>
         <div class="feature">
           <div class="feature-icon">📈</div>

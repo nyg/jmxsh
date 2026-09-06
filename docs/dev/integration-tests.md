@@ -64,6 +64,8 @@ The server exposes helper methods used by tests:
 | `Count` | int attribute (read-only) | Tracks how many times `setName()` was called |
 | `echo(String)` | operation | Returns `"echo:"` + input |
 | `add(int, int)` | operation | Returns the sum |
+| `at(Instant)` | operation | Returns `"at:"` + the instant |
+| `sum(int[])` | operation | Returns the sum of the array |
 | `reset()` | operation | Resets Name to `"default"` and Count to `0` |
 
 This gives tests a controllable MBean with readable, writable, and read-only attributes, plus operations with different signatures and return types.
@@ -150,18 +152,38 @@ Tests reading and writing MBean attributes via the `get` and `set` commands.
 | `testGetSimpleFormat` | `get -s Name` prints just the value (no `Name = ...` expression) |
 | `testGetNonExistentAttribute` | Getting a non-existent attribute produces no result output |
 
-### OperationInvocationIT (6 tests)
+### OperationInvocationIT (14 tests)
 
 Tests invoking MBean operations via the `run` command.
 
+`testRunOperation` is parameterized over a command and the substring its result must contain:
+
+| Command | What it verifies |
+|------|-----------------|
+| `run echo hello` | Returns `"echo:hello"` |
+| `run add 3 5` | Returns `8` |
+| `run -j [3,5] add` | A JSON array binds parameters by position |
+| `run -j '{"p1":3,"p2":5}' add` | A JSON object binds parameters by name |
+| `run at 2026-01-01T00:00:00Z` | A positional value is parsed into an `Instant` |
+| `run -j '["2026-01-01T00:00:00Z"]' at` | The same `Instant` passed inside a JSON array |
+| `run sum [1,2,3]` | A positional value starting with `[` is read as a JSON document |
+| `run -j [[1,2,3]] sum` | A nested array passed as the single parameter |
+
+`testRunInvalidInvocation` is parameterized over commands that must fail:
+
+| Command | What it verifies |
+|------|-----------------|
+| `run nonExistent` | Invoking a non-existent operation fails |
+| `run echo too many params` | Passing the wrong number of parameters fails |
+| `run -j [3,5] add 7` | `-j` together with positional parameters fails |
+| `run -j nope add` | Malformed JSON fails |
+
+The remaining two tests are not parameterized:
+
 | Test | What it verifies |
 |------|-----------------|
-| `testRunEchoOperation` | `run echo hello` returns `"echo:hello"` |
-| `testRunAddOperation` | `run add 3 5` returns `8` |
-| `testRunResetOperation` | After changing state, `run reset` restores defaults |
 | `testRunWithBeanOption` | `run -b test:type=TestMBean echo world` works without selecting a bean first |
-| `testRunNonExistentOperation` | Invoking a non-existent operation fails |
-| `testRunWithWrongParamCount` | Passing the wrong number of parameters fails |
+| `testRunResetOperation` | After changing state, `run reset` restores defaults |
 
 ### ErrorHandlingIT (6 tests)
 

@@ -5,11 +5,20 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.util.Map;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import tools.jackson.databind.node.IntNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.MissingNode;
+import tools.jackson.databind.node.NullNode;
+import tools.jackson.databind.node.StringNode;
 
 @ExtendWith(MockitoExtension.class)
 class MBeanValueParserTest {
@@ -161,10 +170,134 @@ class MBeanValueParserTest {
   }
 
   @Test
-  void should_throw_when_type_is_unsupported() {
+  void should_throw_when_jackson_cannot_deserialize_type() {
     // When / Then
-    assertThatThrownBy(() -> unit.parse("x", "java.lang.Object"))
+    assertThatThrownBy(() -> unit.parse("x", "java.lang.Runnable"))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Cannot convert \"x\" to type java.lang.Object");
+        .hasMessageStartingWith("Cannot convert \"x\" to type java.lang.Runnable: ");
+  }
+
+  @Test
+  void should_parse_instant_when_type_is_instant() {
+    // When
+    Object result = unit.parse("2026-01-01T00:00:00Z", "java.time.Instant");
+
+    // Then
+    assertThat(result).isEqualTo(Instant.parse("2026-01-01T00:00:00Z"));
+  }
+
+  @Test
+  void should_parse_uuid_when_type_is_uuid() {
+    // When
+    Object result = unit.parse("f81d4fae-7dec-11d0-a765-00a0c91e6bf6", "java.util.UUID");
+
+    // Then
+    assertThat(result).isEqualTo(UUID.fromString("f81d4fae-7dec-11d0-a765-00a0c91e6bf6"));
+  }
+
+  @Test
+  void should_parse_enum_constant_when_type_is_enum() {
+    // When
+    Object result = unit.parse("MONDAY", "java.time.DayOfWeek");
+
+    // Then
+    assertThat(result).isEqualTo(DayOfWeek.MONDAY);
+  }
+
+  @Test
+  void should_parse_int_array_when_expression_is_a_json_array() {
+    // When
+    Object result = unit.parse("[1, 2, 3]", "[I");
+
+    // Then
+    assertThat(result).isEqualTo(new int[] {1, 2, 3});
+  }
+
+  @Test
+  void should_parse_string_array_when_expression_is_a_json_array() {
+    // When
+    Object result = unit.parse("[\"a\", \"b\"]", "[Ljava.lang.String;");
+
+    // Then
+    assertThat(result).isEqualTo(new String[] {"a", "b"});
+  }
+
+  @Test
+  void should_parse_map_when_type_is_object_and_expression_is_a_json_document() {
+    // When
+    Object result = unit.parse("{\"a\": 1}", "java.lang.Object");
+
+    // Then
+    assertThat(result).isEqualTo(Map.of("a", 1));
+  }
+
+  @Test
+  void should_return_expression_when_type_is_object_and_expression_is_not_a_json_document() {
+    // When
+    Object result = unit.parse("x", "java.lang.Object");
+
+    // Then
+    assertThat(result).isEqualTo("x");
+  }
+
+  @Test
+  void should_throw_when_expression_is_a_malformed_json_document() {
+    // When / Then
+    assertThatThrownBy(() -> unit.parse("[1, ", "[I"))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageStartingWith("Cannot convert \"[1, \" to type [I: ");
+  }
+
+  @Test
+  void should_return_null_when_node_is_null() {
+    // When / Then
+    assertThat(unit.parseNode(null, "int")).isNull();
+    assertThat(unit.parseNode(NullNode.getInstance(), "int")).isNull();
+    assertThat(unit.parseNode(MissingNode.getInstance(), "int")).isNull();
+  }
+
+  @Test
+  void should_parse_int_when_node_is_a_number() {
+    // When
+    Object result = unit.parseNode(IntNode.valueOf(3), "int");
+
+    // Then
+    assertThat(result).isEqualTo(3);
+  }
+
+  @Test
+  void should_return_text_verbatim_when_node_is_a_string_and_type_is_string() {
+    // When
+    Object result = unit.parseNode(StringNode.valueOf("null"), "java.lang.String");
+
+    // Then
+    assertThat(result).isEqualTo("null");
+  }
+
+  @Test
+  void should_parse_instant_when_node_is_a_string() {
+    // When
+    Object result = unit.parseNode(StringNode.valueOf("2026-01-01T00:00:00Z"), "java.time.Instant");
+
+    // Then
+    assertThat(result).isEqualTo(Instant.parse("2026-01-01T00:00:00Z"));
+  }
+
+  @Test
+  void should_parse_int_array_when_node_is_an_array() {
+    // When
+    Object result =
+        unit.parseNode(JsonNodeFactory.instance.arrayNode().add(1).add(2), "[I");
+
+    // Then
+    assertThat(result).isEqualTo(new int[] {1, 2});
+  }
+
+  @Test
+  void should_throw_when_node_cannot_be_converted_to_type() {
+    // When / Then
+    assertThatThrownBy(() -> unit.parseNode(StringNode.valueOf("x"), "int"))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageStartingWith("Cannot convert \"\"x\"\" to type int: ");
   }
 }

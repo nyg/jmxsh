@@ -5,7 +5,15 @@ import java.math.BigInteger;
 import java.util.Map;
 import java.util.function.Function;
 
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.StringNode;
+
 public final class MBeanValueParser {
+
+  private static final ObjectMapper MAPPER = JsonMapper.builder().build();
 
   private static final Map<String, Class<?>> PRIMITIVE_TYPES = Map.ofEntries(
       Map.entry("boolean", boolean.class),
@@ -37,6 +45,15 @@ public final class MBeanValueParser {
       Map.entry(BigInteger.class, BigInteger::new),
       Map.entry(BigDecimal.class, BigDecimal::new));
 
+  static JsonNode readTree(String json) {
+    try {
+      return MAPPER.readTree(json);
+    } catch (JacksonException e) {
+      throw new IllegalArgumentException(
+          "Invalid JSON parameters: %s".formatted(e.getOriginalMessage()), e);
+    }
+  }
+
   public Object parse(String expression, String type) {
     if (expression == null || ValueFormat.NULL.equalsIgnoreCase(expression)) {
       return null;
@@ -49,11 +66,48 @@ public final class MBeanValueParser {
       return null;
     }
     Function<String, Object> converter = CONVERTERS.get(targetType);
-    if (converter == null) {
-      throw new IllegalArgumentException(
-          "Cannot convert \"%s\" to type %s".formatted(expression, targetType.getName()));
+    if (converter != null) {
+      return converter.apply(expression);
     }
-    return converter.apply(expression);
+    return convertExpression(expression, targetType);
+  }
+
+  public Object parseNode(JsonNode node, String type) {
+    if (node == null || node.isNull() || node.isMissingNode()) {
+      return null;
+    }
+    return convertNode(node, resolveClass(type));
+  }
+
+  private static Object convertExpression(String expression, Class<?> targetType) {
+    try {
+      return isJsonDocument(expression)
+          ? MAPPER.readValue(expression, targetType)
+          : MAPPER.convertValue(StringNode.valueOf(expression), targetType);
+    } catch (JacksonException e) {
+      throw cannotConvert(expression, targetType, e);
+    }
+  }
+
+  private static Object convertNode(JsonNode node, Class<?> targetType) {
+    try {
+      return MAPPER.convertValue(node, targetType);
+    } catch (JacksonException e) {
+      throw cannotConvert(node.toString(), targetType, e);
+    }
+  }
+
+  private static boolean isJsonDocument(String expression) {
+    char first = expression.charAt(0);
+    return first == '[' || first == '{';
+  }
+
+  private static IllegalArgumentException cannotConvert(
+      String expression, Class<?> targetType, JacksonException cause) {
+    return new IllegalArgumentException(
+        "Cannot convert \"%s\" to type %s: %s"
+            .formatted(expression, targetType.getName(), cause.getOriginalMessage()),
+        cause);
   }
 
   private static Class<?> resolveClass(String type) {

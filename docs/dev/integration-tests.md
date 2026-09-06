@@ -64,6 +64,8 @@ The server exposes helper methods used by tests:
 | `Count` | int attribute (read-only) | Tracks how many times `setName()` was called |
 | `echo(String)` | operation | Returns `"echo:"` + input |
 | `add(int, int)` | operation | Returns the sum |
+| `at(Instant)` | operation | Returns `"at:"` + the instant |
+| `sum(int[])` | operation | Returns the sum of the array |
 | `reset()` | operation | Resets Name to `"default"` and Count to `0` |
 
 This gives tests a controllable MBean with readable, writable, and read-only attributes, plus operations with different signatures and return types.
@@ -150,7 +152,7 @@ Tests reading and writing MBean attributes via the `get` and `set` commands.
 | `testGetSimpleFormat` | `get -s Name` prints just the value (no `Name = ...` expression) |
 | `testGetNonExistentAttribute` | Getting a non-existent attribute produces no result output |
 
-### OperationInvocationIT (6 tests)
+### OperationInvocationIT (14 tests)
 
 Tests invoking MBean operations via the `run` command.
 
@@ -162,6 +164,14 @@ Tests invoking MBean operations via the `run` command.
 | `testRunWithBeanOption` | `run -b test:type=TestMBean echo world` works without selecting a bean first |
 | `testRunNonExistentOperation` | Invoking a non-existent operation fails |
 | `testRunWithWrongParamCount` | Passing the wrong number of parameters fails |
+| `testRunWithJsonArray` | `run -j [3,5] add` returns `8` |
+| `testRunWithJsonObject` | `run -j '{"p1":3,"p2":5}' add` binds parameters by name |
+| `testRunWithPositionalInstantParameter` | `run at 2026-01-01T00:00:00Z` parses the `Instant` |
+| `testRunWithJsonInstantParameter` | The same `Instant` passed inside a JSON array |
+| `testRunWithPositionalIntArrayParameter` | `run sum [1,2,3]` reads the value as a JSON document |
+| `testRunWithJsonIntArrayParameter` | `run -j [[1,2,3]] sum` passes a nested array |
+| `testRunRejectsJsonCombinedWithPositionalParameters` | `-j` together with positional parameters fails |
+| `testRunRejectsMalformedJson` | Malformed JSON fails |
 
 ### ErrorHandlingIT (6 tests)
 

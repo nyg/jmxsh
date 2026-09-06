@@ -108,4 +108,78 @@ class OperationInvocationIT {
         .as("Expected failure when invoking echo with wrong number of parameters")
         .isFalse();
   }
+
+  @Test
+  void testRunWithJsonArray() {
+    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
+    assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
+    assertThat(cc.execute("run -j [3,5] add")).isTrue();
+    assertThat(resultWriter.toString())
+        .as("Expected '8' in output, got: " + resultWriter)
+        .contains("8");
+  }
+
+  @Test
+  void testRunWithJsonObject() {
+    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
+    assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
+    assertThat(cc.execute("run -j '{\"p1\":3,\"p2\":5}' add")).isTrue();
+    assertThat(resultWriter.toString())
+        .as("Expected '8' in output, got: " + resultWriter)
+        .contains("8");
+  }
+
+  @Test
+  void testRunWithPositionalInstantParameter() {
+    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
+    assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
+    assertThat(cc.execute("run at 2026-01-01T00:00:00Z")).isTrue();
+    assertThat(resultWriter.toString())
+        .as("Expected 'at:2026-01-01T00:00:00Z' in output, got: " + resultWriter)
+        .contains("at:2026-01-01T00:00:00Z");
+  }
+
+  @Test
+  void testRunWithJsonInstantParameter() {
+    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
+    assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
+    assertThat(cc.execute("run -j '[\"2026-01-01T00:00:00Z\"]' at")).isTrue();
+    assertThat(resultWriter.toString())
+        .as("Expected 'at:2026-01-01T00:00:00Z' in output, got: " + resultWriter)
+        .contains("at:2026-01-01T00:00:00Z");
+  }
+
+  @Test
+  void testRunWithPositionalIntArrayParameter() {
+    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
+    assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
+    assertThat(cc.execute("run sum [1,2,3]")).isTrue();
+    assertThat(resultWriter.toString())
+        .as("Expected '6' in output, got: " + resultWriter)
+        .contains("6");
+  }
+
+  @Test
+  void testRunWithJsonIntArrayParameter() {
+    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
+    assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
+    assertThat(cc.execute("run -j [[1,2,3]] sum")).isTrue();
+    assertThat(resultWriter.toString())
+        .as("Expected '6' in output, got: " + resultWriter)
+        .contains("6");
+  }
+
+  @Test
+  void testRunRejectsJsonCombinedWithPositionalParameters() {
+    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
+    assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
+    assertThat(cc.execute("run -j [3,5] add 7")).isFalse();
+  }
+
+  @Test
+  void testRunRejectsMalformedJson() {
+    assertThat(cc.execute("open " + jmxServer.getConnectionUrl())).isTrue();
+    assertThat(cc.execute("bean test:type=TestMBean")).isTrue();
+    assertThat(cc.execute("run -j nope add")).isFalse();
+  }
 }

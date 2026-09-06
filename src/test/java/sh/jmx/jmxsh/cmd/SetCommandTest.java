@@ -11,6 +11,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.time.DayOfWeek;
+import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -128,5 +130,21 @@ class SetCommandTest {
   void setArgumentsThrowsWhenNull() {
     assertThatThrownBy(() -> command.setArguments(null))
         .isInstanceOf(NullPointerException.class);
+  }
+
+  @Test
+  void should_set_instant_when_attribute_type_is_instant() {
+    setValueAndVerify(
+        "2026-01-01T00:00:00Z", "java.time.Instant", Instant.parse("2026-01-01T00:00:00Z"));
+  }
+
+  @Test
+  void should_set_enum_constant_when_attribute_type_is_enum() {
+    setValueAndVerify("MONDAY", "java.time.DayOfWeek", DayOfWeek.MONDAY);
+  }
+
+  @Test
+  void should_set_string_array_when_value_is_a_json_array() {
+    setValueAndVerify("[\"a\", \"b\"]", "[Ljava.lang.String;", new String[] {"a", "b"});
   }
 }

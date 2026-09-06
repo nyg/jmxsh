@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.management.JMException;
 import javax.management.MBeanInfo;
@@ -16,7 +17,7 @@ import sh.jmx.jmxsh.Command;
 import sh.jmx.jmxsh.Session;
 import sh.jmx.jmxsh.io.ValueOutputFormat;
 import sh.jmx.jmxsh.utils.MBeanValueParser;
-import sh.jmx.jmxsh.utils.ValueFormat;
+import sh.jmx.jmxsh.utils.OperationArguments;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
@@ -27,7 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 @CommandLine.Command(
     name = "run",
     description = "Invoke an MBean operation",
-    footer = "Syntax is \n run <operationName> [parameter1] [parameter2]")
+    footer = "Syntax is \n run <operationName> [parameter1] [parameter2]\n"
+        + " run -j <json> <operationName>")
 @Slf4j
 public class RunCommand extends Command {
   private final MBeanValueParser valueParser = new MBeanValueParser();
@@ -35,6 +37,8 @@ public class RunCommand extends Command {
   private String bean;
 
   private String domain;
+
+  private String json;
 
   private boolean measure;
 
@@ -71,30 +75,26 @@ public class RunCommand extends Command {
       throw new IllegalArgumentException("At least one parameter is needed");
     }
 
-    String[] paramTypes = parseParamTypes();
-    String operationName = parameters.get(0);
+    String operationName = parameters.getFirst();
+    OperationArguments arguments = createArguments();
+    String[] paramTypes = parseParamTypes(arguments.size());
     log.debug("invoking operation {} on {}", operationName, beanName);
     ObjectName name = new ObjectName(beanName);
     MBeanServerConnection con = session.getConnection().getServerConnection();
     MBeanInfo beanInfo = con.getMBeanInfo(name);
 
-    MBeanOperationInfo operationInfo = findOperation(beanInfo, operationName, paramTypes);
+    MBeanOperationInfo operationInfo = findOperation(beanInfo, operationName, paramTypes, arguments);
     if (operationInfo == null) {
-      throw new IllegalArgumentException(
-          "Operation "
-              + operationName
-              + " with "
-              + (parameters.size() - 1)
-              + " parameters doesn't exist in bean "
-              + beanName);
+      throw noMatchingOperation(beanInfo, operationName, beanName, arguments);
     }
 
     MBeanParameterInfo[] paramInfos = operationInfo.getSignature();
-    String[] signatures = new String[paramInfos.length];
-    Object[] params = buildParams(paramInfos, signatures);
+    Object[] params = arguments.bind(paramInfos);
+    String[] signatures =
+        Arrays.stream(paramInfos).map(MBeanParameterInfo::getType).toArray(String[]::new);
     session.getOutput().printMessage(
         "Calling operation %s of mbean %s with params %s.".formatted(
-            operationName, beanName, Arrays.toString(params)));
+            operationName, beanName, Arrays.deepToString(params)));
 
     Object result = invoke(session, con, name, operationName, params, signatures);
     session.getOutput().printMessage("Operation returns: ");
@@ -102,22 +102,35 @@ public class RunCommand extends Command {
     session.getOutput().println("");
   }
 
-  private String[] parseParamTypes() {
+  private OperationArguments createArguments() {
+    if (json == null) {
+      return OperationArguments.ofPositional(
+          parameters.subList(1, parameters.size()), valueParser);
+    }
+    if (parameters.size() > 1) {
+      throw new IllegalArgumentException(
+          "Positional parameters cannot be combined with -j, pass only the operation name");
+    }
+    return OperationArguments.ofJson(json, valueParser);
+  }
+
+  private String[] parseParamTypes(int argumentCount) {
     if (types == null) {
       return new String[0];
     }
     String[] paramTypes = types.split(",");
-    if (paramTypes.length != parameters.size() - 1) {
+    if (paramTypes.length != argumentCount) {
       throw new IllegalArgumentException("Signature does not match parameter count");
     }
     return paramTypes;
   }
 
-  private MBeanOperationInfo findOperation(MBeanInfo beanInfo, String operationName, String[] paramTypes) {
+  private MBeanOperationInfo findOperation(MBeanInfo beanInfo, String operationName,
+      String[] paramTypes, OperationArguments arguments) {
     for (MBeanOperationInfo info : beanInfo.getOperations()) {
-      boolean nameAndArityMatch = operationName.equals(info.getName())
-          && info.getSignature().length == parameters.size() - 1;
-      if (nameAndArityMatch && parameterTypesMatch(info.getSignature(), paramTypes)) {
+      if (operationName.equals(info.getName())
+          && arguments.fits(info.getSignature())
+          && parameterTypesMatch(info.getSignature(), paramTypes)) {
         return info;
       }
     }
@@ -136,22 +149,27 @@ public class RunCommand extends Command {
     return true;
   }
 
-  private Object[] buildParams(MBeanParameterInfo[] paramInfos, String[] signatures) {
-    Object[] params = new Object[parameters.size() - 1];
-    if (params.length != paramInfos.length) {
-      throw new IllegalArgumentException(
-          "%d parameters are expected but %d are provided".formatted(paramInfos.length, params.length));
+  private static IllegalArgumentException noMatchingOperation(MBeanInfo beanInfo,
+      String operationName, String beanName, OperationArguments arguments) {
+    List<String> candidates = Arrays.stream(beanInfo.getOperations())
+        .filter(info -> operationName.equals(info.getName()))
+        .map(RunCommand::describeSignature)
+        .toList();
+    if (candidates.isEmpty()) {
+      return new IllegalArgumentException(
+          "Operation %s doesn't exist in bean %s".formatted(operationName, beanName));
     }
-    for (int i = 0; i < paramInfos.length; i++) {
-      MBeanParameterInfo paramInfo = paramInfos[i];
-      String expression = parameters.get(i + 1);
-      if (expression != null) {
-        expression = ValueFormat.parseValue(expression);
-      }
-      params[i] = valueParser.parse(expression, paramInfo.getType());
-      signatures[i] = paramInfo.getType();
-    }
-    return params;
+    return new IllegalArgumentException(
+        "Operation %s with %d parameters doesn't exist in bean %s, known signatures are %s"
+            .formatted(operationName, arguments.size(), beanName, String.join(", ", candidates)));
+  }
+
+  private static String describeSignature(MBeanOperationInfo info) {
+    return "%s(%s)".formatted(
+        info.getName(),
+        Arrays.stream(info.getSignature())
+            .map(parameter -> parameter.getType() + " " + parameter.getName())
+            .collect(Collectors.joining(", ")));
   }
 
   private Object invoke(Session session, MBeanServerConnection con, ObjectName name,
@@ -176,6 +194,13 @@ public class RunCommand extends Command {
   @Option(names = {"-d", "--domain"}, description = "Domain of MBean to invoke")
   public final void setDomain(String domain) {
     this.domain = domain;
+  }
+
+  @Option(
+      names = {"-j", "--json"},
+      description = "JSON array or object holding the operation parameters")
+  public final void setJson(String json) {
+    this.json = json;
   }
 
   @Option(

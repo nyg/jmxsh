@@ -100,16 +100,22 @@ class OperationArgumentsTest {
 
   @Test
   void should_throw_when_json_is_neither_an_array_nor_an_object() {
+    // Given
+    MBeanValueParser parser = new MBeanValueParser();
+
     // When / Then
-    assertThatThrownBy(() -> OperationArguments.ofJson("\"x\"", new MBeanValueParser()))
+    assertThatThrownBy(() -> OperationArguments.ofJson("\"x\"", parser))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("JSON parameters must be an array or an object but were STRING");
   }
 
   @Test
   void should_throw_when_json_is_malformed() {
+    // Given
+    MBeanValueParser parser = new MBeanValueParser();
+
     // When / Then
-    assertThatThrownBy(() -> OperationArguments.ofJson("[3,", new MBeanValueParser()))
+    assertThatThrownBy(() -> OperationArguments.ofJson("[3,", parser))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageStartingWith("Invalid JSON parameters: ");
   }

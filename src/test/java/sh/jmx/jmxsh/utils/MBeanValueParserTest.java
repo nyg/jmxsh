@@ -295,8 +295,11 @@ class MBeanValueParserTest {
 
   @Test
   void should_throw_when_node_cannot_be_converted_to_type() {
+    // Given
+    StringNode node = StringNode.valueOf("x");
+
     // When / Then
-    assertThatThrownBy(() -> unit.parseNode(StringNode.valueOf("x"), "int"))
+    assertThatThrownBy(() -> unit.parseNode(node, "int"))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageStartingWith("Cannot convert \"\"x\"\" to type int: ");
   }

@@ -28,8 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 @CommandLine.Command(
     name = "run",
     description = "Invoke an MBean operation",
-    footer = "Syntax is \n run <operationName> [parameter1] [parameter2]\n"
-        + " run -j <json> <operationName>")
+    footer = """
+        Syntax is
+         run <operationName> [parameter1] [parameter2]
+         run -j <json> <operationName>""")
 @Slf4j
 public class RunCommand extends Command {
   private final MBeanValueParser valueParser = new MBeanValueParser();

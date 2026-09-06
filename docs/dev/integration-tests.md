@@ -156,22 +156,34 @@ Tests reading and writing MBean attributes via the `get` and `set` commands.
 
 Tests invoking MBean operations via the `run` command.
 
+`testRunOperation` is parameterized over a command and the substring its result must contain:
+
+| Command | What it verifies |
+|------|-----------------|
+| `run echo hello` | Returns `"echo:hello"` |
+| `run add 3 5` | Returns `8` |
+| `run -j [3,5] add` | A JSON array binds parameters by position |
+| `run -j '{"p1":3,"p2":5}' add` | A JSON object binds parameters by name |
+| `run at 2026-01-01T00:00:00Z` | A positional value is parsed into an `Instant` |
+| `run -j '["2026-01-01T00:00:00Z"]' at` | The same `Instant` passed inside a JSON array |
+| `run sum [1,2,3]` | A positional value starting with `[` is read as a JSON document |
+| `run -j [[1,2,3]] sum` | A nested array passed as the single parameter |
+
+`testRunInvalidInvocation` is parameterized over commands that must fail:
+
+| Command | What it verifies |
+|------|-----------------|
+| `run nonExistent` | Invoking a non-existent operation fails |
+| `run echo too many params` | Passing the wrong number of parameters fails |
+| `run -j [3,5] add 7` | `-j` together with positional parameters fails |
+| `run -j nope add` | Malformed JSON fails |
+
+The remaining two tests are not parameterized:
+
 | Test | What it verifies |
 |------|-----------------|
-| `testRunEchoOperation` | `run echo hello` returns `"echo:hello"` |
-| `testRunAddOperation` | `run add 3 5` returns `8` |
-| `testRunResetOperation` | After changing state, `run reset` restores defaults |
 | `testRunWithBeanOption` | `run -b test:type=TestMBean echo world` works without selecting a bean first |
-| `testRunNonExistentOperation` | Invoking a non-existent operation fails |
-| `testRunWithWrongParamCount` | Passing the wrong number of parameters fails |
-| `testRunWithJsonArray` | `run -j [3,5] add` returns `8` |
-| `testRunWithJsonObject` | `run -j '{"p1":3,"p2":5}' add` binds parameters by name |
-| `testRunWithPositionalInstantParameter` | `run at 2026-01-01T00:00:00Z` parses the `Instant` |
-| `testRunWithJsonInstantParameter` | The same `Instant` passed inside a JSON array |
-| `testRunWithPositionalIntArrayParameter` | `run sum [1,2,3]` reads the value as a JSON document |
-| `testRunWithJsonIntArrayParameter` | `run -j [[1,2,3]] sum` passes a nested array |
-| `testRunRejectsJsonCombinedWithPositionalParameters` | `-j` together with positional parameters fails |
-| `testRunRejectsMalformedJson` | Malformed JSON fails |
+| `testRunResetOperation` | After changing state, `run reset` restores defaults |
 
 ### ErrorHandlingIT (6 tests)
 

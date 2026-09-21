@@ -65,10 +65,10 @@ public class BeanCommand extends Command {
 
   static List<String> getCandidateBeanNames(Session session) throws MalformedObjectNameException {
     try {
-      ArrayList<String> results = new ArrayList<>(BeansCommand.getBeans(session, null));
       String domain = session.getDomain();
+      List<String> beans = BeansCommand.getBeans(session, domain);
+      ArrayList<String> results = new ArrayList<>(beans);
       if (domain != null) {
-        List<String> beans = BeansCommand.getBeans(session, domain);
         for (String bean : beans) {
           results.add(bean.substring(domain.length() + 1));
         }

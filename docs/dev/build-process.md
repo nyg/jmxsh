@@ -117,8 +117,7 @@ local projects can reference them as dependencies.
 
 ## CI/CD
 
-The CI workflow (`java-ci.yaml`) runs `mvn verify` (compile + unit + integration + E2E tests) on
-every push and pull request targeting `master`.
+The CI workflow (`java-ci.yaml`) runs `mvn verify` (compile + unit + integration + E2E tests) on every push and pull request targeting `master`, then `mvn sonar:sonar` to send the analysis and JaCoCo coverage to SonarCloud. The Sonar step is skipped when the `SONAR_TOKEN` secret is unavailable, as on pull requests from forks and Dependabot.
 
 ### Releasing
 

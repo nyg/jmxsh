@@ -59,6 +59,7 @@
 
     <!-- Plugins -->
     <jacoco.version>0.8.15</jacoco.version>
+    <sonar-maven-plugin.version>5.7.0.6970</sonar-maven-plugin.version>
     <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
     <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
     <maven-jar-plugin.version>3.5.1</maven-jar-plugin.version>
@@ -293,6 +294,11 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>${sonar-maven-plugin.version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

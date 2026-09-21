@@ -3,13 +3,22 @@ package sh.jmx.jmxsh.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import sh.jmx.jmxsh.cc.CommandCenter;
+import sh.jmx.jmxsh.cc.ConsoleCompleter;
 import sh.jmx.jmxsh.io.WriterCommandOutput;
+import org.jline.reader.Candidate;
+import org.jline.reader.ParsedLine;
+import org.jline.reader.Parser.ParseContext;
+import org.jline.reader.impl.DefaultParser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /** Integration tests for browsing domains, beans, and MBean info via a real JMX connection. */
 class DomainBeanNavigationIT {
@@ -82,6 +91,50 @@ class DomainBeanNavigationIT {
     assertThat(result)
         .as("Expected 'test:type=TestMBean' in beans output, got: " + result)
         .contains("test:type=TestMBean");
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "bean ", "get -b ", "get --bean ", "set -b ", "set --bean "
+  })
+  void should_complete_only_selected_domain_when_domain_is_selected(String command) {
+    assertThat(cc.execute("domain test")).isTrue();
+    ConsoleCompleter unit = new ConsoleCompleter(cc);
+    ParsedLine line = new DefaultParser().parse(command, command.length(), ParseContext.COMPLETE);
+    List<Candidate> candidates = new ArrayList<>();
+
+    unit.complete(null, line, candidates);
+
+    assertThat(candidates).extracting(Candidate::value)
+        .containsExactly("test:type=TestMBean", "type=TestMBean");
+  }
+
+  @Test
+  void should_complete_all_domains_when_selected_domain_is_unset() {
+    assertThat(cc.execute("domain test")).isTrue();
+    ConsoleCompleter unit = new ConsoleCompleter(cc);
+    assertThat(cc.execute("domain null")).isTrue();
+    ParsedLine line = new DefaultParser().parse("bean ", 5, ParseContext.COMPLETE);
+    List<Candidate> candidates = new ArrayList<>();
+
+    unit.complete(null, line, candidates);
+
+    assertThat(candidates).extracting(Candidate::value)
+        .containsExactly("JMImplementation:type=MBeanServerDelegate", "test:type=TestMBean");
+  }
+
+  @Test
+  void should_complete_new_domain_when_selected_domain_changes() {
+    assertThat(cc.execute("domain test")).isTrue();
+    ConsoleCompleter unit = new ConsoleCompleter(cc);
+    assertThat(cc.execute("domain JMImplementation")).isTrue();
+    ParsedLine line = new DefaultParser().parse("bean ", 5, ParseContext.COMPLETE);
+    List<Candidate> candidates = new ArrayList<>();
+
+    unit.complete(null, line, candidates);
+
+    assertThat(candidates).extracting(Candidate::value)
+        .containsExactly("JMImplementation:type=MBeanServerDelegate", "type=MBeanServerDelegate");
   }
 
   @Test

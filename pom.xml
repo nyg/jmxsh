@@ -40,11 +40,11 @@
     <!-- Third-party dependencies -->
     <lombok.version>1.18.48</lombok.version>
     <slf4j.version>2.0.20</slf4j.version>
-    <logback.version>1.6.4</logback.version>
+    <logback.version>1.6.6</logback.version>
     <picocli.version>4.7.7</picocli.version>
-    <jline.version>4.4.6</jline.version>
+    <jline.version>4.4.8</jline.version>
     <jmxremote-optional.version>5.0</jmxremote-optional.version>
-    <jackson.version>3.1.7</jackson.version>
+    <jackson.version>3.2.4</jackson.version>
 
     <!-- Test dependencies -->
     <mockito.version>5.24.0</mockito.version>
@@ -58,15 +58,15 @@
     <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
     <!-- Plugins -->
-    <jacoco.version>0.8.15</jacoco.version>
+    <jacoco.version>0.8.16</jacoco.version>
     <sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
     <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
     <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
     <maven-jar-plugin.version>3.5.1</maven-jar-plugin.version>
     <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
     <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
-    <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
-    <maven-failsafe-plugin.version>3.6.0</maven-failsafe-plugin.version>
+    <maven-surefire-plugin.version>3.6.1</maven-surefire-plugin.version>
+    <maven-failsafe-plugin.version>3.6.1</maven-failsafe-plugin.version>
     <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
     <exec-maven-plugin.version>3.6.4</exec-maven-plugin.version>
   </properties>

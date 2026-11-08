@@ -1,4 +1,4 @@
-# jmxsh - Copilot Development Instructions
+# jmxsh - Agent Development Instructions
 
 ## Project Overview
 

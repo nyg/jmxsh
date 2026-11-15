@@ -21,3 +21,8 @@ buildNumber.properties
 .factorypath
 .project
 .settings
+
+# Worker
+node_modules
+.wrangler
+.dev.vars*

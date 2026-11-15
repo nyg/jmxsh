@@ -13,6 +13,14 @@
   <meta name="twitter:card" content="summary">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.png" type="image/png">
+  <!-- Blockers drop third-party sendBeacon requests, so count.js sends its hits with fetch instead. -->
+  <script>
+    if (window.fetch) navigator.sendBeacon = function (url) {
+      fetch(url, { method: 'POST', keepalive: true, mode: 'no-cors' }).catch(function () {})
+      return true
+    }
+  </script>
+  <script data-goatcounter="https://jmxsh.cloudflare-mmdif.workers.dev/hit" async src="count.js"></script>
 </head>
 <body>
 

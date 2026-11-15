@@ -143,3 +143,12 @@ class DomainsCommandTest {
 - Commands throw `IllegalStateException` for invalid session state (e.g., not connected)
 - `RuntimeIOException` wraps checked `IOException` as unchecked
 - Error display respects `OutputMode`: BRIEF shows a short error message, SILENT suppresses output
+
+## Website
+
+`docs/` is the site at https://jmx.sh (GitHub Pages) and also holds the APT repository in `docs/apt/`. Page views go to GoatCounter through the Cloudflare Worker in `worker/`.
+
+- `docs/count.js` is an unmodified copy of GoatCounter's `count.v4.js`. Replace it with a newer upstream copy, never edit it.
+- `docs/index.html` points it at the Worker's `/hit` endpoint, and swaps `sendBeacon` for `fetch` because blockers drop third-party beacons.
+- The Worker accepts only `POST /hit` from `ALLOWED_ORIGIN` and forwards the hit with the visitor's IP, user agent and language. `GOATCOUNTER_TOKEN` is a Wrangler secret (`worker/.dev.vars` locally), never committed. Deploying the Worker is a manual `pnpm run deploy` in `worker/`.
+- Keep tracker keywords (`beacon`, `analytics`, `collect`, `goatcounter`, …) out of the script file name, the Worker name and the endpoint path: generic blocklist rules match them.
